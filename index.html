@@ -3,6 +3,17 @@
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <link rel="manifest" href="manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker зарегистрирован', reg))
+                    .catch(error => console.log('Ошибка регистрации Service Worker', error));
+            });
+        }
+    </script>
+
     <meta name="viewport" content="width=device-width">
     <meta name="theme-color" content="#ffffff">
     <title>App | Task Aura</title>
