@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<!-- saved from url=(0025)http://127.0.0.1:8000/app -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    
+    <meta name="viewport" content="width=device-width">
+    <meta name="theme-color" content="#ffffff">
+    <title>App | Task Aura</title>
+
+                    <!-- Подключение Bootstrap CSS -->
+    <link href="./resources/bootstrap.min.css" rel="stylesheet">
+    <!-- Подключение Bootstrap Icons -->
+    <link rel="stylesheet" href="./resources/bootstrap-icons.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 88px;
+        }
+
+        /* Верхняя часть с днями недели */
+        .week-days {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        .day:hover {
+            background-color: #e8e8e8;
+        }
+        .day.active {
+            font-weight: bold;
+            color: #007bff;
+            background-color: #f2e4fb85;
+        }
+
+        /* Блок задач */
+        .tasks {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            padding-bottom: 70px; /* чтобы не загораживать кнопку */
+        }
+
+        /* Стиль задач */
+        .task {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            background-color: #f8fcff;
+        }
+
+        .task-left {
+            flex: 0 0 auto;
+            margin-right: 6px;
+            font-size: 36px;
+        }
+
+        .task-center {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-time {
+            font-size: 12px;
+        }
+
+        .task-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: -2px;
+        }
+
+        .task.task.done .task-title {
+            text-decoration: line-through;
+        }
+
+        .task.task.done {
+            background-color: #c1faeb;
+            color: #5d5d5d;
+        }
+
+        .task-right {
+            flex: 0 0 auto;
+            margin: 0 6px;
+            cursor: pointer;
+            font-size: 35px;
+        }
+
+        /* Нижняя навигация */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: #ffffff;
+            padding: 10px 0;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-button {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            font-weight: bold;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: color 0.2s;
+        }
+        .nav-button.active {
+            color: #007bff;
+        }
+
+        /* Иконки в задачах и навигации */
+        .icon {
+            margin-left: 8px;
+            font-size: 1.2em;
+        }
+
+        /* Кнопка + снизу справа */
+        .add-note-btn {
+            position: fixed;
+            bottom: 105px; /* чуть выше навигации */
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .add-note-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+    <style>
+        .nav-top {
+            background-color: #f7f6ff;
+            margin-bottom: 15px;
+            border-radius: 16px;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+        .nav-top.block {
+            pointer-events: none;
+        }
+        .nav-top.block div, .nav-top.block button {
+            color: #888888 !important;
+        }
+
+        /* Общий контейнер для папок и заметок */
+        #notesContainer, #routineContainer, #tasksContainer, #profileContainer {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.5s ease, max-height 0.5s ease;
+        }
+
+        /* Активный контейнер */
+        #notesContainer.show, #routineContainer.show, #tasksContainer.show, #profileContainer.show {
+            opacity: 1;
+            max-height: fit-content; /* или другой подходящий максимум, чтобы плавно раскрыть */
+        }
+
+        #profileContainer {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            grid-gap: 10px;
+        }
+
+        #profileContainer button {
+            background-color: #ff1010;
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            width: 100%;
+            margin: 0;
+        }
+
+        /* Стиль папки */
+        .folder, .no-folder {
+            border-radius: 4px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Вложенные папки */
+        .folder .folder {
+            margin: 10px 0;
+            border: 1px solid #e6e6e6;
+        }
+
+        /* Заголовок папки */
+        .folder-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Название папки */
+        .folder-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Заметка внутри папки */
+        .note {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            background-color: #fafafa;
+            margin-top: 4px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-top: 1px solid #e7e7ec;
+        }
+
+        .note:hover {
+            background-color: #f0f0f0;
+        }
+
+        .sub-notes {
+            padding: 0 0 5px 7px;
+            margin-bottom: 4px;
+        }
+
+        .sub-notes .full-note {
+            margin-right: 3px;
+        }
+
+        .full-note {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+
+        /* Заголовок заметки */
+        .note-title {
+            flex: 1;
+            padding: 6px 4px 6px 8px;
+            font-size: 1em;
+        }
+
+        /* Иконки действия */
+        .icon {
+            font-size: 1.2em;
+            margin-left: 8px;
+            cursor: pointer;
+            color: #555;
+            transition: color 0.2s;
+        }
+
+        .icon:hover {
+            color: #000;
+        }
+    </style>
+
+    <style>
+        #nextWeek, #prevWeek {
+            border: 0;
+            font-weight: 700;
+            font-family: emoji;
+            background-color: #0000;
+        }
+
+        .create-folder-btn {
+            border-radius: 9px;
+            border: 1px #efefef solid;
+            padding: 6px 13px;
+            background-color: #fafafa;
+            margin: 10px auto 30px;
+            color: #000;
+        }
+
+        .modal {
+            align-content: center;
+        }
+    </style>
+
+    </head>
+<body>
+        <!-- Вкладка Routine (активная) -->
+    <div class="nav-top">
+        <div class="container my-3" style="max-width: 750px;">
+            <!-- Надпись с полной выбранной датой -->
+            <!-- Неделя -->
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <button id="prevWeek" class="m-1">&lt;&lt; </button>
+                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Tuesday, January 13, 2026</div>
+                <button id="nextWeek" class="m-1"> &gt;&gt;</button>
+            </div>
+            <div class="d-flex justify-content-around" id="weekDays">
+                <div class="text-center day" data-day="2026-01-11"><div>Sun</div><div>11</div></div>
+                <div class="text-center day" data-day="2026-01-12"><div>Mon</div><div>12</div></div>
+                <div class="text-center day active" data-day="2026-01-13"><div>Tue</div><div>13</div></div>
+                <div class="text-center day" data-day="2026-01-14"><div>Wed</div><div>14</div></div>
+                <div class="text-center day" data-day="2026-01-15"><div>Thu</div><div>15</div></div>
+                <div class="text-center day" data-day="2026-01-16"><div>Fri</div><div>16</div></div>
+                <div class="text-center day" data-day="2026-01-17"><div>Sat</div><div>17</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной блок задач -->
+    <div class="container flex-fill show" id="routineContainer"><div class="task"><div class="task-left"><span>📧</span></div><div class="task-center"><div class="task-title">Check email</div><div class="task-time">09:00 - 10:00</div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Check mailbox</div><div class="task-time">11:00</div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task"><div class="task-left"><span>🐈</span></div><div class="task-center"><div class="task-title">Pet the cat</div><div class="task-time">0/5</div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task"><div class="task-left"><span>⛺️</span></div><div class="task-center"><div class="task-title">Rest</div><div class="task-time">12:00 (0/60 минут)</div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div></div>
+
+    <!-- Блок задач без регулярности -->
+    <div class="container flex-fill" id="tasksContainer"><div class="task"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Complete Task Aura training</div><div class="task-time"></div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Fulfill the dream</div><div class="task-time"></div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task done"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Go for a walk</div><div class="task-time">09:00 - 11:00</div></div><div class="task-right"><i class="bi-check-circle" title="Finish"></i></div></div></div>
+
+    <!-- Блок с заметками -->
+    <div class="container" style="display: grid;" id="notesContainer">
+        <div class="container flex-fill" id="notesContainerContent"><div class="folder"><div class="folder-header"><span class="folder-name">Work in Task Aura</span><i class="bi bi-plus-square icon" title="Add a note"></i></div><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Start working with notes</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div><div class="sub-notes"><div class="full-note"><div class="note"><div class="note-title">Child note</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div><div class="sub-notes"><div class="full-note"><div class="note"><div class="note-title">Grandchild note #1</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Grandchild note #2</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Grandchild note #3</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div><div class="full-note"><div class="note"><div class="note-title">Another child note</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div><div class="full-note"><div class="note"><div class="note-title">Data clearing</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Complete Task Aura training</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div><div class="folder"><div class="folder-header"><span class="folder-name">Main folder</span><i class="bi bi-plus-square icon" title="Add a note"></i></div><div class="notes-list"></div><div class="folder"><div class="folder-header"><span class="folder-name">Child folder</span><i class="bi bi-plus-square icon" title="Add a note"></i></div><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Note in child folder</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div><div class="folder"><div class="folder-header"><span class="folder-name">Grandchild folder</span><i class="bi bi-plus-square icon" title="Add a note"></i></div><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Multiple attachments</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div></div></div><div class="no-folder"><span class="folder-name">Notes without a folder</span><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Note outside folder</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Check email</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Check mailbox</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Take out the boxes to the garage</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Fulfill the dream</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Go for a walk</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Play a new game</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Pet the cat</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Rest</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div></div>
+        <button class="bi-plus-square icon create-folder-btn" data-bs-toggle="modal" data-bs-target="#formCreateFolder" title="Create folder"> Create folder</button>
+    </div>
+
+    <!-- Блок с заметками -->
+    <div class="container" id="profileContainer">
+        <button id="deleteAllBtn" class="bi bi-trash icon" title="Delete all data">
+            Delete all data        </button>
+        <span>Version: 1.0.12.2</span>
+    </div>
+
+    <!-- Кнопка + снизу справа -->
+    <button class="btn btn-primary add-note-btn" title="Add a note/task" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
+
+    <!-- Модальное окно для добавления заметки -->
+    <div class="modal fade" id="formNoteModal" tabindex="-1" aria-labelledby="formNoteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="formNoteModalLabel">Add a note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formNoteForm">
+                        <input type="text" name="id" id="formNoteID" class="d-none">
+                        <div class="input-group mb-3">
+                            <input type="text" autocomplete="task-name" class="form-control" placeholder="Name" id="formNoteTitle" aria-label="Name">
+                            <span class="input-group-text"></span>
+                            <input type="text" autocomplete="task-icon" class="form-control" placeholder="Icon (optional)" id="formNoteIcon" aria-label="Icon (optional)">
+                        </div>
+                        <div class="mb-3">
+                            <label for="formNoteDescription" class="form-label">Content</label>
+                            <textarea class="form-control" id="formNoteDescription" rows="4" required=""></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="formNoteFolder" class="form-label">Folder</label>
+                            <select class="form-select" id="formNoteFolder" aria-label="Select a folder"><option value="">Without a folder</option><option value="1">Work in Task Aura</option><option value="2">Main folder</option><option value="3">Child folder</option><option value="4">Grandchild folder</option></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="formNoteParentNote" class="form-label">Parent note</label>
+                            <select class="form-select" id="formNoteParentNote" aria-label="Select a note"><option value="">Without a note</option><option value="1">Start working with notes</option><option value="2">Data clearing</option><option value="3">Note outside folder</option><option value="4">Multiple attachments</option><option value="5">Note in child folder</option><option value="6">Complete Task Aura training</option><option value="7">Check email</option><option value="8">Check mailbox</option><option value="9">Take out the boxes to the garage</option><option value="10">Fulfill the dream</option><option value="11">Go for a walk</option><option value="12">Play a new game</option><option value="13">Pet the cat</option><option value="14">Rest</option><option value="15">Child note</option><option value="16">Grandchild note #1</option><option value="17">Grandchild note #2</option><option value="18">Grandchild note #3</option><option value="19">Another child note</option></select>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="isTaskSwitch">
+                            <label class="form-check-label" for="isTaskSwitch">Task</label>
+                        </div>
+                        <!-- Начало задачи -->
+                        <div class="mb-3" id="taskDateStartContainer" style="display: none;">
+                            <label for="taskDateStart" class="form-label">Start of the task</label>
+                            <input type="date" class="form-control" id="taskDateStart">
+                        </div>
+                        <!-- Конец задачи -->
+                        <div class="mb-3" id="taskDateEndContainer" style="display: none;">
+                            <label for="taskDateEnd" class="form-label">End of task</label>
+                            <input type="date" class="form-control" id="taskDateEnd">
+                        </div>
+
+                        <!-- Повторение -->
+                        <div class="mb-3" id="taskRepeatContainer" style="display: none;">
+                            <label for="taskRepeat" class="form-label">Repetition</label>
+                            <select class="form-select" id="taskRepeat">
+                                <option value="null">No repetitions</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+
+                            <!-- Контейнеры для дополнительных настроек -->
+                            <div id="repeatDailyContainer" style="display: none; margin: 10px 0;">
+                                <label for="dailyInterval">Interval (days):</label>
+                                <input type="number" id="dailyInterval" min="1" max="10000" value="1">
+                            </div>
+                            <div id="repeatWeeklyContainer" style="display: none; margin: 10px 0;">
+                                <label>Days of the week:</label><br>
+                                <label><input type="checkbox" value="1" class="weekly-day-checkbox">Monday</label>
+                                <label><input type="checkbox" value="2" class="weekly-day-checkbox">Tuesday</label>
+                                <label><input type="checkbox" value="3" class="weekly-day-checkbox">Wednesday</label>
+                                <label><input type="checkbox" value="4" class="weekly-day-checkbox">Thursday</label>
+                                <label><input type="checkbox" value="5" class="weekly-day-checkbox">Friday</label>
+                                <label><input type="checkbox" value="6" class="weekly-day-checkbox">Saturday</label>
+                                <label><input type="checkbox" value="0" class="weekly-day-checkbox">Sunday</label><br><br>
+                                <label for="weeklyInterval">Interval (weeks):</label>
+                                <input type="number" id="weeklyInterval" min="1" max="52" value="1">
+                            </div>
+                            <div id="repeatMonthlyContainer" style="display: none; margin: 10px 0;">
+                                <label>Dates of the month:</label><br>
+                                <select id="monthDays" multiple="" size="6">
+                                    <!-- Заполняется скриптом -->
+                                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select><br><br>
+                                <label for="monthlyInterval">Interval (months):</label>
+                                <input type="number" id="monthlyInterval" min="1" max="12" value="1">
+                            </div>
+                        </div>
+
+                        <!-- Время выполнения -->
+                        <div class="mb-3" id="taskTimeContainer" style="display: none;">
+                            <label for="taskTimeType" class="form-label">Execution time</label>
+                            <select class="form-select" id="taskTimeType">
+                                <option value="null">At any time</option>
+                                <option value="exact">Exact time (e.g. 09:00)</option>
+                                <option value="period">Period (from 10:30 to 10:45)</option>
+                            </select>
+
+                            <!-- Точное время -->
+                            <input type="time" class="form-control mt-2" id="taskTimeStart">
+                            <input type="time" class="form-control mt-2" id="taskTimeEnd">
+                        </div>
+
+                        <!-- Цель (количество/время) -->
+                        <div class="mb-3" id="taskGoalContainer" style="display: none;">
+                            <label for="taskGoalType" class="form-label">Goal</label>
+                            <select class="form-select" id="taskGoalType">
+                                <option value="null">Complete the task</option>
+                                <option value="count">Number of repetitions</option>
+                                <option value="time">Lead time</option>
+                            </select>
+
+                            <!-- Для "Количество повторений" -->
+                            <div id="taskGoalCount" style="display: none;">
+                                <label for="taskRepeatCount" class="form-label mt-2">Quantity</label>
+                                <input type="number" class="form-control" id="taskRepeatCount">
+                            </div>
+
+                            <!-- Для "Время выполнения" -->
+                            <div id="taskTimeGoal" style="display: none;">
+                                <label for="taskGoalMinutes" class="form-label mt-2">Minutes</label>
+                                <input type="number" class="form-control" id="taskGoalMinutes">
+
+                                <label for="taskGoalSeconds" class="form-label mt-2">Seconds</label>
+                                <input type="number" class="form-control" id="taskGoalSeconds">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="formNoteCancelBtn" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="formNoteSaveBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для создания папки -->
+    <div class="modal fade" id="formCreateFolder" tabindex="-1" aria-labelledby="formCreateFolderLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="formCreateFolderLabel">Create folder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createFolderForm">
+                        <div class="mb-3">
+                            <label for="folderName" class="form-label">Folder name</label>
+                            <input type="text" autocomplete="folder-name" class="form-control" id="folderName" required="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="parentFolderSelect" class="form-label">Parent folder</label>
+                            <select class="form-select" id="parentFolderSelect"><option value="">Without a folder</option><option value="1">Work in Task Aura</option><option value="2">Main folder</option><option value="3">Child folder</option><option value="4">Grandchild folder</option></select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Bootstrap -->
+    <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="noteDescription">
+                    <!-- Здесь будет описание -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижняя навигация -->
+    <nav class="navbar fixed-bottom bottom-nav">
+        <button class="nav-button active" data-target="routineContainer">
+            <i class="bi bi-house-door-fill"></i>
+            <span>Routine</span>
+        </button>
+        <button class="nav-button" data-target="tasksContainer">
+            <i class="bi bi-list-task"></i>
+            <span>Tasks</span>
+        </button>
+        <button class="nav-button" data-target="notesContainer">
+            <i class="bi bi-journal-text"></i>
+            <span>Notes</span>
+        </button>
+        <button class="nav-button" data-target="profileContainer">
+            <i class="bi bi-person-circle"></i>
+            <span>Profile</span>
+        </button>
+    </nav>
+            <!-- Подключение Bootstrap JS и Popper -->
+    <script src="./resources/bootstrap.bundle.min.js.download"></script>
+
+    <script>
+        // =============================== //
+        // === Вспомогательные функции === //
+        // =============================== //
+
+        Date.prototype.toStringWithoutTime = function() {
+            const year = this.getFullYear();
+            const month = (this.getMonth() + 1).toString().padStart(2, '0');
+            const day = this.getDate().toString().padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        };
+
+        Date.prototype.getWeekNumber = function () {
+            const tempDate = new Date(this.getFullYear(), this.getMonth(), this.getDate());
+            const firstDayOfYear = new Date(tempDate.getFullYear(), 0, 0);
+            const daysOffset = firstDayOfYear.getDay();
+            firstDayOfYear.setDate(firstDayOfYear.getDate() - daysOffset);
+            const diff = Math.floor((tempDate - firstDayOfYear) / (24 * 60 * 60 * 1000));
+            return Math.ceil((diff + 1) / 7);
+        };
+
+        Date.prototype.getWeekStart = function () {
+            const day = this.getDay(); // 0 (Sunday) - 6 (Saturday)
+            const start = new Date(this);
+            start.setDate(this.getDate() - day); // сдвиг на начало недели
+            return start;
+        };
+
+        // ======================== //
+        // === Работа с данными === //
+        // ======================== //
+
+        // Массив с данными по умолчанию
+        let data = {
+            notes: {
+                1: {
+                    id: 1,
+                    title: 'Start working with notes',
+                    description: 'A simple app for taking notes and tasks.',
+                    folder: 1
+                },
+                2: {
+                    id: 2,
+                    title: 'Data clearing',
+                    description: 'In the profile, you can click \'clear data\' to delete all notes, folders, tasks.',
+                    folder: 1
+                },
+                3: {
+                    id: 3,
+                    title: 'Note outside folder',
+                    description: 'Notes can be stored without a folder.',
+                    folder: null
+                },
+                4: {
+                    id: 4,
+                    title: 'Multiple attachments',
+                    description: 'Notes can be stored in a complex folder hierarchy.',
+                    folder: 4
+                },
+                5: {
+                    id: 5,
+                    title: 'Note in child folder',
+                    description: 'Notes can be stored in a complex folder hierarchy.',
+                    folder: 3
+                },
+                6: {
+                    id: 6,
+                    title: 'Complete Task Aura training',
+                    description: 'It is necessary to study everything from the section \'Working in Task Aura\'.',
+                    folder: 1,
+                    task: 1
+                },
+                7: {
+                    id: 7,
+                    title: 'Check email',
+                    icon: '📧',
+                    description: 'Checking email for new messages.',
+                    folder: null,
+                    task: 2
+                },
+                8: {
+                    id: 8,
+                    title: 'Check mailbox',
+                    description: 'Checking the mailbox at the address ул.Странная, д.494.',
+                    folder: null,
+                    task: 3
+                },
+                9: {
+                    id: 9,
+                    title: 'Take out the boxes to the garage',
+                    description: 'A clean apartment is a good apartment.',
+                    folder: null,
+                    task: 4
+                },
+                10: {
+                    id: 10,
+                    title: 'Fulfill the dream',
+                    description: 'Write down all tasks, habits and notes in one app!',
+                    folder: null,
+                    task: 5
+                },
+                11: {
+                    id: 11,
+                    title: 'Go for a walk',
+                    description: 'Sometimes you need to go for a walk',
+                    folder: null,
+                    task: 6
+                },
+                12: {
+                    id: 12,
+                    title: 'Play a new game',
+                    description: 'Sometimes you need to rest',
+                    folder: null,
+                    task: 7
+                },
+                13: {
+                    id: 13,
+                    title: 'Pet the cat',
+                    icon: '🐈',
+                    description: 'At least 5 times a day, you should do this!',
+                    folder: null,
+                    task: 8
+                },
+                14: {
+                    id: 14,
+                    title: 'Rest',
+                    icon: '⛺️',
+                    task: 9
+                },
+                15: {
+                    id: 15,
+                    title: 'Child note',
+                    parent: 1,
+                    folder: 1
+                },
+                16: {
+                    id: 16,
+                    title: 'Grandchild note #1',
+                    parent: 15,
+                    folder: 1
+                },
+                17: {
+                    id: 17,
+                    title: 'Grandchild note #2',
+                    parent: 15,
+                    folder: 1
+                },
+                18: {
+                    id: 18,
+                    title: 'Grandchild note #3',
+                    parent: 15,
+                    folder: 1
+                },
+                19: {
+                    id: 19,
+                    title: 'Another child note',
+                    parent: 1,
+                    folder: 1
+                }
+            }, // ключ: ID, значение: данные заметки
+            tasks: {
+                1: {
+                    id: 1,
+                    note: 6,
+                    regularity: null,
+                    dateStart: '2026-01-02'
+                },
+                2: {
+                    id: 2,
+                    note: 7,
+                    regularity: {
+                        type: 'daily',          // тип регулярности: daily, weekly, monthly, custom
+                        interval: 1,            // интервал выполнения: каждый день, каждые 2 дня и т.д.
+                        daysOfWeek: null,       // для weekly: дни недели (1 — понедельник, 7 — воскресенье)
+                        daysOfMonth: null,       // для monthly: числа месяца
+                        customFrequency: null   // для кастомных вариантов
+                    },
+                    dateStart: '2025-01-01',
+                    timeStart: '09:00',
+                    timeEnd: '10:00',
+                    completion: {
+                        2025: {
+                            53: [null, null, true, true, null, null, null],
+                        },
+                        2026: {
+                            1: [null, null, null, null, null, null, true],
+                            2: [true, true, null, null, null, null, null],
+                        }
+                    }
+                },
+                3: {
+                    id: 3,
+                    note: 8,
+                    regularity: {
+                        type: 'daily',          // тип регулярности: daily, weekly, monthly, custom
+                        interval: 3,            // интервал выполнения: каждый день, каждые 2 дня и т.д.
+                        daysOfWeek: null,       // для weekly: дни недели (1 — понедельник, 7 — воскресенье)
+                        daysOfMonth: null,       // для monthly: число месяца
+                        customFrequency: null   // для кастомных вариантов
+                    },
+                    dateStart: '2026-01-01',
+                    timeStart: '11:00',
+                },
+                4: {
+                    id: 4,
+                    note: 9,
+                    regularity: {
+                        type: 'weekly',          // тип регулярности: daily, weekly, monthly, custom
+                        interval: 1,            // интервал выполнения: каждый день, каждые 2 дня и т.д.
+                        daysOfWeek: null,       // для weekly: дни недели (1 — понедельник, 7 — воскресенье)
+                        daysOfMonth: null,       // для monthly: число месяца
+                        customFrequency: null   // для кастомных вариантов
+                    },
+                    dateStart: '2026-01-01'
+                },
+                5: {
+                    id: 5,
+                    note: 10,
+                    regularity: null,
+                    dateStart: '2026-01-01',
+                    dateEnd: '2026-12-31'
+                },
+                6: {
+                    id: 6,
+                    note: 11,
+                    regularity: null,
+                    dateStart: '2026-01-01',
+                    dateEnd: '2026-01-31',
+                    timeStart: '09:00',
+                    timeEnd: '11:00',
+                    completion: true
+                },
+                7: {
+                    id: 7,
+                    note: 11,
+                    regularity: null,
+                    dateStart: '2026-01-09',
+                    dateEnd: '2026-01-09',
+                    timeStart: '11:00',
+                    timeEnd: '13:00'
+                },
+                8: {
+                    id: 8,
+                    note: 13,
+                    regularity: {
+                        type: 'daily',          // тип регулярности: daily, weekly, monthly, custom
+                        interval: 1,            // интервал выполнения: каждый день, каждые 2 дня и т.д.
+                        daysOfWeek: null,       // для weekly: дни недели (1 — понедельник, 7 — воскресенье)
+                        daysOfMonth: null,       // для monthly: число месяца
+                        customFrequency: null   // для кастомных вариантов
+                    },
+                    goal: {
+                        type: 'count',
+                        count: 5,
+                    },
+                    dateStart: '2026-01-01',
+                    completion: {
+                        2026: {
+                            1: [null, null, null, null, 8, 5, 5],
+                            2: [3, 0, 14, null, null, null, null],
+                        }
+                    }
+                },
+                9: {
+                    id: 9,
+                    note: 14,
+                    regularity: {
+                        type: 'daily',          // тип регулярности: daily, weekly, monthly, custom
+                        interval: 1,            // интервал выполнения: каждый день, каждые 2 дня и т.д.
+                        daysOfWeek: null,       // для weekly: дни недели (1 — понедельник, 7 — воскресенье)
+                        daysOfMonth: null,       // для monthly: число месяца
+                        customFrequency: null   // для кастомных вариантов
+                    },
+                    goal: {
+                        type: 'time',
+                        count: 3600,
+                    },
+                    dateStart: '2026-01-01',
+                    timeStart: '12:00',
+                    completion: {
+                        2026: {
+                            1: [null, null, null, null, 1000, 3600, 1800],
+                            2: [1799, 1500, 180, null, null, null, null],
+                        }
+                    }
+                }
+            }, // ключ: ID, значение: данные задачи
+            folders: {
+                1: {
+                    id: 1,
+                    name: 'Work in Task Aura'
+                },
+                2: {
+                    id: 2,
+                    name: 'Main folder'
+                },
+                3: {
+                    id: 3,
+                    name: 'Child folder'
+                },
+                4: {
+                    id: 4,
+                    name: 'Grandchild folder'
+                }
+            }, // ключ: ID, значение: данные папки
+            structure: [
+                {id: 1, children: []},
+                {id: 2, children: [{id: 3, children: [{id: 4, children: []}]}]}
+            ] // иерархия папок в заметках (по ID)
+        };
+        let selectedDate = (new Date(new Date().toDateString()));
+        let currentWeekStart = null; // начало текущей недели (воскресенье или понедельник)
+
+        // Загрузка из localStorage
+        function load() {
+            const json = localStorage.getItem('appData');
+            if (json) {
+                data = JSON.parse(json);
+            }
+            afterLoadData();
+        }
+
+        // Сохранение в localStorage
+        function save() {
+            localStorage.setItem('appData', JSON.stringify(data));
+        }
+
+        // Очистка данных
+        function clearData() {
+            // Ваша логика
+            data = {
+                notes: {},
+                tasks: {},
+                folders: {},
+                structure: []
+            };
+            afterLoadData();
+            save();
+            alert('Data deleted!'); // пример
+            updateWeek(selectedDate);
+            refreshNotes();
+            updateFolderListInForm();
+            updateCreateFolderOptions();
+        }
+
+        // Обработка данных после загрузки или обнуления данных
+        function afterLoadData() {
+            if (data.task_max_id == null) {
+                data.task_max_id = 0;
+                if (Object.keys(data.tasks).length > 0) {
+                    data.task_max_id = Math.max(...Object.keys(data.tasks).map(id => parseInt(id)));
+                }
+            }
+            if (data.note_max_id == null) {
+                data.note_max_id = 0;
+                if (Object.keys(data.notes).length > 0) {
+                    data.note_max_id = Math.max(...Object.keys(data.notes).map(id => parseInt(id)));
+                }
+            }
+            if (data.folder_max_id == null) {
+                data.folder_max_id = 0;
+                if (Object.keys(data.folders).length > 0) {
+                    data.folder_max_id = Math.max(...Object.keys(data.folders).map(id => parseInt(id)));
+                }
+            }
+        }
+
+        // =================================== //
+        // === Методы для работы с данными === //
+        // =================================== //
+
+        function isTaskDue(task, date) {
+            // Проверяем, что задача доступна (есть dateStart)
+            if (!task.dateStart) {
+                console.error('У регулярной задачи №' + task.id + ' не указана дата старта.');
+                return false;
+            }
+
+            const dateStart = (new Date(new Date(task.dateStart).toDateString()));
+            if (date < dateStart) {
+                return false;
+            }
+
+            const { type, interval, daysOfWeek, daysOfMonth } = task.regularity;
+
+            switch (type) {
+                case 'daily':
+                    // Проверка разницы в днях между последним выполнением и сегодня
+                    const diffDays = Math.floor((date - dateStart) / (1000 * 60 * 60 * 24));
+                    return diffDays % interval === 0;
+
+                case 'weekly':
+                    // Проверка, совпадает ли день недели и интервал
+                    if (daysOfWeek) {
+                        if (!daysOfWeek.includes(date.getDay())) return false;
+                        if (interval) {
+                            const weekDiff = Math.floor((date - dateStart) / (1000 * 60 * 60 * 24 * 7));
+                            return weekDiff % interval === 0;
+                        }
+                    }
+                    else if (interval) {
+                        const weekDiff = Math.floor((date - dateStart) / (1000 * 60 * 60 * 24));
+                        return weekDiff % (interval * 7) === 0;
+                    }
+                    return true;
+
+                case 'monthly':
+                    // Проверка дня месяца
+                    if (!daysOfMonth.includes(date.getDate())) return false;
+                    if (interval) {
+                        const monthsDiff = (date.getFullYear() - dateStart.getFullYear()) * 12 + (date.getMonth() - dateStart.getMonth());
+                        return monthsDiff % interval === 0;
+                    }
+                    return true;
+
+                // Можно добавить свои случаи для кастомных периодов
+                default:
+                    return false;
+            }
+        }
+
+        function getRegularityTasksFromDate(date) {
+            const completedTasks = [];
+            const notCompletedTasks = [];
+
+            // Обход всех задач
+            for (const taskId in data.tasks) {
+                const task = data.tasks[taskId];
+
+                // Если у задачи нет регулярности, пропускаем
+                if (!task.regularity) {
+                    continue;
+                }
+
+                // Функция для определения, должна ли задача выполниться сегодня
+                const isDue = isTaskDue(task, date);
+                if (isDue) {
+                    // Разделение по выполненности
+                    if (IsTaskCompleted(task)) {
+                        completedTasks.push(task);
+                    } else {
+                        notCompletedTasks.push(task);
+                    }
+                }
+            }
+
+            return [...notCompletedTasks, ...completedTasks];
+        }
+
+        function getOnetimeTasksFromDate(date) {
+            const completedTasks = [];
+            const notCompletedTasks = [];
+
+            for (const taskId in data.tasks) {
+                const task = data.tasks[taskId];
+
+                // Проверка на регулярность
+                if (!task.regularity) {
+                    // Проверка дат
+                    if (date < (new Date(new Date(task.dateStart).toDateString())) ||
+                        (task.dateEnd != null && date > (new Date(new Date(task.dateEnd).toDateString())))) {
+                        continue;
+                    }
+
+                    // Разделение по выполненности
+                    if (IsTaskCompleted(task)) {
+                        completedTasks.push(task);
+                    } else {
+                        notCompletedTasks.push(task);
+                    }
+                }
+            }
+
+            // Объединяем списки: сначала выполненные, потом невыполненные
+            return [...notCompletedTasks, ...completedTasks];
+        }
+
+        function GetTaskGoalPercent(task) {
+            if (task.goal != null) {
+                if (task.goal.type === 'count') {
+                    return GetTaskCompletionResult(task)*100/task.goal.count;
+                } else {
+                    return GetTaskCompletionResult(task)*100/task.goal.count;
+                }
+            }
+            return 0;
+        }
+
+        function GetTaskGoalText(task) {
+            if (task.goal != null) {
+                if (task.goal.type === 'count') {
+                    return (GetTaskCompletionResult(task) ?? 0) + '/' + task.goal.count;
+                } else {
+                    if (task.goal.count < 60) {
+                        return (GetTaskCompletionResult(task) ?? 0) + '/' + task.goal.count + ' секунд';
+                    }
+                    const result = GetTaskCompletionResult(task) ?? 0;
+                    let text;
+                    if (task.goal.count >= 60) {
+                        if (result >= 300) {
+                            text = Math.floor((result)/60);
+                        } else {
+                            text = Math.floor((result)/6)/10;
+                        }
+                        text += '/';
+                        if (task.goal.count >= 300) {
+                            text += Math.floor(task.goal.count/60);
+                        } else {
+                            text += Math.floor(task.goal.count/6)/10;
+                        }
+                        text += ' минут';
+                    } else {
+                        text = result + '/' + task.goal.count + ' секунд';
+                    }
+                    return text;
+                }
+            }
+            return '';
+        }
+
+        function GetTaskCompletionResult(task) {
+            if (task.regularity) {
+                const year = selectedDate.getFullYear();
+                const weekNumber = selectedDate.getWeekNumber();
+                const dayOfWeek = selectedDate.getDay();
+
+                if (task.completion != null &&
+                    task.completion[year] &&
+                    task.completion[year][weekNumber] &&
+                    task.completion[year][weekNumber][dayOfWeek] != null) {
+                    return task.completion[year][weekNumber][dayOfWeek];
+                }
+            } else {
+                if (task.completion != null) {
+                    return task.completion;
+                }
+            }
+
+            return null;
+        }
+
+        function IsTaskCompleted(task) {
+            const result = GetTaskCompletionResult(task);
+
+            if (result !== null) {
+                if (task.goal != null) {
+                    return result >= task.goal.count;
+                }
+                return result === true;
+            }
+
+            return false;
+        }
+
+        function SetTaskComplete(task, result) {
+            if (task.regularity) {
+                const year = selectedDate.getFullYear();
+                const weekNumber = selectedDate.getWeekNumber();
+                const dayOfWeek = selectedDate.getDay();
+
+                if (!task.completion || typeof task.completion !== 'object') {
+                    task.completion = {};
+                }
+                if (!task.completion[year]) {
+                    task.completion[year] = {};
+                }
+                if (!task.completion[year][weekNumber]) {
+                    task.completion[year][weekNumber] = {};
+                }
+                task.completion[year][weekNumber][dayOfWeek] = result;
+            }
+            else {
+                task.completion = result;
+            }
+        }
+
+        // ================================ //
+        // === Ссылки на элементы сайта === //
+        // ================================ //
+
+        const noteModal = new bootstrap.Modal(document.getElementById('noteModal'));
+        const formNoteModalEl = document.getElementById('formNoteModal');
+        const formNoteModal = new bootstrap.Modal(formNoteModalEl);
+
+        // массив ID всех контейнеров
+        const containers = ['notesContainer', 'routineContainer', 'tasksContainer', 'profileContainer'];
+        const navTop = document.querySelector('.nav-top');
+
+        const formIsTaskSwitch = document.getElementById('isTaskSwitch');
+        const formFields = {
+            id: document.getElementById('formNoteID'),
+            icon: document.getElementById('formNoteIcon'),
+            title: document.getElementById('formNoteTitle'),
+            description: document.getElementById('formNoteDescription'),
+            folder: document.getElementById('formNoteFolder'),
+            parent: document.getElementById('formNoteParentNote'),
+            dateStart: document.getElementById('taskDateStart'),
+            dateStartContainer: document.getElementById('taskDateStartContainer'),
+            dateEnd: document.getElementById('taskDateEnd'),
+            dateEndContainer: document.getElementById('taskDateEndContainer'),
+            repeat: document.getElementById('taskRepeat'),
+            repeatContainer: document.getElementById('taskRepeatContainer'),
+            repeatDailyContainer: document.getElementById('repeatDailyContainer'),
+            dailyInterval: document.getElementById('dailyInterval'),
+            repeatWeeklyContainer: document.getElementById('repeatWeeklyContainer'),
+            weeklyInterval: document.getElementById('weeklyInterval'),
+            repeatMonthlyContainer: document.getElementById('repeatMonthlyContainer'),
+            monthlyInterval: document.getElementById('monthlyInterval'),
+            timeType: document.getElementById('taskTimeType'),
+            timeTypeContainer: document.getElementById('taskTimeContainer'),
+            timePeriodContainer: document.getElementById('taskTimePeriodContainer'),
+            timeStart: document.getElementById('taskTimeStart'),
+            timeEnd: document.getElementById('taskTimeEnd'),
+            goalType: document.getElementById('taskGoalType'),
+            goalTypeContainer: document.getElementById('taskGoalContainer'),
+            countGoal: document.getElementById('taskGoalCount'),
+            timeGoal: document.getElementById('taskTimeGoal'),
+            repeatCount: document.getElementById('taskRepeatCount'),
+            goalMinutes: document.getElementById('taskGoalMinutes'),
+            goalSeconds: document.getElementById('taskGoalSeconds')
+        };
+        const noteForm = document.getElementById('formNoteForm');
+
+        // Находим кнопку
+        const deleteBtn = document.getElementById('deleteAllBtn');
+
+        function refreshRoutine() {
+            const container = document.getElementById('routineContainer');
+
+            // Очищаем текущий список задач
+            container.innerHTML = '';
+
+            // Получаем задачи, которые должны быть выполнены сегодня
+            const tasksToday = getRegularityTasksFromDate(selectedDate);
+
+            // Для каждой задачи создаем элемент и добавляем в контейнер
+            tasksToday.forEach(task => {
+                container.appendChild(renderTaskHtmlBlock(task));
+            });
+        }
+
+        function refreshTasks() {
+            const container = document.getElementById('tasksContainer');
+
+            // Очищаем текущий список задач
+            container.innerHTML = '';
+
+            // Получаем задачи без регулярности
+            const onetimeTasks = getOnetimeTasksFromDate(selectedDate);
+
+            // Для каждой задачи создаем элемент и добавляем в контейнер
+            onetimeTasks.forEach(task => {
+                container.appendChild(renderTaskHtmlBlock(task));
+            });
+        }
+
+        function refreshNotes() {
+            const contentContainer = document.getElementById('notesContainerContent');
+            contentContainer.innerHTML = ''; // очищаем
+
+            // Создаем вспомогательный объект, чтобы сгруппировать заметки по папкам
+            const notesByFolder = {};
+            const subNotes = {};
+
+            // Распределяем заметки по папкам
+            for (const noteId in data.notes) {
+                const note = data.notes[noteId];
+                const folderId = note.folder ?? null;
+                if (!notesByFolder[folderId]) {
+                    notesByFolder[folderId] = [];
+                }
+                if (note.parent != null && data.notes[note.parent].folder === note.folder) {
+                    if (!subNotes[note.parent]) {
+                        subNotes[note.parent] = [];
+                    }
+                    subNotes[note.parent].push(note);
+                } else {
+                    notesByFolder[folderId].push(note);
+                }
+            }
+
+            // Функция для создания блока папки
+            function createFolderBlock(folderId, folderName, nestedFolders=[]) {
+                const folderDiv = document.createElement('div');
+                folderDiv.className = 'folder';
+
+                // Заголовок папки
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'folder-header';
+
+                const folderNameSpan = document.createElement('span');
+                folderNameSpan.className = 'folder-name';
+                folderNameSpan.textContent = folderName; // + '(' + folderId + ')';
+
+                const plusIcon = document.createElement('i');
+                plusIcon.className = 'bi bi-plus-square icon';
+                plusIcon.title = 'Add a note';
+
+                // Можно добавить обработчик клика для добавления заметки в этот папку
+                plusIcon.addEventListener('click', () => {
+                    ResetNoteForm();
+                    formNoteModal.show();
+                    formFields.folder.value = folderId;
+                });
+
+                headerDiv.appendChild(folderNameSpan);
+                headerDiv.appendChild(plusIcon);
+                folderDiv.appendChild(headerDiv);
+
+                // Заметки внутри папки
+                const notesListDiv = document.createElement('div');
+                notesListDiv.className = 'notes-list';
+
+                const notesInFolder = notesByFolder[folderId] || [];
+                notesInFolder.forEach(note => {
+                    notesListDiv.appendChild(RenderNoteElement(note, subNotes));
+                });
+
+                folderDiv.appendChild(notesListDiv);
+
+                // Вложенные папки (рекурсия)
+                if (nestedFolders.length > 0) {
+                    nestedFolders.forEach(nestedFolder => {
+                        const nestedFolderId = nestedFolder.id
+                        const nestedFolderName = data.folders[nestedFolderId].name || 'Nested folder';
+                        const nestedFoldersChildren = nestedFolder.children; // массив или null
+                        // Вызов для вложенных
+                        const nestedFolderDiv = createFolderBlock(nestedFolderId, nestedFolderName, nestedFoldersChildren ?? []);
+                        folderDiv.appendChild(nestedFolderDiv);
+                    });
+                }
+
+                return folderDiv;
+            }
+
+            // Обработка структуры
+            for (const folderIndex in data.structure) {
+                const folderId = data.structure[folderIndex].id;
+                const nestedFolderIds = data.structure[folderIndex].children; // массив или null
+                const folderName = data.folders[folderId].name || 'Unnamed folder';
+
+                const folderDiv = createFolderBlock(folderId, folderName, nestedFolderIds ?? []);
+                contentContainer.appendChild(folderDiv);
+            }
+
+            // Обработка заметок без папки
+            const notesWithoutFolder = notesByFolder[null] || [];
+            if (notesWithoutFolder.length > 0) {
+                const noFolderDiv = document.createElement('div');
+                noFolderDiv.className = 'no-folder';
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'folder-header';
+                const title = document.createElement('span');
+                title.className = 'folder-name';
+                title.textContent = 'Notes without a folder';
+
+                const notesListDiv = document.createElement('div');
+                notesListDiv.className = 'notes-list';
+
+                notesWithoutFolder.forEach(note => {
+                    notesListDiv.appendChild(RenderNoteElement(note));
+                });
+
+                titleDiv.appendChild(title);
+                noFolderDiv.appendChild(title);
+                noFolderDiv.appendChild(notesListDiv);
+                contentContainer.appendChild(noFolderDiv);
+            }
+        }
+
+        function RenderNoteDiv(note) {
+            const noteDiv = document.createElement('div');
+            noteDiv.className = 'note';
+
+            const noteTitleDiv = document.createElement('div');
+            noteTitleDiv.className = 'note-title';
+            noteTitleDiv.textContent = note.title;
+
+            // Обработчик клика
+            noteTitleDiv.addEventListener('click', () => {
+                // Здесь открываем модальное окно и подставляем описание
+                document.getElementById('noteModalLabel').innerText = note.title;
+                document.getElementById('noteDescription').innerText = note.description;
+                noteModal.show();
+            });
+
+            const editIcon = document.createElement('i');
+            editIcon.className = 'bi bi-pencil-square icon';
+            editIcon.title = 'Edit';
+            editIcon.addEventListener('click', () => {
+                ShowNoteFormForNote(note.id);
+            });
+
+            const deleteIcon = document.createElement('i');
+            deleteIcon.className = 'bi bi-trash icon';
+            deleteIcon.title = 'Delete';
+
+            noteDiv.appendChild(noteTitleDiv);
+            noteDiv.appendChild(editIcon);
+            noteDiv.appendChild(deleteIcon);
+
+            return noteDiv;
+        }
+
+        function RenderNoteElement(note, subNotes = []) {
+            const noteBlock = document.createElement('div');
+            noteBlock.className = 'full-note';
+
+            let noteDiv = RenderNoteDiv(note);
+            noteBlock.appendChild(noteDiv);
+
+            // Дочерние записи
+            const noteSubs = subNotes[note.id];
+            if (noteSubs) {
+                const noteSubNotes = document.createElement('div');
+                noteSubNotes.className = 'sub-notes';
+
+                // Создаём дочерние записи
+                noteSubs.forEach(subNote => {
+                    noteDiv = RenderNoteElement(subNote, subNotes);
+                    noteSubNotes.appendChild(noteDiv);
+                });
+
+                noteBlock.appendChild(noteSubNotes);
+            }
+
+            return noteBlock;
+        }
+
+        function ResetNoteForm()
+        {
+            noteForm.reset();
+        }
+
+        function ShowNoteFormForNote(note_id) {
+            const note = data.notes[note_id];
+
+            ResetNoteForm();
+            formFields.id.value = note.id;
+            formFields.icon.value = note.icon ?? '';
+            formFields.title.value = note.title;
+            formFields.folder.value = note.folder ?? '';
+            formFields.parent.value = note.parent ?? '';
+            if (note.task != null) {
+                const task = data.tasks[note.task];
+                formIsTaskSwitch.checked = true;
+                formFields.dateStart.value = task.dateStart ?? '';
+                formFields.dateEnd.value = task.dateEnd ?? '';
+
+                const regType = task.regularity ? task.regularity.type : 'null';
+                formFields.repeat.value = regType;
+                switch (regType) {
+                    case 'daily':
+                        formFields.dailyInterval.value = task.regularity.interval;
+                        break;
+                    case 'weekly':
+                        formFields.weeklyInterval.value = task.regularity.interval;
+                        const daysOfWeek = task.regularity.daysOfWeek;
+                        document.querySelectorAll('.weekly-day-checkbox').forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                        daysOfWeek.forEach(day => {
+                            const checkbox = document.querySelector(`.weekly-day-checkbox[value="${day}"]`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        });
+                        break;
+                    case 'monthly':
+                        formFields.monthlyInterval.value = task.regularity.interval;
+                        const daysOfMonth = task.regularity.daysOfMonth;
+                        const monthDaysSelect = document.getElementById('monthDays');
+                        Array.from(monthDaysSelect.options).forEach(option => {
+                            option.selected = false;
+                        });
+                        daysOfMonth.forEach(day => {
+                            const option = Array.from(monthDaysSelect.options).find(opt => parseInt(opt.value) === day);
+                            if (option) {
+                                option.selected = true;
+                            }
+                        });
+                        break;
+                }
+
+                if (task.timeStart != null) {
+                    formFields.timeStart.value = task.timeStart;
+                    if (task.timeEnd != null) {
+                        formFields.timeType.value = 'period';
+                        formFields.timeEnd.value = task.timeEnd;
+                    } else {
+                        formFields.timeType.value = 'exact';
+                    }
+                } else {
+                    formFields.timeType.value = 'null';
+                }
+
+                const goalType = task.goal ? task.goal.type : 'null';
+                formFields.goalType.value = goalType;
+                switch (goalType) {
+                    case 'count':
+                        formFields.repeatCount.value = task.goal.count;
+                        break;
+                    case 'time':
+                        const time = task.goal.count;
+                        formFields.goalMinutes.value = Math.floor(time/60);
+                        formFields.goalSeconds.value = time - Math.floor(time/60)*60;
+                        break;
+                    case 'null':
+                        break;
+                }
+            }
+            formNoteModal.show();
+        }
+
+        function renderTaskHtmlBlock(task) {
+            // Получаем название задачи из note
+            const noteId = task.note;
+            const note = Object.values(data.notes).find(n => n.id === noteId);
+            const taskTitle = note ? note.title : 'Untitled';
+            const done = IsTaskCompleted(task);
+
+            // Создаем основной блок задачи
+            const taskDiv = document.createElement('div');
+            taskDiv.className = done ? 'task done' : 'task';
+            if (!done) {
+                const percent = GetTaskGoalPercent(task);
+                if (percent !== 0) {
+                    // Создаем строку градиента и устанавливаем стиль
+                    taskDiv.style.background = `linear-gradient(to right, #c1faeb ${percent}%, #f8fcff ${percent}%)`;
+                }
+            }
+
+            // Левая иконка
+            const leftDiv = document.createElement('div');
+            leftDiv.className = 'task-left';
+
+            // <i>
+            /*const leftIcon = document.createElement('i');
+            leftIcon.className = 'bi bi-check-circle icon'; // Иконка слева
+            leftDiv.appendChild(leftIcon);*/
+            const leftIcon = document.createElement('span');
+            leftIcon.textContent = note && note.icon ? note.icon : '✍️'; // Иконка слева
+            leftDiv.appendChild(leftIcon);
+
+            // Центр с временем и названием
+            const centerDiv = document.createElement('div');
+            centerDiv.className = 'task-center';
+
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'task-time';
+            let timeText = task.timeStart ? task.timeStart + (task.timeEnd ? ' - ' + task.timeEnd : '') : '';
+            const goalText = GetTaskGoalText(task);
+            if (timeText !== '') {
+                if (goalText !== '') {
+                    timeText = timeText + ' (' + goalText + ')';
+                }
+            } else {
+                timeText = goalText;
+            }
+            timeDiv.textContent = timeText;
+
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'task-title';
+            titleDiv.textContent = taskTitle;
+
+            centerDiv.appendChild(titleDiv);
+            centerDiv.appendChild(timeDiv);
+
+            // Правая кнопка
+            const rightDiv = document.createElement('div');
+            rightDiv.className = 'task-right';
+
+            const rightIcon = document.createElement('i');
+            rightIcon.className = done ? 'bi-check-circle' : 'bi bi-circle';
+            rightIcon.setAttribute('title', 'Finish');
+
+            // Обработчик клика по иконке
+            rightIcon.addEventListener('click', () => {
+                if (task.goal) {
+                    // Предположим, что goal имеет поле type, например: goal.type
+                    if (task.goal.type === 'count') {
+                        const value = prompt('Enter a number for the goal:');
+                        if (value !== null && !isNaN(value)) {
+                            SetTaskComplete(task, Number(value));
+                        }
+                    } else {
+                        // Обработка других типов целей
+                        alert('Other target or unidentified type.');
+                        return;
+                    }
+                } else {
+                    const done = !IsTaskCompleted(task);
+                    // Цели нет, просто отметим задачу выполненной
+                    SetTaskComplete(task, done);
+                }
+                save();
+                if (task.regularity) {
+                    refreshRoutine();
+                } else {
+                    refreshTasks();
+                }
+            });
+            rightDiv.appendChild(rightIcon);
+
+            // Собираем весь блок
+            taskDiv.appendChild(leftDiv);
+            taskDiv.appendChild(centerDiv);
+            taskDiv.appendChild(rightDiv);
+
+            return taskDiv;
+        }
+
+        // Переключение активных кнопок навигации
+        document.querySelectorAll('.nav-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target'); // например, 'notesContainer'
+
+                // Проверяем, активна ли уже выбранная вкладка
+                if (btn.classList.contains('active')) {
+                    // Если активна — ничего не делаем
+                    return;
+                }
+
+                if (targetId === 'tasksContainer' || targetId === 'routineContainer') {
+                    // Разблокировать
+                    navTop.classList.remove('block');
+                } else {
+                    // Заблокировать блок
+                    navTop.classList.add('block');
+                }
+
+                // Убираем активный класс у всех кнопок
+                document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
+                // Добавляем активный класс текущей
+                btn.classList.add('active');
+
+                // Скрываем все контейнеры
+                containers.forEach(id => {
+                    const container = document.getElementById(id);
+                    container.classList.remove('show');
+                });
+
+                const targetContainer = document.getElementById(targetId);
+                if (targetContainer) {
+                    targetContainer.classList.add('show');
+                }
+            });
+        });
+
+        // Функция для обновления отображения полной даты
+        function updateFullDateDisplay() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const text = selectedDate.toLocaleDateString('en', options);
+            document.getElementById('fullDateDisplay').textContent = text.charAt(0).toUpperCase() + text.slice(1);
+        }
+
+        // Обновление недельных дней
+        function updateWeek(weekDate) {
+            selectedDate = weekDate;
+            // вычисляем дату начала недели
+            currentWeekStart = weekDate.getWeekStart();
+            const days = document.querySelectorAll('.day');
+            days.forEach((dayElem, index) => {
+                const date = new Date(currentWeekStart);
+                date.setDate(currentWeekStart.getDate() + index);
+                // обновляем data-day
+                dayElem.setAttribute('data-day', date.toStringWithoutTime());
+                // обновляем отображение дней и названий
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                dayElem.innerHTML = `<div>${dayNames[date.getDay()]}</div><div>${date.getDate()}</div>`;
+                // если это выбранный день, делаем его активным
+                if (date.toDateString() === selectedDate.toDateString()) {
+                    dayElem.classList.add('active');
+                }
+                else {
+                    dayElem.classList.remove('active');
+                }
+            });
+            updateFullDateDisplay();
+            refreshRoutine();
+            refreshTasks();
+        }
+
+        // Обработчик клика по дню
+        document.querySelectorAll('.day').forEach(day => {
+            day.addEventListener('click', () => {
+                if (day.classList.contains('active')) {
+                    return;
+                }
+
+                document.querySelectorAll('.day').forEach(d => d.classList.remove('active'));
+                day.classList.add('active');
+                const dateStr = day.getAttribute('data-day');
+                selectedDate = new Date((new Date(dateStr)).toDateString());
+                updateFullDateDisplay();
+
+                taskContainerAnimatedUpdate();
+
+                refreshRoutine();
+                refreshTasks();
+            });
+        });
+
+        function taskContainerAnimatedUpdate() {
+            containers.forEach(id => {
+                const container = document.getElementById(id);
+
+                if (container.classList.contains('show') && (id === 'tasksContainer' || id === 'routineContainer')) {
+                    const transitionDuration = 135;
+                    container.classList.remove('show');
+
+                    // Ждем продолжительность анимации, чтобы потом добавить класс обратно
+                    setTimeout(() => {
+                        container.classList.add('show');
+                    }, transitionDuration);
+                }
+            });
+        }
+
+        // Обработчики для переключения недели
+        document.getElementById('prevWeek').addEventListener('click', () => {
+            currentWeekStart.setDate(currentWeekStart.getDate() - 1);
+            updateWeek(currentWeekStart);
+            taskContainerAnimatedUpdate();
+        });
+        document.getElementById('nextWeek').addEventListener('click', () => {
+            currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+            updateWeek(currentWeekStart);
+            taskContainerAnimatedUpdate();
+        });
+
+        // Обработка кнопки "сохранить" внутри модалки
+        document.getElementById('formNoteSaveBtn').addEventListener('click', () => {
+            let id = parseInt(formFields.id.value.trim());
+            if (isNaN(id)) id = null;
+
+            const icon = formFields.icon.value.trim();
+            const title = formFields.title.value.trim();
+            const description = formFields.description.value.trim();
+            const selectedFolderId = formFields.folder.value;
+            const folderId = selectedFolderId ? parseInt(selectedFolderId) : null;
+            const selectedParentId = formFields.parent.value;
+            const parentId = selectedParentId ? parseInt(selectedParentId) : null;
+            const isTask = formIsTaskSwitch.checked ?? false;
+            let taskDeleted = false;
+
+            let note, task;
+            if (id != null) // Обновить текущую запись (Редактировать)
+            {
+                note = data.notes[id]; // Сохраняется ссылка на объект
+
+                note.icon = icon;
+                note.title = title;
+                note.description = description;
+                note.folder = folderId;
+                note.parent = parentId;
+            }
+            else {
+                if (!title) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+
+                // Определяем максимальный ID и создаем новый
+                data.note_max_id++;
+                const note_id = data.note_max_id;
+
+                // Создаем новую заметку
+                note = {
+                    id: note_id,
+                    title: title,
+                    description: description,
+                    folder: folderId,
+                    parent: parentId,
+                };
+
+                data.notes[note_id] = note;
+                updateParentNoteOptions();
+            }
+
+            if (isTask) {
+                if (id != null && note.task) {
+                    task = data.tasks[note.task];
+                }
+                if (task == null) {
+                    data.task_max_id++;
+                    const task_id = data.task_max_id;
+
+                    task = {
+                        id: task_id,
+                        note: note.id,
+                        dateStart: formFields.dateStart.value,
+                    };
+                    data.tasks[task_id] = task;
+
+                    note.task = task_id;
+                }
+            } else {
+                if (id != null && note.task) {
+                    delete data.tasks[note.task];
+                    delete note.task;
+                    taskDeleted = true;
+                }
+            }
+
+
+            if (isTask) {
+                const goalType = formFields.goalType.value;
+                const timeStart = formFields.timeType.value !== 'null' ? formFields.timeStart.value : null;
+                const dateEnd = formFields.dateEnd.value;
+                const repeatable = formFields.repeat.value !== 'null' ? formFields.repeat.value : null;
+
+                if (dateEnd != null && dateEnd !== '') {
+                    task.dateEnd = dateEnd;
+                } else {
+                    if ('dateEnd' in task) {
+                        delete task.dateEnd;
+                    }
+                }
+
+                if (goalType !== 'null') {
+                    task.goal = {};
+                    task.goal.type = goalType;
+                    task.goal.count = goalType === 'count' ?
+                        (formFields.repeatCount.value * 1 ?? 1) :
+                        (formFields.goalMinutes.value * 60 ?? 0) + (formFields.goalSeconds.value * 1 ?? 0);
+                } else {
+                    if ('goal' in task) {
+                        delete task.goal;
+                    }
+                }
+
+                if (timeStart != null && timeStart !== '') {
+                    task.timeStart = timeStart;
+                    const timeEnd = formFields.timeType.value === 'period' ? formFields.timeEnd.value : null;
+                    if (timeEnd != null) {
+                        task.timeEnd = timeEnd;
+                    } else {
+                        if ('timeEnd' in task) {
+                            delete task.timeEnd;
+                        }
+                    }
+                } else {
+                    if ('timeStart' in task) {
+                        delete task.timeStart;
+                    }
+                    if ('timeEnd' in task) {
+                        delete task.timeEnd;
+                    }
+                }
+
+                if (repeatable != null && repeatable !== '') {
+                    switch (repeatable) {
+                        case 'daily':
+                            let dailyInterval = formFields.dailyInterval.value ?? 1;
+                            if (dailyInterval === '') dailyInterval = 1;
+                            task.regularity = {
+                                type: 'daily',
+                                interval: (dailyInterval * 1),
+                            };
+                            break;
+                        case 'weekly':
+                            let weeklyInterval = formFields.weeklyInterval.value ?? 1;
+                            // Получить выбранные дни недели
+                            const selectedDays = Array.from(document.querySelectorAll('.weekly-day-checkbox:checked'))
+                                .map(cb => parseInt(cb.value));
+                            if (weeklyInterval === '') weeklyInterval = 1;
+                            task.regularity = {
+                                type: 'weekly',
+                                daysOfWeek: selectedDays,
+                                interval: (weeklyInterval * 1),
+                            };
+                            break;
+                        case 'monthly':
+                            let monthlyInterval = formFields.monthlyInterval.value ?? 1;
+                            // Получить выбранные дни месяца
+                            const selectedMonthDays = Array.from(document.getElementById('monthDays').selectedOptions)
+                                .map(opt => parseInt(opt.value));
+                            if (monthlyInterval === '') monthlyInterval = 1;
+                            task.regularity = {
+                                type: 'monthly',
+                                daysOfMonth: selectedMonthDays,
+                                interval: (monthlyInterval * 1),
+                            };
+                            break;
+                    }
+                } else {
+                    if ('regularity' in task) {
+                        delete task.regularity;
+                    }
+                }
+            }
+
+            if (icon !== '' && icon != null) {
+                note.icon = icon;
+            } else {
+                if ('icon' in note) {
+                    delete note.icon;
+                }
+            }
+
+            save();
+
+            if (isTask || taskDeleted) {
+                refreshRoutine();
+                refreshTasks();
+            }
+            refreshNotes();
+
+            // После сохранения закрываем модальное окно Bootstrap
+            formNoteModal.hide();
+            ResetNoteForm(); // Очистка формы
+        });
+
+        function updateFolderListInForm() {
+            // Очистить существующие опции, кроме "Без папки"
+            formFields.folder.innerHTML = '<option value="">Without a folder</option>';
+            // Добавить опции из data.folders
+            for (const folderId in data.folders) {
+                const folder = data.folders[folderId];
+                const option = document.createElement('option');
+                option.value = folder.id; // Можно использовать id как значение
+                option.textContent = folder.name;
+                formFields.folder.appendChild(option);
+            }
+        }
+
+        formNoteModalEl.addEventListener('show.bs.modal', () => {
+            toggleTaskFields(formIsTaskSwitch.checked);
+        });
+
+        formNoteModalEl.addEventListener('hide.bs.modal', () => {
+            if (formFields.id.value > 0) {
+                ResetNoteForm();
+            }
+        });
+
+        function toggleTaskFields(show) {
+            const displayStyle = show ? 'block' : 'none';
+
+            // Показывать/скрывать контейнеры
+            formFields.dateStartContainer.style.display = show ? 'block' : 'none';
+            formFields.dateEndContainer.style.display = show ? 'block' : 'none';
+            formFields.repeatContainer.style.display = show ? 'block' : 'none';
+            formFields.timeTypeContainer.style.display = show ? 'block' : 'none';
+            formFields.goalTypeContainer.style.display = show ? 'block' : 'none';
+
+            if (show) {
+                showTimeType(formFields.timeType.value);
+                showGoalType(formFields.goalType.value);
+                if (!formFields.dateStart.value) formFields.dateStart.value = selectedDate.toStringWithoutTime();
+                handleRepeatChange();
+            }
+        }
+
+        function showTimeType(type) {
+            if (type === 'exact') {
+                formFields.timeStart.style.display = 'block';
+                formFields.timeEnd.style.display = 'none';
+                formFields.timeStart.disabled = false;
+                formFields.timeEnd.disabled = true;
+            } else if (type === 'period') {
+                formFields.timeStart.style.display = 'block';
+                formFields.timeEnd.style.display = 'block';
+                formFields.timeStart.disabled = false;
+                formFields.timeEnd.disabled = false;
+            } else {
+                formFields.timeStart.style.display = 'none';
+                formFields.timeEnd.style.display = 'none';
+                formFields.timeStart.disabled = true;
+                formFields.timeEnd.disabled = true;
+            }
+        }
+
+        function showGoalType(type) {
+            if (type === 'count') {
+                formFields.countGoal.style.display = 'block';
+                formFields.timeGoal.style.display = 'none';
+
+                formFields.repeatCount.disabled = false;
+                formFields.goalMinutes.disabled = true;
+                formFields.goalSeconds.disabled = true;
+            } else if (type === 'time') {
+                formFields.countGoal.style.display = 'none';
+                formFields.timeGoal.style.display = 'block';
+
+                formFields.repeatCount.disabled = true;
+                formFields.goalMinutes.disabled = false;
+                formFields.goalSeconds.disabled = false;
+            } else {
+                formFields.countGoal.style.display = 'none';
+                formFields.timeGoal.style.display = 'none';
+            }
+        }
+
+        // Обработчики переключателя
+        formIsTaskSwitch.addEventListener('change', () => {
+            toggleTaskFields(formIsTaskSwitch.checked);
+        });
+
+        // Обработчики выборов
+        document.getElementById('taskTimeType').addEventListener('change', (e) => {
+            showTimeType(e.target.value);
+        });
+
+        document.getElementById('taskGoalType').addEventListener('change', (e) => {
+            showGoalType(e.target.value);
+        });
+
+        // Заполнение select для чисел месяца
+        const monthDaysSelect = document.getElementById('monthDays');
+        for (let i = 1; i <= 31; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            monthDaysSelect.appendChild(option);
+        }
+
+        // Функция обработки изменения выбора
+        function handleRepeatChange() {
+            const value = formFields.repeat.value;
+            // Скрываем все контейнеры по умолчанию
+            formFields.repeatDailyContainer.style.display = 'none';
+            formFields.repeatWeeklyContainer.style.display = 'none';
+            formFields.repeatMonthlyContainer.style.display = 'none';
+
+            // В зависимости от выбора показываем нужный блок
+            if (value === 'daily') {
+                formFields.repeatDailyContainer.style.display = 'block';
+            } else if (value === 'weekly') {
+                formFields.repeatWeeklyContainer.style.display = 'block';
+            } else if (value === 'monthly') {
+                formFields.repeatMonthlyContainer.style.display = 'block';
+            }
+        }
+        formFields.repeat.addEventListener('change', handleRepeatChange);
+
+        function updateCreateFolderOptions() {
+            const folderSelect = document.getElementById('parentFolderSelect');
+            folderSelect.innerHTML = '<option value="">Without a folder</option>';
+
+            for (const folderId in data.folders) {
+                const folder = data.folders[folderId];
+                const option = document.createElement('option');
+                option.value = folder.id;
+                option.textContent = folder.name;
+                folderSelect.appendChild(option);
+            }
+        }
+
+        function updateParentNoteOptions() {
+            const noteSelect = document.getElementById('formNoteParentNote');
+            noteSelect.innerHTML = '<option value="">Without a note</option>';
+
+            for (const noteId in data.notes) {
+                const note = data.notes[noteId];
+                const option = document.createElement('option');
+                option.value = note.id;
+                option.textContent = note.title;
+                noteSelect.appendChild(option);
+            }
+        }
+
+        document.getElementById('createFolderForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const folderName = document.getElementById('folderName').value.trim();
+            let parentFolderId = parseInt(document.getElementById('parentFolderSelect').value) ?? null;
+            if (isNaN(parentFolderId)) parentFolderId = null;
+
+            if (!folderName) return;
+
+            data.folder_max_id++;
+            let folder_id = data.folder_max_id;
+
+            data.folders[folder_id] = {
+                id: folder_id,
+                name: folderName,
+            };
+
+            function addFolderToStructure(structure, parentFolderId, newFolder) {
+                for (let item of structure) {
+                    if (item.id === parentFolderId) {
+                        // Нашли родительскую папку
+                        item.children.push(newFolder);
+                        return true; // чтобы остановить поиск
+                    }
+                    if (item.children && Object.keys(item.children).length > 0) {
+                        // Рекурсивный вызов для вложенных папок
+                        const added = addFolderToStructure(item.children, parentFolderId, newFolder);
+                        if (added) return true; // если добавили, прекращаем поиск
+                    }
+                }
+                return false; // не нашли родителя
+            }
+
+            const newFolder = {
+                id: folder_id,
+                children: []
+            };
+
+            if (parentFolderId == null) {
+                // Добавляем в корень
+                data.structure.push(newFolder);
+            } else {
+                // Ищем родителя и добавляем
+                const success = addFolderToStructure(data.structure, parentFolderId, newFolder);
+                if (!success) {
+                    console.error('Родительская папка не найдена');
+                    data.structure.push(newFolder);
+                }
+            }
+
+            save();
+
+            refreshNotes();
+            updateFolderListInForm();
+            updateCreateFolderOptions();
+
+            // сброс формы
+            document.getElementById('createFolderForm').reset();
+
+            // закрываем модальное окно
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('formCreateFolder'));
+            modalInstance.hide();
+        });
+
+        deleteBtn.addEventListener('click', () => {
+            // Подтверждение
+            if (confirm('Are you sure you want to delete all data?')) {
+                // Меняем иконку, например на вращающийся загрузчик
+                deleteBtn.classList.remove('bi-plus-square');
+                deleteBtn.classList.add('bi-arrow-repeat'); // или любую иконку загрузки
+
+                // вызываем функцию
+                clearData();
+
+                // Можно вернуть обратно иконку после завершения
+                // пример: через некоторое время или после завершения операции
+                setTimeout(() => {
+                    deleteBtn.classList.remove('bi-arrow-repeat');
+                    deleteBtn.classList.add('bi-plus-square');
+                }, 2000); // пример задержки
+            }
+        });
+
+        // ===================== //
+        // === Инициализация === //
+        // ===================== //
+
+        load();
+        updateWeek(selectedDate);
+        refreshNotes();
+        updateFolderListInForm();
+        updateCreateFolderOptions();
+        updateParentNoteOptions();
+    </script>
+
+
+</body></html>
