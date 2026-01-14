@@ -1,4 +1,7 @@
-const CACHE = 'task-aura-cache-v1.0.14.2';
+const SW_VERSION = 'v1.0.14.2';
+const CACHE = 'task-aura-cache-' + SW_VERSION;
+
+console.log('Service Worker: ' + SW_VERSION);
 
 // Названия ресурсов для кэширования. Убедитесь, что пути соответствуют структуре сайта.
 const RESOURCES_TO_CACHE = [
@@ -60,5 +63,3 @@ function refresh(response) {
         });
     });
 }
-
-console.log('Service Worker: v1.0.14.2');
