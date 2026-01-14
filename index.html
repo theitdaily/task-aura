@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <!-- saved from url=(0025)http://127.0.0.1:8000/app -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-    <meta name="application-name" content="Task Aura" />
-    <meta name="author" content="TheITDaily" />
-    <meta name="description"
-          content="Free Note-Taking and To-Do App"
-    />
-    <meta property="og:url" content="https://theitdaily.github.io/task-aura" />
-    <meta property="og:title" content="Task Aura" />
-    <meta
-            property="og:description"
-            content="Free Note-Taking and To-Do App"
-    />
+    
+    
+    <meta name="viewport" content="width=device-width">
+    <meta name="theme-color" content="#ffffff">
+    <title>App | Task Aura</title>
+    <meta name="application-name" content="Task Aura">
+    <meta name="author" content="TheITDaily">
+    <meta name="description" content="Free Note-Taking and To-Do App">
+    <meta property="og:title" content="Task Aura">
+    <meta property="og:description" content="Free Note-Taking and To-Do App">
 
     <!-- App Head: Start -->
     <link rel="apple-touch-icon" sizes="180x180" href="https://theitdaily.github.io/task-aura/apple-touch-icon.png" />
@@ -31,10 +29,6 @@
         }
     </script>
     <!-- App Head: End -->
-
-    <meta name="viewport" content="width=device-width">
-    <meta name="theme-color" content="#ffffff">
-    <title>App | Task Aura</title>
 
     <!-- Подключение Bootstrap CSS -->
     <link href="./resources/bootstrap.min.css" rel="stylesheet">
@@ -346,20 +340,20 @@
     </head>
 <body>
         <!-- Вкладка Routine (активная) -->
-    <div class="nav-top">
+    <div class="nav-top block">
         <div class="container my-3" style="max-width: 750px;">
             <!-- Надпись с полной выбранной датой -->
             <!-- Неделя -->
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <button id="prevWeek" class="m-1">&lt;&lt; </button>
-                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Tuesday, January 13, 2026</div>
+                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Wednesday, January 14, 2026</div>
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
                 <div class="text-center day" data-day="2026-01-11"><div>Sun</div><div>11</div></div>
                 <div class="text-center day" data-day="2026-01-12"><div>Mon</div><div>12</div></div>
-                <div class="text-center day active" data-day="2026-01-13"><div>Tue</div><div>13</div></div>
-                <div class="text-center day" data-day="2026-01-14"><div>Wed</div><div>14</div></div>
+                <div class="text-center day" data-day="2026-01-13"><div>Tue</div><div>13</div></div>
+                <div class="text-center day active" data-day="2026-01-14"><div>Wed</div><div>14</div></div>
                 <div class="text-center day" data-day="2026-01-15"><div>Thu</div><div>15</div></div>
                 <div class="text-center day" data-day="2026-01-16"><div>Fri</div><div>16</div></div>
                 <div class="text-center day" data-day="2026-01-17"><div>Sat</div><div>17</div></div>
@@ -368,14 +362,14 @@
     </div>
 
     <!-- Основной блок задач -->
-    <div class="container flex-fill show" id="routineContainer"><div class="task"><div class="task-left"><span>📧</span></div><div class="task-center"><div class="task-title">Check email</div><div class="task-time">09:00 - 10:00</div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Check mailbox</div><div class="task-time">11:00</div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task"><div class="task-left"><span>🐈</span></div><div class="task-center"><div class="task-title">Pet the cat</div><div class="task-time">0/5</div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task"><div class="task-left"><span>⛺️</span></div><div class="task-center"><div class="task-title">Rest</div><div class="task-time">12:00 (0/60 минут)</div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div></div>
+    <div class="container flex-fill show" id="routineContainer"></div>
 
     <!-- Блок задач без регулярности -->
-    <div class="container flex-fill" id="tasksContainer"><div class="task"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Complete Task Aura training</div><div class="task-time"></div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Fulfill the dream</div><div class="task-time"></div></div><div class="task-right"><i class="bi bi-circle" title="Finish"></i></div></div><div class="task done"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Go for a walk</div><div class="task-time">09:00 - 11:00</div></div><div class="task-right"><i class="bi-check-circle" title="Finish"></i></div></div></div>
+    <div class="container flex-fill" id="tasksContainer"></div>
 
     <!-- Блок с заметками -->
     <div class="container" style="display: grid;" id="notesContainer">
-        <div class="container flex-fill" id="notesContainerContent"><div class="folder"><div class="folder-header"><span class="folder-name">Work in Task Aura</span><i class="bi bi-plus-square icon" title="Add a note"></i></div><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Start working with notes</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div><div class="sub-notes"><div class="full-note"><div class="note"><div class="note-title">Child note</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div><div class="sub-notes"><div class="full-note"><div class="note"><div class="note-title">Grandchild note #1</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Grandchild note #2</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Grandchild note #3</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div><div class="full-note"><div class="note"><div class="note-title">Another child note</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div><div class="full-note"><div class="note"><div class="note-title">Data clearing</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Complete Task Aura training</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div><div class="folder"><div class="folder-header"><span class="folder-name">Main folder</span><i class="bi bi-plus-square icon" title="Add a note"></i></div><div class="notes-list"></div><div class="folder"><div class="folder-header"><span class="folder-name">Child folder</span><i class="bi bi-plus-square icon" title="Add a note"></i></div><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Note in child folder</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div><div class="folder"><div class="folder-header"><span class="folder-name">Grandchild folder</span><i class="bi bi-plus-square icon" title="Add a note"></i></div><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Multiple attachments</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div></div></div><div class="no-folder"><span class="folder-name">Notes without a folder</span><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Note outside folder</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Check email</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Check mailbox</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Take out the boxes to the garage</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Fulfill the dream</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Go for a walk</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Play a new game</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Pet the cat</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Rest</div><i class="bi bi-pencil-square icon" title="Edit"></i><i class="bi bi-trash icon" title="Delete"></i></div></div></div></div></div>
+        <div class="container flex-fill" id="notesContainerContent"></div>
         <button class="bi-plus-square icon create-folder-btn" data-bs-toggle="modal" data-bs-target="#formCreateFolder" title="Create folder"> Create folder</button>
     </div>
 
@@ -383,7 +377,7 @@
     <div class="container" id="profileContainer">
         <button id="deleteAllBtn" class="bi bi-trash icon" title="Delete all data">
             Delete all data        </button>
-        <span>Version: 1.0.12.2</span>
+        <span>Version: 1.0.14.1</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -411,11 +405,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="formNoteFolder" class="form-label">Folder</label>
-                            <select class="form-select" id="formNoteFolder" aria-label="Select a folder"><option value="">Without a folder</option><option value="1">Work in Task Aura</option><option value="2">Main folder</option><option value="3">Child folder</option><option value="4">Grandchild folder</option></select>
+                            <select class="form-select" id="formNoteFolder" aria-label="Select a folder"><option value="">Without a folder</option></select>
                         </div>
                         <div class="mb-3">
                             <label for="formNoteParentNote" class="form-label">Parent note</label>
-                            <select class="form-select" id="formNoteParentNote" aria-label="Select a note"><option value="">Without a note</option><option value="1">Start working with notes</option><option value="2">Data clearing</option><option value="3">Note outside folder</option><option value="4">Multiple attachments</option><option value="5">Note in child folder</option><option value="6">Complete Task Aura training</option><option value="7">Check email</option><option value="8">Check mailbox</option><option value="9">Take out the boxes to the garage</option><option value="10">Fulfill the dream</option><option value="11">Go for a walk</option><option value="12">Play a new game</option><option value="13">Pet the cat</option><option value="14">Rest</option><option value="15">Child note</option><option value="16">Grandchild note #1</option><option value="17">Grandchild note #2</option><option value="18">Grandchild note #3</option><option value="19">Another child note</option></select>
+                            <select class="form-select" id="formNoteParentNote" aria-label="Select a note"><option value="">Without a note</option></select>
                         </div>
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" id="isTaskSwitch">
@@ -533,7 +527,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="parentFolderSelect" class="form-label">Parent folder</label>
-                            <select class="form-select" id="parentFolderSelect"><option value="">Without a folder</option><option value="1">Work in Task Aura</option><option value="2">Main folder</option><option value="3">Child folder</option><option value="4">Grandchild folder</option></select>
+                            <select class="form-select" id="parentFolderSelect"><option value="">Without a folder</option></select>
                         </div>
                         <button type="submit" class="btn btn-primary">Create</button>
                     </form>
@@ -576,7 +570,8 @@
             <span>Profile</span>
         </button>
     </nav>
-            <!-- Подключение Bootstrap JS и Popper -->
+        
+    <!-- Подключение Bootstrap JS и Popper -->
     <script src="./resources/bootstrap.bundle.min.js"></script>
 
     <script>

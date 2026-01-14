@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <!-- saved from url=(0035)http://127.0.0.1:8000/app?locale=ru -->
 <html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    
+    <meta name="viewport" content="width=device-width">
+    <meta name="theme-color" content="#ffffff">
+    <title>App | Task Aura</title>
+    <meta name="application-name" content="Task Aura">
+    <meta name="author" content="TheITDaily">
+    <meta name="description" content="Бесплатное приложение для ведения заметок и списка дел">
+    <meta property="og:title" content="Task Aura">
+    <meta property="og:description" content="Бесплатное приложение для ведения заметок и списка дел">
 
-    <meta name="application-name" content="Task Aura" />
-    <meta name="author" content="TheITDaily" />
-    <meta name="description"
-          content="Бесплатное приложение для ведения заметок и списка дел"
-    />
-    <meta property="og:url" content="https://theitdaily.github.io/task-aura/ru" />
-    <meta property="og:title" content="Task Aura" />
-    <meta
-            property="og:description"
-            content="Бесплатное приложение для ведения заметок и списка дел"
-    />
 
+    <!-- App Head: Start -->
     <link rel="apple-touch-icon" sizes="180x180" href="https://theitdaily.github.io/task-aura/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="https://theitdaily.github.io/task-aura/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="https://theitdaily.github.io/task-aura/favicon-16x16.png" />
@@ -29,10 +29,7 @@
             });
         }
     </script>
-
-    <meta name="viewport" content="width=device-width">
-    <meta name="theme-color" content="#ffffff">
-    <title>App | Task Aura</title>
+    <!-- App Head: End -->
 
     <!-- Подключение Bootstrap CSS -->
     <link href="./resources/bootstrap.min.css" rel="stylesheet">
@@ -344,20 +341,20 @@
     </head>
 <body>
         <!-- Вкладка Routine (активная) -->
-    <div class="nav-top">
+    <div class="nav-top block">
         <div class="container my-3" style="max-width: 750px;">
             <!-- Надпись с полной выбранной датой -->
             <!-- Неделя -->
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <button id="prevWeek" class="m-1">&lt;&lt; </button>
-                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Вторник, 13 января 2026 г.</div>
+                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Среда, 14 января 2026 г.</div>
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
                 <div class="text-center day" data-day="2026-01-11"><div>Вс</div><div>11</div></div>
                 <div class="text-center day" data-day="2026-01-12"><div>Пн</div><div>12</div></div>
-                <div class="text-center day active" data-day="2026-01-13"><div>Вт</div><div>13</div></div>
-                <div class="text-center day" data-day="2026-01-14"><div>Ср</div><div>14</div></div>
+                <div class="text-center day" data-day="2026-01-13"><div>Вт</div><div>13</div></div>
+                <div class="text-center day active" data-day="2026-01-14"><div>Ср</div><div>14</div></div>
                 <div class="text-center day" data-day="2026-01-15"><div>Чт</div><div>15</div></div>
                 <div class="text-center day" data-day="2026-01-16"><div>Пт</div><div>16</div></div>
                 <div class="text-center day" data-day="2026-01-17"><div>Сб</div><div>17</div></div>
@@ -366,22 +363,22 @@
     </div>
 
     <!-- Основной блок задач -->
-    <div class="container flex-fill show" id="routineContainer"><div class="task"><div class="task-left"><span>📧</span></div><div class="task-center"><div class="task-title">Проверить электронную почту</div><div class="task-time">09:00 - 10:00</div></div><div class="task-right"><i class="bi bi-circle" title="Завершить"></i></div></div><div class="task"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Проверить почтовый ящик</div><div class="task-time">11:00</div></div><div class="task-right"><i class="bi bi-circle" title="Завершить"></i></div></div><div class="task"><div class="task-left"><span>🐈</span></div><div class="task-center"><div class="task-title">Погладить кота</div><div class="task-time">0/5</div></div><div class="task-right"><i class="bi bi-circle" title="Завершить"></i></div></div><div class="task"><div class="task-left"><span>⛺️</span></div><div class="task-center"><div class="task-title">Отдых</div><div class="task-time">12:00 (0/60 минут)</div></div><div class="task-right"><i class="bi bi-circle" title="Завершить"></i></div></div></div>
+    <div class="container flex-fill show" id="routineContainer"></div>
 
     <!-- Блок задач без регулярности -->
-    <div class="container flex-fill" id="tasksContainer"><div class="task"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Пройти обучение Task Aura</div><div class="task-time"></div></div><div class="task-right"><i class="bi bi-circle" title="Завершить"></i></div></div><div class="task"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Исполнить мечту</div><div class="task-time"></div></div><div class="task-right"><i class="bi bi-circle" title="Завершить"></i></div></div><div class="task done"><div class="task-left"><span>✍️</span></div><div class="task-center"><div class="task-title">Сходить погулять</div><div class="task-time">09:00 - 11:00</div></div><div class="task-right"><i class="bi-check-circle" title="Завершить"></i></div></div></div>
+    <div class="container flex-fill" id="tasksContainer"></div>
 
     <!-- Блок с заметками -->
     <div class="container" style="display: grid;" id="notesContainer">
-        <div class="container flex-fill" id="notesContainerContent"><div class="folder"><div class="folder-header"><span class="folder-name">Работа в Task Aura</span><i class="bi bi-plus-square icon" title="Добавить заметку"></i></div><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Начало работы с заметками</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div><div class="sub-notes"><div class="full-note"><div class="note"><div class="note-title">Дочерняя заметка</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div><div class="sub-notes"><div class="full-note"><div class="note"><div class="note-title">Внучатая заметка #1</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Внучатая заметка #2</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Внучатая заметка #3</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div></div></div><div class="full-note"><div class="note"><div class="note-title">Ещё одна дочерняя заметка</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div></div></div><div class="full-note"><div class="note"><div class="note-title">Очистка данных</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Пройти обучение Task Aura</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div></div></div><div class="folder"><div class="folder-header"><span class="folder-name">Главная папка</span><i class="bi bi-plus-square icon" title="Добавить заметку"></i></div><div class="notes-list"></div><div class="folder"><div class="folder-header"><span class="folder-name">Дочерняя папка</span><i class="bi bi-plus-square icon" title="Добавить заметку"></i></div><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Заметка в дочерней папке</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div></div><div class="folder"><div class="folder-header"><span class="folder-name">Внучатая папка</span><i class="bi bi-plus-square icon" title="Добавить заметку"></i></div><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Несколько вложений</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div></div></div></div></div><div class="no-folder"><span class="folder-name">Заметки без папки</span><div class="notes-list"><div class="full-note"><div class="note"><div class="note-title">Заметка вне папки</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Проверить электронную почту</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Проверить почтовый ящик</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Вынести коробки в гараж</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Исполнить мечту</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Сходить погулять</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Поиграть в новую игру</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Погладить кота</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div><div class="full-note"><div class="note"><div class="note-title">Отдых</div><i class="bi bi-pencil-square icon" title="Редактировать"></i><i class="bi bi-trash icon" title="Удалить"></i></div></div></div></div></div>
+        <div class="container flex-fill" id="notesContainerContent"></div>
         <button class="bi-plus-square icon create-folder-btn" data-bs-toggle="modal" data-bs-target="#formCreateFolder" title="Создать папку"> Создать папку</button>
     </div>
 
     <!-- Блок с заметками -->
     <div class="container" id="profileContainer">
-        <button id="deleteAllBtn" class="bi bi-trash icon" title="Удалить все данные">
+        <button id="deleteAllBtn" class="bi bi-trash icon bi-plus-square" title="Удалить все данные">
             Удалить все данные        </button>
-        <span>Версия: 1.0.12.2</span>
+        <span>Версия: 1.0.14.1</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -409,7 +406,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="formNoteFolder" class="form-label">Папка</label>
-                            <select class="form-select" id="formNoteFolder" aria-label="Выберите папку"><option value="">Без папки</option><option value="1">Работа в Task Aura</option><option value="2">Главная папка</option><option value="3">Дочерняя папка</option><option value="4">Внучатая папка</option></select>
+                            <select class="form-select" id="formNoteFolder" aria-label="Выберите папку"><option value="">Без папки</option></select>
                         </div>
                         <div class="mb-3">
                             <label for="formNoteParentNote" class="form-label">Родительская заметка</label>
@@ -531,7 +528,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="parentFolderSelect" class="form-label">Родительская папка</label>
-                            <select class="form-select" id="parentFolderSelect"><option value="">Без папки</option><option value="1">Работа в Task Aura</option><option value="2">Главная папка</option><option value="3">Дочерняя папка</option><option value="4">Внучатая папка</option></select>
+                            <select class="form-select" id="parentFolderSelect"><option value="">Без папки</option></select>
                         </div>
                         <button type="submit" class="btn btn-primary">Создать</button>
                     </form>
@@ -574,7 +571,8 @@
             <span>Профиль</span>
         </button>
     </nav>
-            <!-- Подключение Bootstrap JS и Popper -->
+        
+    <!-- Подключение Bootstrap JS и Popper -->
     <script src="./resources/bootstrap.bundle.min.js"></script>
 
     <script>
