@@ -1,21 +1,19 @@
 const CACHE_NAME = 'task-aura-cache-v1';
 
-// Пара ресурсов для кэширования
+// Названия ресурсов для кэширования. Убедитесь, что пути соответствуют структуре сайта.
 const RESOURCES_TO_CACHE = [
-    'index.html',  // или index_ru.html, в зависимости от языка
-    'ru.html',  // или index_ru.html, в зависимости от языка
-    'sources/',       // папка с библиотеками
-    'styles.css',     // если есть
-    'main.js',        // ваш основной JS файл
-    // добавьте иконки, шрифты и другие ресурсы
-    // 'icons/icon-192.png',
-    // 'icons/icon-512.png'
+    'index.html',
+    'ru.html',
+    'sources/', // Проверьте, что эта папка и её содержимое есть
 ];
 
-// Установка Service Worker и предзагрузка кеша
+// Установка и предзагрузка кеша
 self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(RESOURCES_TO_CACHE))
+        caches.open(CACHE_NAME).then(cache => {
+            // Добавляем указанные ресурсы в кеш
+            return cache.addAll(RESOURCES_TO_CACHE);
+        })
     );
 });
 
@@ -23,6 +21,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys => Promise.all(
+            // Удаляем все кеши, не являющиеся текущим
             keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
         ))
     );
@@ -35,9 +34,17 @@ self.addEventListener('fetch', event => {
             if (cachedResponse) {
                 return cachedResponse;
             }
-            // Если ресурс не в кеше, загрузить из сети
+            // Не нашли в кеше - делаем запрос в сеть
             return fetch(event.request).then(networkResponse => {
-                // Можно кешировать новые ресурсы динамически (опционально)
+                // Проверяем ответ
+                if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+                    return networkResponse;
+                }
+                // Кешируем ответ для будущих запросов
+                const responseClone = networkResponse.clone();
+                caches.open(CACHE_NAME).then(cache => {
+                    cache.put(event.request, responseClone);
+                });
                 return networkResponse;
             });
         })
