@@ -12,8 +12,8 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('https://theitdaily.github.io/task-aura/sw.js')
-                    .then(reg => console.log('Service Worker зарегистрирован', reg))
-                    .catch(error => console.log('Ошибка регистрации Service Worker', error));
+                    .then(reg => console.log('Service Worker registered', reg))
+                    .catch(error => console.log('Service Worker registration error', error));
             });
         }
     </script>
