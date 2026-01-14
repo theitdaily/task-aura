@@ -1,4 +1,4 @@
-const CACHE_NAME = 'task-aura-cache-v4';
+const CACHE_NAME = 'task-aura-cache-v5';
 
 // Названия ресурсов для кэширования. Убедитесь, что пути соответствуют структуре сайта.
 const RESOURCES_TO_CACHE = [
