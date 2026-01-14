@@ -4,7 +4,10 @@ const CACHE_NAME = 'task-aura-cache-v1';
 const RESOURCES_TO_CACHE = [
     'index.html',
     'ru.html',
-    'sources/', // Проверьте, что эта папка и её содержимое есть
+    'resources/bootstrap.bundle.min.js',
+    'resources/bootstrap.min.css',
+    'resources/bootstrap-icons.css',
+    'resources/fonts/bootstrap-icons.woff2',
 ];
 
 // Установка и предзагрузка кеша
