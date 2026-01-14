@@ -1,4 +1,4 @@
-const CACHE_NAME = 'task-aura-cache-v6';
+const CACHE = 'task-aura-cache-v1.0.14.2';
 
 // Названия ресурсов для кэширования. Убедитесь, что пути соответствуют структуре сайта.
 const RESOURCES_TO_CACHE = [
@@ -8,8 +8,8 @@ const RESOURCES_TO_CACHE = [
     'resources/fonts/bootstrap-icons.woff2',
 ];
 
-// Установка и предзагрузка кеша
-self.addEventListener('install', event => {
+// При установке воркера мы должны закешировать часть данных (статику).
+self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             // Добавляем указанные ресурсы в кеш
@@ -18,37 +18,47 @@ self.addEventListener('install', event => {
     );
 });
 
-// Активация и очистка старых кешей
-self.addEventListener('activate', event => {
+// При запросе на сервер мы используем данные из кэша и только после идем на сервер.
+self.addEventListener('fetch', (event) => {
+    // Как и в предыдущем примере, сначала `respondWith()` потом `waitUntil()`
+    event.respondWith(fromCache(event.request));
     event.waitUntil(
-        caches.keys().then(keys => Promise.all(
-            // Удаляем все кеши, не являющиеся текущим
-            keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-        ))
+        update(event.request)
+            // В конце, после получения "свежих" данных от сервера уведомляем всех клиентов.
+            .then(refresh)
     );
 });
 
-// Обработка fetch-запросов
-self.addEventListener('fetch', event => {
-    // Остальной ваш код кеширования
-    event.respondWith(
-        caches.match(event.request).then(cachedResponse => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
-            // Не нашли в кеше - делаем запрос в сеть
-            return fetch(event.request).then(networkResponse => {
-                if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-                    return networkResponse;
-                }
-                const responseClone = networkResponse.clone();
-                caches.open(CACHE_NAME).then(cache => {
-                    cache.put(event.request, responseClone);
-                });
-                return networkResponse;
-            });
-        })
-    );
-});
+function fromCache(request) {
+    return caches.open(CACHE).then((cache) =>
+        cache.match(request).then((matching) =>
+            matching || Promise.reject('no-match')
+        ));
+}
 
-console.log('Service Worker: v1.0.14.1');
+function update(request) {
+    return caches.open(CACHE).then((cache) =>
+        fetch(request).then((response) =>
+            cache.put(request, response.clone()).then(() => response)
+        )
+    );
+}
+
+// Шлём сообщения об обновлении данных всем клиентам.
+function refresh(response) {
+    return self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
+            // Подробнее про ETag можно прочитать тут
+            // https://en.wikipedia.org/wiki/HTTP_ETag
+            const message = {
+                type: 'refresh',
+                url: response.url,
+                eTag: response.headers.get('ETag')
+            };
+            // Уведомляем клиент об обновлении данных.
+            client.postMessage(JSON.stringify(message));
+        });
+    });
+}
+
+console.log('Service Worker: v1.0.14.2');
