@@ -14,7 +14,7 @@ const RESOURCES_TO_CACHE = [
 // При установке воркера мы должны закешировать часть данных (статику).
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
+        caches.open(CACHE).then(cache => {
             // Добавляем указанные ресурсы в кеш
             return cache.addAll(RESOURCES_TO_CACHE);
         })
