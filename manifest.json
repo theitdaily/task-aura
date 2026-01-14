@@ -1,7 +1,8 @@
 {
   "name": "Task Aura - Managing notes and tasks",
   "short_name": "TaskAura",
-  "start_url": "/",
+  "id": "https://theitdaily.github.io/task-aura",
+  "start_url": "https://theitdaily.github.io/task-aura",
   "url": "https://theitdaily.github.io/task-aura",
   "display": "standalone",
   "background_color": "#ffffff",
