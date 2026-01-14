@@ -50,3 +50,5 @@ self.addEventListener('fetch', event => {
         })
     );
 });
+
+console.log('Service Worker: v1.0.14.1');
