@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#ffffff">
     <title>App | Task Aura</title>
     <meta name="application-name" content="Task Aura">
-    <meta name="author" content="TheITDaily">
+    <meta name="author" content="https://github.com/theitdaily">
     <meta name="description" content="Free Note-Taking and To-Do App">
     <meta property="og:title" content="Task Aura">
     <meta property="og:description" content="Free Note-Taking and To-Do App">
@@ -192,10 +192,10 @@
             border-radius: 16px;
             box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
         }
-        .nav-top.block {
+        .nav-top.disabled {
             pointer-events: none;
         }
-        .nav-top.block div, .nav-top.block button {
+        .nav-top.disabled div, .nav-top.disabled button {
             color: #888888 !important;
         }
 
@@ -337,10 +337,11 @@
         }
     </style>
 
-    </head>
+        <meta name="version" content="1.0.14.3">
+</head>
 <body>
         <!-- Вкладка Routine (активная) -->
-    <div class="nav-top block">
+    <div class="nav-top">
         <div class="container my-3" style="max-width: 750px;">
             <!-- Надпись с полной выбранной датой -->
             <!-- Неделя -->
@@ -377,7 +378,7 @@
     <div class="container" id="profileContainer">
         <button id="deleteAllBtn" class="bi bi-trash icon" title="Delete all data">
             Delete all data        </button>
-        <span>Version: 1.0.14.1</span>
+        <span>Version: 1.0.14.3</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -1601,10 +1602,10 @@
 
                 if (targetId === 'tasksContainer' || targetId === 'routineContainer') {
                     // Разблокировать
-                    navTop.classList.remove('block');
+                    navTop.classList.remove('disabled');
                 } else {
                     // Заблокировать блок
-                    navTop.classList.add('block');
+                    navTop.classList.add('disabled');
                 }
 
                 // Убираем активный класс у всех кнопок

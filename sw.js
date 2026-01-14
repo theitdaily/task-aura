@@ -1,4 +1,4 @@
-const SW_VERSION = 'v1.0.14.2';
+const SW_VERSION = 'v1.0.14.3';
 const CACHE = 'task-aura-cache-' + SW_VERSION;
 
 console.log('Service Worker: ' + SW_VERSION);

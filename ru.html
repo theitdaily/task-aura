@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#ffffff">
     <title>App | Task Aura</title>
     <meta name="application-name" content="Task Aura">
-    <meta name="author" content="TheITDaily">
+    <meta name="author" content="https://github.com/theitdaily">
     <meta name="description" content="Бесплатное приложение для ведения заметок и списка дел">
     <meta property="og:title" content="Task Aura">
     <meta property="og:description" content="Бесплатное приложение для ведения заметок и списка дел">
@@ -193,10 +193,10 @@
             border-radius: 16px;
             box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
         }
-        .nav-top.block {
+        .nav-top.disabled {
             pointer-events: none;
         }
-        .nav-top.block div, .nav-top.block button {
+        .nav-top.disabled div, .nav-top.disabled button {
             color: #888888 !important;
         }
 
@@ -338,10 +338,11 @@
         }
     </style>
 
-    </head>
+        <meta name="version" content="1.0.14.3">
+</head>
 <body>
         <!-- Вкладка Routine (активная) -->
-    <div class="nav-top block">
+    <div class="nav-top">
         <div class="container my-3" style="max-width: 750px;">
             <!-- Надпись с полной выбранной датой -->
             <!-- Неделя -->
@@ -376,9 +377,9 @@
 
     <!-- Блок с заметками -->
     <div class="container" id="profileContainer">
-        <button id="deleteAllBtn" class="bi bi-trash icon bi-plus-square" title="Удалить все данные">
+        <button id="deleteAllBtn" class="bi bi-trash icon" title="Удалить все данные">
             Удалить все данные        </button>
-        <span>Версия: 1.0.14.1</span>
+        <span>Версия: 1.0.14.3</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -410,7 +411,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="formNoteParentNote" class="form-label">Родительская заметка</label>
-                            <select class="form-select" id="formNoteParentNote" aria-label="Выберите заметку"><option value="">Без заметки</option><option value="1">Начало работы с заметками</option><option value="2">Очистка данных</option><option value="3">Заметка вне папки</option><option value="4">Несколько вложений</option><option value="5">Заметка в дочерней папке</option><option value="6">Пройти обучение Task Aura</option><option value="7">Проверить электронную почту</option><option value="8">Проверить почтовый ящик</option><option value="9">Вынести коробки в гараж</option><option value="10">Исполнить мечту</option><option value="11">Сходить погулять</option><option value="12">Поиграть в новую игру</option><option value="13">Погладить кота</option><option value="14">Отдых</option><option value="15">Дочерняя заметка</option><option value="16">Внучатая заметка #1</option><option value="17">Внучатая заметка #2</option><option value="18">Внучатая заметка #3</option><option value="19">Ещё одна дочерняя заметка</option></select>
+                            <select class="form-select" id="formNoteParentNote" aria-label="Выберите заметку"><option value="">Без заметки</option></select>
                         </div>
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" id="isTaskSwitch">
@@ -1602,10 +1603,10 @@
 
                 if (targetId === 'tasksContainer' || targetId === 'routineContainer') {
                     // Разблокировать
-                    navTop.classList.remove('block');
+                    navTop.classList.remove('disabled');
                 } else {
                     // Заблокировать блок
-                    navTop.classList.add('block');
+                    navTop.classList.add('disabled');
                 }
 
                 // Убираем активный класс у всех кнопок
