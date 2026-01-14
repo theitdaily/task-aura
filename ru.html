@@ -2,6 +2,18 @@
 <!-- saved from url=(0035)http://127.0.0.1:8000/app?locale=ru -->
 <html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+    <meta name="application-name" content="Task Aura" />
+    <meta name="author" content="TheITDaily" />
+    <meta name="description"
+          content="Бесплатное приложение для ведения заметок и списка дел"
+    />
+    <meta property="og:url" content="https://theitdaily.github.io/task-aura/ru" />
+    <meta property="og:title" content="Task Aura" />
+    <meta
+            property="og:description"
+            content="Бесплатное приложение для ведения заметок и списка дел"
+    />
+
     <link rel="apple-touch-icon" sizes="180x180" href="https://theitdaily.github.io/task-aura/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="https://theitdaily.github.io/task-aura/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="https://theitdaily.github.io/task-aura/favicon-16x16.png" />
@@ -11,7 +23,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('https://theitdaily.github.io/task-aura/sw.js')
+                navigator.serviceWorker.register('https://theitdaily.github.io/task-aura/sw.js?v=4')
                     .then(reg => console.log('Service Worker зарегистрирован', reg))
                     .catch(error => console.log('Ошибка регистрации Service Worker', error));
             });

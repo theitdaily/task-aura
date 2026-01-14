@@ -10,7 +10,7 @@ const RESOURCES_TO_CACHE = [
     'resources/fonts/bootstrap-icons.woff2',
 ];
 
-const PAGE_REQUESTS = ['/', '/index.html'];
+const PAGE_REQUESTS = ['/', '/index.html', '/ru', '/ru.html'];
 
 // Установка и предзагрузка кеша
 self.addEventListener('install', event => {
