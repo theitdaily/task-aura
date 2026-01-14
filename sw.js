@@ -1,16 +1,12 @@
-const CACHE_NAME = 'task-aura-cache-v5';
+const CACHE_NAME = 'task-aura-cache-v6';
 
 // Названия ресурсов для кэширования. Убедитесь, что пути соответствуют структуре сайта.
 const RESOURCES_TO_CACHE = [
-    'index.html',
-    'ru.html',
     'resources/bootstrap.bundle.min.js',
     'resources/bootstrap.min.css',
     'resources/bootstrap-icons.css',
     'resources/fonts/bootstrap-icons.woff2',
 ];
-
-const PAGE_REQUESTS = ['/', '/index.html', '/ru', '/ru.html'];
 
 // Установка и предзагрузка кеша
 self.addEventListener('install', event => {
@@ -34,13 +30,6 @@ self.addEventListener('activate', event => {
 
 // Обработка fetch-запросов
 self.addEventListener('fetch', event => {
-    const requestUrl = new URL(event.request.url);
-    if (PAGE_REQUESTS.includes(requestUrl.pathname)) {
-        // Для index.html всегда делаем запрос в сеть
-        event.respondWith(fetch(event.request));
-        return;
-    }
-
     // Остальной ваш код кеширования
     event.respondWith(
         caches.match(event.request).then(cachedResponse => {
