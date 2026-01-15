@@ -337,7 +337,7 @@
         }
     </style>
 
-        <meta name="version" content="1.0.14.3">
+        <meta name="version" content="1.0.15.2">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -347,15 +347,15 @@
             <!-- Неделя -->
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <button id="prevWeek" class="m-1">&lt;&lt; </button>
-                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Wednesday, January 14, 2026</div>
+                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Thursday, January 15, 2026</div>
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
                 <div class="text-center day" data-day="2026-01-11"><div>Sun</div><div>11</div></div>
                 <div class="text-center day" data-day="2026-01-12"><div>Mon</div><div>12</div></div>
                 <div class="text-center day" data-day="2026-01-13"><div>Tue</div><div>13</div></div>
-                <div class="text-center day active" data-day="2026-01-14"><div>Wed</div><div>14</div></div>
-                <div class="text-center day" data-day="2026-01-15"><div>Thu</div><div>15</div></div>
+                <div class="text-center day" data-day="2026-01-14"><div>Wed</div><div>14</div></div>
+                <div class="text-center day active" data-day="2026-01-15"><div>Thu</div><div>15</div></div>
                 <div class="text-center day" data-day="2026-01-16"><div>Fri</div><div>16</div></div>
                 <div class="text-center day" data-day="2026-01-17"><div>Sat</div><div>17</div></div>
             </div>
@@ -376,13 +376,69 @@
 
     <!-- Блок с заметками -->
     <div class="container" id="profileContainer">
-        <button id="deleteAllBtn" class="bi bi-trash icon" title="Delete all data">
+        <button id="deleteAllBtn" class="bi bi-trash icon" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" title="Delete all data">
             Delete all data        </button>
-        <span>Version: 1.0.14.3</span>
+        <span>Version: 1.0.15.2</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
     <button class="btn btn-primary add-note-btn" title="Add a note/task" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
+
+    <!-- Модальное окно для уведомления -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">Notification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="notificationModalBody">
+                    <!-- Здесь будет сообщение -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete all data?                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Bootstrap для ввода числа -->
+    <div class="modal fade" id="goalInputModal" tabindex="-1" aria-labelledby="goalInputModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="goalInputModalLabel">Enter a number for the goal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="number" id="task" style="display: none">
+                    <input type="number" class="form-control" id="goalNumberInput" placeholder="Enter a number">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="modalConfirmBtn">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Модальное окно для добавления заметки -->
     <div class="modal fade" id="formNoteModal" tabindex="-1" aria-labelledby="formNoteModalLabel" aria-hidden="true">
@@ -483,7 +539,7 @@
                             <label for="taskGoalType" class="form-label">Goal</label>
                             <select class="form-select" id="taskGoalType">
                                 <option value="null">Complete the task</option>
-                                <option value="count">Number of repetitions</option>
+                                <option value="count">Quantity</option>
                                 <option value="time">Lead time</option>
                             </select>
 
@@ -914,7 +970,7 @@
             };
             afterLoadData();
             save();
-            alert('Data deleted!'); // пример
+            showNotification('Data deleted!');
             updateWeek(selectedDate);
             refreshNotes();
             updateFolderListInForm();
@@ -1411,6 +1467,15 @@
             noteForm.reset();
         }
 
+        function showNotification(message) {
+            // Установка текста сообщения
+            document.getElementById('notificationModalBody').textContent = message;
+
+            // Показ модального окна
+            const notifModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+            notifModal.show();
+        }
+
         function ShowNoteFormForNote(note_id) {
             const note = data.notes[note_id];
 
@@ -1418,6 +1483,7 @@
             formFields.id.value = note.id;
             formFields.icon.value = note.icon ?? '';
             formFields.title.value = note.title;
+            formFields.description.value = note.description;
             formFields.folder.value = note.folder ?? '';
             formFields.parent.value = note.parent ?? '';
             if (note.task != null) {
@@ -1555,29 +1621,7 @@
 
             // Обработчик клика по иконке
             rightIcon.addEventListener('click', () => {
-                if (task.goal) {
-                    // Предположим, что goal имеет поле type, например: goal.type
-                    if (task.goal.type === 'count') {
-                        const value = prompt('Enter a number for the goal:');
-                        if (value !== null && !isNaN(value)) {
-                            SetTaskComplete(task, Number(value));
-                        }
-                    } else {
-                        // Обработка других типов целей
-                        alert('Other target or unidentified type.');
-                        return;
-                    }
-                } else {
-                    const done = !IsTaskCompleted(task);
-                    // Цели нет, просто отметим задачу выполненной
-                    SetTaskComplete(task, done);
-                }
-                save();
-                if (task.regularity) {
-                    refreshRoutine();
-                } else {
-                    refreshTasks();
-                }
+                clickOnTaskCompleteButton(task);
             });
             rightDiv.appendChild(rightIcon);
 
@@ -1587,6 +1631,65 @@
             taskDiv.appendChild(rightDiv);
 
             return taskDiv;
+        }
+
+        function clickOnTaskCompleteButton(task) {
+            if (task.goal) {
+                if (task.goal.type === 'count') {
+                    // Установка значения поля task
+                    document.getElementById('task').value = task.id; // Предположим, что у задачи есть поле id
+
+                    // Очистка поля ввода
+                    document.getElementById('goalNumberInput').value = GetTaskCompletionResult(task);
+
+                    // Показать модальное окно
+                    var modal = new bootstrap.Modal(document.getElementById('goalInputModal'));
+                    modal.show();
+
+                    // Обработчик для кнопки OK
+                    const confirmBtn = document.getElementById('modalConfirmBtn');
+
+                    // Для избежания дублирования слушателей — удалим предыдущий
+                    confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+                    document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+                        const value = document.getElementById('goalNumberInput').value;
+                        if (value !== '' && !isNaN(value)) {
+                            const taskId = document.getElementById('task').value;
+
+                            // Найти задачу по ID
+                            const taskToUpdate = data.tasks[taskId]; // Предположим, есть такая функция
+
+                            if (taskToUpdate) {
+                                SetTaskComplete(taskToUpdate, Number(value));
+
+                                // Скрываем модальное окно
+                                bootstrap.Modal.getInstance(document.getElementById('goalInputModal')).hide();
+
+                                save();
+                                if (taskToUpdate.regularity) {
+                                    refreshRoutine();
+                                } else {
+                                    refreshTasks();
+                                }
+                            }
+                        } else {
+                            // Можно добавить сообщение об ошибке
+                        }
+                    });
+                } else {
+                    alert('Other target or unidentified type.');
+                    return;
+                }
+            } else {
+                const done = !IsTaskCompleted(task);
+                SetTaskComplete(task, done);
+                save();
+                if (task.regularity) {
+                    refreshRoutine();
+                } else {
+                    refreshTasks();
+                }
+            }
         }
 
         // Переключение активных кнопок навигации
@@ -2104,23 +2207,24 @@
             modalInstance.hide();
         });
 
-        deleteBtn.addEventListener('click', () => {
-            // Подтверждение
-            if (confirm('Are you sure you want to delete all data?')) {
-                // Меняем иконку, например на вращающийся загрузчик
-                deleteBtn.classList.remove('bi-plus-square');
-                deleteBtn.classList.add('bi-arrow-repeat'); // или любую иконку загрузки
+        // Обработчик кнопки "Delete" внутри модального окна
+        const deleteConfirmModalInstance = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+            // Меняем иконку
+            deleteBtn.classList.remove('bi-plus-square');
+            deleteBtn.classList.add('bi-arrow-repeat');
 
-                // вызываем функцию
-                clearData();
+            // Вызываем функцию для удаления данных
+            clearData();
 
-                // Можно вернуть обратно иконку после завершения
-                // пример: через некоторое время или после завершения операции
-                setTimeout(() => {
-                    deleteBtn.classList.remove('bi-arrow-repeat');
-                    deleteBtn.classList.add('bi-plus-square');
-                }, 2000); // пример задержки
-            }
+            // Скрываем модальное окно
+            deleteConfirmModalInstance.hide();
+
+            // Восстановим иконку через задержку
+            setTimeout(() => {
+                deleteBtn.classList.remove('bi-arrow-repeat');
+                deleteBtn.classList.add('bi-plus-square');
+            }, 2000);
         });
 
         // ===================== //
