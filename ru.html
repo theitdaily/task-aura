@@ -12,7 +12,6 @@
     <meta property="og:title" content="Task Aura">
     <meta property="og:description" content="Бесплатное приложение для ведения заметок и списка дел">
 
-
     <!-- App Head: Start -->
     <link rel="apple-touch-icon" sizes="180x180" href="https://theitdaily.github.io/task-aura/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="https://theitdaily.github.io/task-aura/favicon-32x32.png" />
@@ -1317,7 +1316,9 @@
 
             // Для каждой задачи создаем элемент и добавляем в контейнер
             tasksToday.forEach(task => {
-                container.appendChild(renderTaskHtmlBlock(task));
+                const divElement = renderTaskHtmlBlock(task);
+                container.appendChild(divElement);
+                addDragEndDropEvent(divElement);
             });
         }
 
@@ -1614,6 +1615,8 @@
 
             // Создаем основной блок задачи
             const taskDiv = document.createElement('div');
+            taskDiv.setAttribute('id', 'task-' + task.id);
+            taskDiv.setAttribute('draggable', 'true');
             let taskDivClassName = done ? 'task done' : 'task';
             if (!task.regularity) taskDivClassName += IsTaskExpired(task, selectedDate) ? ' expired' : '';
             taskDiv.className = taskDivClassName;
@@ -2313,6 +2316,10 @@
             reloadLocale(this.value);
         });
 
+        // ============================= //
+        // === Работа с локализацией === //
+        // ============================= //
+
         function checkLocale() {
             const locale = localStorage.getItem('appLocale');
             if (locale) {
@@ -2323,9 +2330,11 @@
                 setLocale(`ru`);
             }
         }
+
         function setLocale(locale) {
             localStorage.setItem('appLocale', locale);
         }
+
         function reloadLocale(locale) {
             switch (locale) {
                 case 'en':
@@ -2339,6 +2348,52 @@
 
         checkLocale();
 
+        // =================== //
+        // === Drag & Drop === //
+        // =================== //
+
+        let draggedId = null;
+
+        const container = document.getElementById('routineContainer');
+
+        container.addEventListener('dragover', (ev) => {
+            ev.preventDefault(); // Разрешить сброс
+        });
+
+        container.addEventListener('drop', (ev) => {
+            ev.preventDefault();
+
+            const targetId = ev.target.closest('.task')?.id;
+            const sourceId = ev.dataTransfer.getData("text/plain");
+            const sourceElem = document.getElementById(sourceId);
+            const targetElem = document.getElementById(targetId);
+
+            if (sourceElem && targetElem && sourceElem !== targetElem) {
+                const rect = targetElem.getBoundingClientRect();
+                const middleY = rect.top + rect.height / 2;
+                const cursorY = ev.clientY;
+
+                if (cursorY > middleY) {
+                    // Вставляем после targetElem
+                    if (targetElem.nextSibling) {
+                        container.insertBefore(sourceElem, targetElem.nextSibling);
+                    } else {
+                        container.appendChild(sourceElem);
+                    }
+                } else {
+                    // Вставляем перед targetElem
+                    container.insertBefore(sourceElem, targetElem);
+                }
+            }
+        });
+
+        // Обработчик mousedown для начала перетаскивания
+        function addDragEndDropEvent(divElement) {
+            divElement.addEventListener('dragstart', function(ev) {
+                ev.dataTransfer.setData("text/plain", ev.target.id);
+                draggedId = ev.target.id;
+            });
+        }
 
         // ===================== //
         // === Инициализация === //
