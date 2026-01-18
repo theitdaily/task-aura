@@ -114,6 +114,11 @@
             margin-top: -2px;
         }
 
+        .task.expired {
+            background-color: #ffe7e7;
+            color: #b00000;
+        }
+
         .task.task.done .task-title {
             text-decoration: line-through;
         }
@@ -219,16 +224,27 @@
             justify-content: center;
             flex-wrap: wrap;
             grid-gap: 10px;
+            padding-bottom: 15px;
+            flex-direction: column;
+            align-items: center;
         }
 
         #profileContainer button {
-            background-color: #ff1010;
-            color: #000;
             border: none;
             padding: 8px 12px;
             border-radius: 4px;
             width: 100%;
             margin: 0;
+        }
+
+        #deleteAllBtn {
+            background-color: #ff1010;
+            color: #000;
+        }
+
+        #languageSelect {
+            width: auto;
+            display: block;
         }
 
         /* Стиль папки */
@@ -338,7 +354,7 @@
         }
     </style>
 
-        <meta name="version" content="1.0.15.2">
+        <meta name="version" content="1.0.18.2">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -348,17 +364,17 @@
             <!-- Неделя -->
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <button id="prevWeek" class="m-1">&lt;&lt; </button>
-                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Четверг, 15 января 2026 г.</div>
+                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Воскресенье, 18 января 2026 г.</div>
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day" data-day="2026-01-11"><div>Вс</div><div>11</div></div>
-                <div class="text-center day" data-day="2026-01-12"><div>Пн</div><div>12</div></div>
-                <div class="text-center day" data-day="2026-01-13"><div>Вт</div><div>13</div></div>
-                <div class="text-center day" data-day="2026-01-14"><div>Ср</div><div>14</div></div>
-                <div class="text-center day active" data-day="2026-01-15"><div>Чт</div><div>15</div></div>
-                <div class="text-center day" data-day="2026-01-16"><div>Пт</div><div>16</div></div>
-                <div class="text-center day" data-day="2026-01-17"><div>Сб</div><div>17</div></div>
+                <div class="text-center day active" data-day="2026-01-18"><div>Вс</div><div>18</div></div>
+                <div class="text-center day" data-day="2026-01-19"><div>Пн</div><div>19</div></div>
+                <div class="text-center day" data-day="2026-01-20"><div>Вт</div><div>20</div></div>
+                <div class="text-center day" data-day="2026-01-21"><div>Ср</div><div>21</div></div>
+                <div class="text-center day" data-day="2026-01-22"><div>Чт</div><div>22</div></div>
+                <div class="text-center day" data-day="2026-01-23"><div>Пт</div><div>23</div></div>
+                <div class="text-center day" data-day="2026-01-24"><div>Сб</div><div>24</div></div>
             </div>
         </div>
     </div>
@@ -379,7 +395,11 @@
     <div class="container" id="profileContainer">
         <button id="deleteAllBtn" class="bi bi-trash icon" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" title="Удалить все данные">
             Удалить все данные        </button>
-        <span>Версия: 1.0.15.2</span>
+        <select id="languageSelect" class="form-select">
+            <option value="en">English</option>
+            <option value="ru" selected="">Русский</option>
+        </select>
+        <span>Версия: 1.0.18.2</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -630,7 +650,7 @@
     </nav>
         
     <!-- Подключение Bootstrap JS и Popper -->
-    <script src="./resources/bootstrap.bundle.min.js"></script>
+    <script src="./ru_files/bootstrap.bundle.min.js.download"></script>
 
     <script>
         // =============================== //
@@ -863,16 +883,8 @@
                     dateEnd: '2026-01-31',
                     timeStart: '09:00',
                     timeEnd: '11:00',
-                    completion: true
-                },
-                7: {
-                    id: 7,
-                    note: 11,
-                    regularity: null,
-                    dateStart: '2026-01-09',
-                    dateEnd: '2026-01-09',
-                    timeStart: '11:00',
-                    timeEnd: '13:00'
+                    completion: true,
+                    completedAt: '2026-02-04',
                 },
                 8: {
                     id: 8,
@@ -1092,8 +1104,7 @@
                 // Проверка на регулярность
                 if (!task.regularity) {
                     // Проверка дат
-                    if (date < (new Date(new Date(task.dateStart).toDateString())) ||
-                        (task.dateEnd != null && date > (new Date(new Date(task.dateEnd).toDateString())))) {
+                    if (date < (new Date(new Date(task.dateStart).toDateString())) || (IsTaskCompleted(task) && IsTaskExpired(task, date))) {
                         continue;
                     }
 
@@ -1187,12 +1198,16 @@
             return false;
         }
 
-        function SetTaskComplete(task, result) {
-            if (task.regularity) {
-                const year = selectedDate.getFullYear();
-                const weekNumber = selectedDate.getWeekNumber();
-                const dayOfWeek = selectedDate.getDay();
+        function IsTaskExpired(task, date) {
+            return task.dateEnd != null && (task.completedAt == null && date > (new Date(new Date(task.dateEnd).toDateString())) ||
+                (task.completedAt != null && date > (new Date(new Date(task.completedAt).toDateString()))));
+        }
 
+        function SetTaskComplete(task, result) {
+            const year = selectedDate.getFullYear();
+            const weekNumber = selectedDate.getWeekNumber();
+            const dayOfWeek = selectedDate.getDay();
+            if (task.regularity) {
                 if (!task.completion || typeof task.completion !== 'object') {
                     task.completion = {};
                 }
@@ -1206,6 +1221,13 @@
             }
             else {
                 task.completion = result;
+                if (IsTaskCompleted(task)) {
+                    const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+                    const day = selectedDate.getDate().toString().padStart(2, '0');
+                    task.completedAt = `${year}-${month}-${day}`;
+                } else {
+                    delete (task.completedAt);
+                }
             }
         }
 
@@ -1567,7 +1589,9 @@
 
             // Создаем основной блок задачи
             const taskDiv = document.createElement('div');
-            taskDiv.className = done ? 'task done' : 'task';
+            let taskDivClassName = done ? 'task done' : 'task';
+            if (!task.regularity) taskDivClassName += IsTaskExpired(task, selectedDate) ? ' expired' : '';
+            taskDiv.className = taskDivClassName;
             if (!done) {
                 const percent = GetTaskGoalPercent(task);
                 if (percent !== 0) {
@@ -1595,6 +1619,17 @@
             const timeDiv = document.createElement('div');
             timeDiv.className = 'task-time';
             let timeText = task.timeStart ? task.timeStart + (task.timeEnd ? ' - ' + task.timeEnd : '') : '';
+            if (task.dateEnd && !task.regularity) {
+                const dateEnd = new Date(task.dateEnd);
+                let dateText = dateEnd.toLocaleDateString('ru', { year: 'numeric', month: 'long', day: 'numeric' });
+                dateText = dateText.replace(/\s/g, '\u00A0'); // Заменяем все пробелы на неразрывные
+                if (timeText !== '') {
+                    timeText = timeText + ' до ' + dateText;
+                } else {
+                    timeText = 'до ' + dateText;
+                    timeText = timeText.charAt(0).toUpperCase() + timeText.slice(1);
+                }
+            }
             const goalText = GetTaskGoalText(task);
             if (timeText !== '') {
                 if (goalText !== '') {
@@ -2227,6 +2262,38 @@
                 deleteBtn.classList.add('bi-plus-square');
             }, 2000);
         });
+
+        document.getElementById('languageSelect').addEventListener('change', function() {
+            setLocale(this.value);
+            reloadLocale(this.value);
+        });
+
+        function checkLocale() {
+            const locale = localStorage.getItem('appLocale');
+            if (locale) {
+                if (locale !== `ru`) {
+                    reloadLocale(locale);
+                }
+            } else {
+                setLocale(`ru`);
+            }
+        }
+        function setLocale(locale) {
+            localStorage.setItem('appLocale', locale);
+        }
+        function reloadLocale(locale) {
+            switch (locale) {
+                case 'en':
+                    window.location.href = `https://theitdaily.github.io/task-aura`;
+                    break;
+                case 'ru':
+                    window.location.href = `https://theitdaily.github.io/task-aura/ru`;
+                    break;
+            }
+        }
+
+        checkLocale();
+
 
         // ===================== //
         // === Инициализация === //
