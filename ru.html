@@ -224,7 +224,6 @@
             justify-content: center;
             flex-wrap: wrap;
             grid-gap: 10px;
-            padding-bottom: 15px;
             flex-direction: column;
             align-items: center;
         }
@@ -237,7 +236,7 @@
             margin: 0;
         }
 
-        #deleteAllBtn {
+        #deleteAllBtn, #resetToFactoryBtn {
             background-color: #ff1010;
             color: #000;
         }
@@ -354,7 +353,7 @@
         }
     </style>
 
-        <meta name="version" content="1.0.18.2">
+        <meta name="version" content="1.0.18.3">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -395,11 +394,13 @@
     <div class="container" id="profileContainer">
         <button id="deleteAllBtn" class="bi bi-trash icon" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" title="Удалить все данные">
             Удалить все данные        </button>
+        <button id="resetToFactoryBtn" class="bi bi-trash icon" data-bs-toggle="modal" data-bs-target="#resetToFactoryBtnConfirmModal" title="Сбросить до заводских настроек">
+            Сбросить до заводских настроек        </button>
         <select id="languageSelect" class="form-select">
             <option value="en">English</option>
             <option value="ru" selected="">Русский</option>
         </select>
-        <span>Версия: 1.0.18.2</span>
+        <span>Версия: 1.0.18.3</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -436,6 +437,24 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
                     <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения -->
+    <div class="modal fade" id="resetToFactoryBtnConfirmModal" tabindex="-1" aria-labelledby="resetToFactoryBtnConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetToFactoryBtnConfirmModalLabel">Подтверждение</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Вы уверены, что хотите удалить все данные?                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-danger" id="confirmResetBtn">Удалить</button>
                 </div>
             </div>
         </div>
@@ -818,7 +837,8 @@
                     id: 1,
                     note: 6,
                     regularity: null,
-                    dateStart: '2026-01-02'
+                    dateStart: '2026-01-01',
+                    dateEnd: '2026-01-01'
                 },
                 2: {
                     id: 2,
@@ -988,6 +1008,10 @@
             refreshNotes();
             updateFolderListInForm();
             updateCreateFolderOptions();
+        }
+
+        function resetData() {
+            localStorage.clear();
         }
 
         // Обработка данных после загрузки или обнуления данных
@@ -1280,6 +1304,7 @@
 
         // Находим кнопку
         const deleteBtn = document.getElementById('deleteAllBtn');
+        const resetToFactory = document.getElementById('resetToFactoryBtn');
 
         function refreshRoutine() {
             const container = document.getElementById('routineContainer');
@@ -1623,11 +1648,20 @@
                 const dateEnd = new Date(task.dateEnd);
                 let dateText = dateEnd.toLocaleDateString('ru', { year: 'numeric', month: 'long', day: 'numeric' });
                 dateText = dateText.replace(/\s/g, '\u00A0'); // Заменяем все пробелы на неразрывные
-                if (timeText !== '') {
-                    timeText = timeText + ' до ' + dateText;
+                if (task.dateStart !== task.dateEnd) {
+                    if (timeText !== '') {
+                        timeText = timeText + ' до ' + dateText;
+                    } else {
+                        timeText = 'до ' + dateText;
+                        timeText = timeText.charAt(0).toUpperCase() + timeText.slice(1);
+                    }
                 } else {
-                    timeText = 'до ' + dateText;
-                    timeText = timeText.charAt(0).toUpperCase() + timeText.slice(1);
+                    if (timeText !== '') {
+                        timeText = timeText + ' - ' + dateText;
+                    } else {
+                        timeText = dateText;
+                        timeText = timeText.charAt(0).toUpperCase() + timeText.slice(1);
+                    }
                 }
             }
             const goalText = GetTaskGoalText(task);
@@ -1762,7 +1796,20 @@
                 if (targetContainer) {
                     targetContainer.classList.add('show');
                 }
+
+                localStorage.setItem('activeTab', targetId);
             });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTargetId = localStorage.getItem('activeTab');
+
+            if (savedTargetId) {
+                const btn = document.querySelector(`.nav-button[data-target="${savedTargetId}"]`);
+                if (btn && !btn.classList.contains('active')) {
+                    btn.click();  // Или аналогичный код, чтобы активировать вкладку
+                }
+            }
         });
 
         // Функция для обновления отображения полной даты
@@ -2246,21 +2293,19 @@
         // Обработчик кнопки "Delete" внутри модального окна
         const deleteConfirmModalInstance = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
         document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-            // Меняем иконку
-            deleteBtn.classList.remove('bi-plus-square');
-            deleteBtn.classList.add('bi-arrow-repeat');
-
             // Вызываем функцию для удаления данных
             clearData();
 
             // Скрываем модальное окно
             deleteConfirmModalInstance.hide();
+        });
 
-            // Восстановим иконку через задержку
-            setTimeout(() => {
-                deleteBtn.classList.remove('bi-arrow-repeat');
-                deleteBtn.classList.add('bi-plus-square');
-            }, 2000);
+        // Обработчик кнопки "Delete" внутри модального окна
+        const resetToFactoryBtnConfirmModalInstance = new bootstrap.Modal(document.getElementById('resetToFactoryBtnConfirmModal'));
+        document.getElementById('confirmResetBtn').addEventListener('click', () => {
+            // Вызываем функцию для удаления данных
+            resetData();
+            window.location.reload();
         });
 
         document.getElementById('languageSelect').addEventListener('change', function() {
