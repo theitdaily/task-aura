@@ -352,7 +352,7 @@
         }
     </style>
 
-        <meta name="version" content="1.0.18.3">
+        <meta name="version" content="1.0.28.1">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -362,17 +362,17 @@
             <!-- Неделя -->
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <button id="prevWeek" class="m-1">&lt;&lt; </button>
-                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Sunday, January 18, 2026</div>
+                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Wednesday, January 28, 2026</div>
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day active" data-day="2026-01-18"><div>Sun</div><div>18</div></div>
-                <div class="text-center day" data-day="2026-01-19"><div>Mon</div><div>19</div></div>
-                <div class="text-center day" data-day="2026-01-20"><div>Tue</div><div>20</div></div>
-                <div class="text-center day" data-day="2026-01-21"><div>Wed</div><div>21</div></div>
-                <div class="text-center day" data-day="2026-01-22"><div>Thu</div><div>22</div></div>
-                <div class="text-center day" data-day="2026-01-23"><div>Fri</div><div>23</div></div>
-                <div class="text-center day" data-day="2026-01-24"><div>Sat</div><div>24</div></div>
+                <div class="text-center day" data-day="2026-01-25"><div>Sun</div><div>25</div></div>
+                <div class="text-center day" data-day="2026-01-26"><div>Mon</div><div>26</div></div>
+                <div class="text-center day" data-day="2026-01-27"><div>Tue</div><div>27</div></div>
+                <div class="text-center day active" data-day="2026-01-28"><div>Wed</div><div>28</div></div>
+                <div class="text-center day" data-day="2026-01-29"><div>Thu</div><div>29</div></div>
+                <div class="text-center day" data-day="2026-01-30"><div>Fri</div><div>30</div></div>
+                <div class="text-center day" data-day="2026-01-31"><div>Sat</div><div>31</div></div>
             </div>
         </div>
     </div>
@@ -399,7 +399,7 @@
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.0.18.3</span>
+        <span>Version: 1.0.28.1</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -536,6 +536,10 @@
                             <div id="repeatDailyContainer" style="display: none; margin: 10px 0;">
                                 <label for="dailyInterval">Interval (days):</label>
                                 <input type="number" id="dailyInterval" min="1" max="10000" value="1">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="isTaskShowFromLastDate">
+                                    <label class="form-check-label" for="isTaskShowFromLastDate">Count from the date the task was last completed</label>
+                                </div>
                             </div>
                             <div id="repeatWeeklyContainer" style="display: none; margin: 10px 0;">
                                 <label>Days of the week:</label><br>
@@ -699,9 +703,27 @@
             return start;
         };
 
-        // ======================== //
-        // === Работа с данными === //
-        // ======================== //
+        // Вспомогательная функция для преобразования в формат YYYY-MM-DD
+        function getDateFromYearWeekDay(year, week, day) {
+            // Неделя считается с понедельника
+            const simpleDate = new Date(Date.UTC(year, 0, 4)); // 4 января — в любой год, это день, где 1-я неделя
+            const dayOfWeek = simpleDate.getUTCDay() || 7; // делаем понедельник = 1, воскресенье=7
+
+            // Находим первый день первой недели
+            const diff = (week - 1) * 7 + (day - dayOfWeek);
+            simpleDate.setUTCDate(simpleDate.getUTCDate() + diff);
+
+            // Форматируем как YYYY-MM-DD
+            const yyyy = simpleDate.getUTCFullYear();
+            const mm = String(simpleDate.getUTCMonth() + 1).padStart(2, '0');
+            const dd = String(simpleDate.getUTCDate()).padStart(2, '0');
+
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // ================================= //
+        // === Работа с хранением данных === //
+        // ================================= //
 
         // Массив с данными по умолчанию
         let data = {
@@ -754,6 +776,7 @@
                 8: {
                     id: 8,
                     title: 'Check mailbox',
+                    icon: '📬',
                     description: 'Checking the mailbox at the address ул.Странная, д.494.',
                     folder: null,
                     task: 3
@@ -866,11 +889,9 @@
                     id: 3,
                     note: 8,
                     regularity: {
-                        type: 'daily',          // тип регулярности: daily, weekly, monthly, custom
-                        interval: 3,            // интервал выполнения: каждый день, каждые 2 дня и т.д.
-                        daysOfWeek: null,       // для weekly: дни недели (1 — понедельник, 7 — воскресенье)
-                        daysOfMonth: null,       // для monthly: число месяца
-                        customFrequency: null   // для кастомных вариантов
+                        type: 'daily',
+                        interval: 3,
+                        fromLastDate: true,
                     },
                     dateStart: '2026-01-01',
                     timeStart: '11:00',
@@ -972,10 +993,11 @@
             structure: [
                 {id: 1, children: []},
                 {id: 2, children: [{id: 3, children: [{id: 4, children: []}]}]}
-            ] // иерархия папок в заметках (по ID)
+            ], // иерархия папок в заметках (по ID)
         };
         let selectedDate = (new Date(new Date().toDateString()));
         let currentWeekStart = null; // начало текущей недели (воскресенье или понедельник)
+        let note_delete_mode = false;
 
         // Загрузка из localStorage
         function load() {
@@ -1046,17 +1068,24 @@
                 return false;
             }
 
-            const dateStart = (new Date(new Date(task.dateStart).toDateString()));
+            let dateStart = (new Date(new Date(task.dateStart).toDateString()));
             if (date < dateStart) {
                 return false;
             }
 
-            const { type, interval, daysOfWeek, daysOfMonth } = task.regularity;
+            const { type, interval, daysOfWeek, daysOfMonth, fromLastDate, lastDate } = task.regularity;
+
+            if (fromLastDate === true && lastDate != null) {
+                const lastDateDate = (new Date(new Date(lastDate).toDateString()));
+                if (date < lastDateDate) return false;
+                dateStart = lastDateDate;
+            }
 
             switch (type) {
                 case 'daily':
                     // Проверка разницы в днях между последним выполнением и сегодня
                     const diffDays = Math.floor((date - dateStart) / (1000 * 60 * 60 * 24));
+                    if (fromLastDate) return lastDate == null || diffDays >= interval;
                     return diffDays % interval === 0;
 
                 case 'weekly':
@@ -1104,9 +1133,10 @@
 
                 // Функция для определения, должна ли задача выполниться сегодня
                 const isDue = isTaskDue(task, date);
-                if (isDue) {
+                const done = IsTaskCompleted(task, date);
+                if (isDue || done) {
                     // Разделение по выполненности
-                    if (IsTaskCompleted(task)) {
+                    if (done) {
                         completedTasks.push(task);
                     } else {
                         notCompletedTasks.push(task);
@@ -1127,12 +1157,12 @@
                 // Проверка на регулярность
                 if (!task.regularity) {
                     // Проверка дат
-                    if (date < (new Date(new Date(task.dateStart).toDateString())) || (IsTaskCompleted(task) && IsTaskExpired(task, date))) {
+                    if (date < (new Date(new Date(task.dateStart).toDateString())) || (IsTaskCompleted(task, date) && IsTaskExpired(task, date))) {
                         continue;
                     }
 
                     // Разделение по выполненности
-                    if (IsTaskCompleted(task)) {
+                    if (IsTaskCompleted(task, date)) {
                         completedTasks.push(task);
                     } else {
                         notCompletedTasks.push(task);
@@ -1208,9 +1238,13 @@
             return null;
         }
 
-        function IsTaskCompleted(task) {
-            const result = GetTaskCompletionResult(task);
+        function IsTaskCompleted(task, date) {
+            const result = GetTaskCompletionResult(task, date);
 
+            return IsTaskCompletedFromResult(task, result);
+        }
+
+        function IsTaskCompletedFromResult(task, result) {
             if (result !== null) {
                 if (task.goal != null) {
                     return result >= task.goal.count;
@@ -1222,14 +1256,78 @@
         }
 
         function IsTaskExpired(task, date) {
-            return task.dateEnd != null && (task.completedAt == null && date > (new Date(new Date(task.dateEnd).toDateString())) ||
-                (task.completedAt != null && date > (new Date(new Date(task.completedAt).toDateString()))));
+            if (!task.regularity) {
+                return task.dateEnd != null && (task.completedAt == null && date > (new Date(new Date(task.dateEnd).toDateString())) ||
+                    (task.completedAt != null && date > (new Date(new Date(task.completedAt).toDateString()))));
+            } else {
+                let { type, interval, daysOfWeek, daysOfMonth, fromLastDate, lastDate } = task.regularity;
+                if (fromLastDate === true) {
+                    const lastDateDate = (lastDate == null) ? (new Date(new Date(task.dateStart).toDateString())) : (new Date(new Date(lastDate).toDateString()));
+                    if (date < lastDateDate) return false;
+                    switch (type) {
+                        case 'daily':
+                            // Проверка разницы в днях между последним выполнением и сегодня
+                            const diffDays = Math.floor((date - lastDateDate) / (1000 * 60 * 60 * 24));
+                            return diffDays > interval || lastDate == null && diffDays !== 0;
+                    }
+                }
+            }
+            return false;
         }
 
-        function SetTaskComplete(task, result) {
-            const year = selectedDate.getFullYear();
-            const weekNumber = selectedDate.getWeekNumber();
-            const dayOfWeek = selectedDate.getDay();
+        function getLastDoneDay(task) {
+            let lastYear = -Infinity;
+            let lastWeek = -Infinity;
+            let lastDay = -Infinity;
+
+            if (!task.completion || typeof task.completion !== 'object') return null;
+
+            // Перебираем все года
+            for (const yearStr in task.completion) {
+                const year = parseInt(yearStr);
+                if (isNaN(year)) continue;
+
+                const weeks = task.completion[year];
+
+                // Перебираем все недели этого года
+                for (const weekStr in weeks) {
+                    const week = parseInt(weekStr);
+                    if (isNaN(week)) continue;
+
+                    const days = weeks[week];
+
+                    // Перебираем все дни этой недели
+                    for (const dayStr in days) {
+                        const day = parseInt(dayStr);
+                        const data = days[dayStr];
+
+                        if (data && IsTaskCompletedFromResult(task, data)) {
+                            // Проверяем, является ли эта дата более поздней
+                            if (
+                                year > lastYear ||
+                                (year === lastYear && week > lastWeek) ||
+                                (year === lastYear && week === lastWeek && day > lastDay)
+                            ) {
+                                lastYear = year;
+                                lastWeek = week;
+                                lastDay = day;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (lastYear === -Infinity) return null; // Нет выполненных задач
+
+            // Преобразуем (год, неделя, день) в конкретную дату
+            const dateStr = getDateFromYearWeekDay(lastYear, lastWeek, lastDay);
+            return dateStr || null;
+        }
+
+        function SetTaskComplete(task, result, date) {
+            const year = date.getFullYear();
+            const weekNumber = date.getWeekNumber();
+            const dayOfWeek = date.getDay();
             if (task.regularity) {
                 if (!task.completion || typeof task.completion !== 'object') {
                     task.completion = {};
@@ -1241,16 +1339,23 @@
                     task.completion[year][weekNumber] = {};
                 }
                 task.completion[year][weekNumber][dayOfWeek] = result;
+                if (task.regularity.fromLastDate === true) {
+                    if (IsTaskCompleted(task, date)) {
+                        task.regularity.lastDate = date.toStringWithoutTime();
+                    } else {
+                        const lastDone = getLastDoneDay(task);
+                        if (lastDone !== null) task.regularity.lastDate = lastDone;
+                        else delete task.regularity.lastDate;
+                    }
+                }
             }
             else {
                 task.completion = result;
-                if (IsTaskCompleted(task)) {
-                    const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
-                    const day = selectedDate.getDate().toString().padStart(2, '0');
-                    task.completedAt = `${year}-${month}-${day}`;
-                } else {
-                    delete (task.completedAt);
-                }
+
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+
+                task.completedAt = `${year}-${month}-${day}`;
             }
         }
 
@@ -1282,6 +1387,7 @@
             repeatContainer: document.getElementById('taskRepeatContainer'),
             repeatDailyContainer: document.getElementById('repeatDailyContainer'),
             dailyInterval: document.getElementById('dailyInterval'),
+            isTaskShowFromLastDate: document.getElementById('isTaskShowFromLastDate'),
             repeatWeeklyContainer: document.getElementById('repeatWeeklyContainer'),
             weeklyInterval: document.getElementById('weeklyInterval'),
             repeatMonthlyContainer: document.getElementById('repeatMonthlyContainer'),
@@ -1316,9 +1422,7 @@
 
             // Для каждой задачи создаем элемент и добавляем в контейнер
             tasksToday.forEach(task => {
-                const divElement = renderTaskHtmlBlock(task);
-                container.appendChild(divElement);
-                addDragEndDropEvent(divElement);
+                container.appendChild(renderTaskHtmlBlock(task));
             });
         }
 
@@ -1374,6 +1478,14 @@
                 const folderNameSpan = document.createElement('span');
                 folderNameSpan.className = 'folder-name';
                 folderNameSpan.textContent = folderName; // + '(' + folderId + ')';
+
+                if (note_delete_mode) {
+                    const deleteIcon = document.createElement('i');
+                    deleteIcon.className = 'bi bi-trash icon';
+                    deleteIcon.title = 'Delete';
+
+                    folderNameSpan.appendChild(deleteIcon);
+                }
 
                 const plusIcon = document.createElement('i');
                 plusIcon.className = 'bi bi-plus-square icon';
@@ -1475,13 +1587,15 @@
                 ShowNoteFormForNote(note.id);
             });
 
-            const deleteIcon = document.createElement('i');
-            deleteIcon.className = 'bi bi-trash icon';
-            deleteIcon.title = 'Delete';
-
             noteDiv.appendChild(noteTitleDiv);
             noteDiv.appendChild(editIcon);
-            noteDiv.appendChild(deleteIcon);
+
+            if (note_delete_mode) {
+                const deleteIcon = document.createElement('i');
+                deleteIcon.className = 'bi bi-trash icon';
+                deleteIcon.title = 'Delete';
+                noteDiv.appendChild(deleteIcon);
+            }
 
             return noteDiv;
         }
@@ -1546,6 +1660,7 @@
                 switch (regType) {
                     case 'daily':
                         formFields.dailyInterval.value = task.regularity.interval;
+                        formFields.isTaskShowFromLastDate.checked = task.regularity.fromLastDate;
                         break;
                     case 'weekly':
                         formFields.weeklyInterval.value = task.regularity.interval;
@@ -1611,14 +1726,15 @@
             const noteId = task.note;
             const note = Object.values(data.notes).find(n => n.id === noteId);
             const taskTitle = note ? note.title : 'Untitled';
-            const done = IsTaskCompleted(task);
+            const done = IsTaskCompleted(task, selectedDate);
 
             // Создаем основной блок задачи
             const taskDiv = document.createElement('div');
             taskDiv.setAttribute('id', 'task-' + task.id);
             taskDiv.setAttribute('draggable', 'true');
+            addDragEndDropEvent(taskDiv);
             let taskDivClassName = done ? 'task done' : 'task';
-            if (!task.regularity) taskDivClassName += IsTaskExpired(task, selectedDate) ? ' expired' : '';
+            taskDivClassName += IsTaskExpired(task, selectedDate) ? ' expired' : '';
             taskDiv.className = taskDivClassName;
             if (!done) {
                 const percent = GetTaskGoalPercent(task);
@@ -1733,7 +1849,7 @@
                             const taskToUpdate = data.tasks[taskId]; // Предположим, есть такая функция
 
                             if (taskToUpdate) {
-                                SetTaskComplete(taskToUpdate, Number(value));
+                                SetTaskComplete(taskToUpdate, Number(value), selectedDate);
 
                                 // Скрываем модальное окно
                                 bootstrap.Modal.getInstance(document.getElementById('goalInputModal')).hide();
@@ -1754,8 +1870,8 @@
                     return;
                 }
             } else {
-                const done = !IsTaskCompleted(task);
-                SetTaskComplete(task, done);
+                const done = !IsTaskCompleted(task, selectedDate);
+                SetTaskComplete(task, done, selectedDate);
                 save();
                 if (task.regularity) {
                     refreshRoutine();
@@ -2026,6 +2142,9 @@
                                 type: 'daily',
                                 interval: (dailyInterval * 1),
                             };
+                            let isTaskShowFromLastDate = formFields.isTaskShowFromLastDate.checked;
+                            if (isTaskShowFromLastDate) task.regularity.fromLastDate = true;
+                            else delete task.regularity.fromLastDate;
                             break;
                         case 'weekly':
                             let weeklyInterval = formFields.weeklyInterval.value ?? 1;
@@ -2354,38 +2473,41 @@
 
         let draggedId = null;
 
-        const container = document.getElementById('routineContainer');
+        initDragAndDropForTaskContainer(document.getElementById('routineContainer'));
+        initDragAndDropForTaskContainer(document.getElementById('tasksContainer'));
 
-        container.addEventListener('dragover', (ev) => {
-            ev.preventDefault(); // Разрешить сброс
-        });
+        function initDragAndDropForTaskContainer(container) {
+            container.addEventListener('dragover', (ev) => {
+                ev.preventDefault(); // Разрешить сброс
+            });
 
-        container.addEventListener('drop', (ev) => {
-            ev.preventDefault();
+            container.addEventListener('drop', (ev) => {
+                ev.preventDefault();
 
-            const targetId = ev.target.closest('.task')?.id;
-            const sourceId = ev.dataTransfer.getData("text/plain");
-            const sourceElem = document.getElementById(sourceId);
-            const targetElem = document.getElementById(targetId);
+                const targetId = ev.target.closest('.task')?.id;
+                const sourceId = ev.dataTransfer.getData("text/plain");
+                const sourceElem = document.getElementById(sourceId);
+                const targetElem = document.getElementById(targetId);
 
-            if (sourceElem && targetElem && sourceElem !== targetElem) {
-                const rect = targetElem.getBoundingClientRect();
-                const middleY = rect.top + rect.height / 2;
-                const cursorY = ev.clientY;
+                if (sourceElem && targetElem && sourceElem !== targetElem) {
+                    const rect = targetElem.getBoundingClientRect();
+                    const middleY = rect.top + rect.height / 2;
+                    const cursorY = ev.clientY;
 
-                if (cursorY > middleY) {
-                    // Вставляем после targetElem
-                    if (targetElem.nextSibling) {
-                        container.insertBefore(sourceElem, targetElem.nextSibling);
+                    if (cursorY > middleY) {
+                        // Вставляем после targetElem
+                        if (targetElem.nextSibling) {
+                            container.insertBefore(sourceElem, targetElem.nextSibling);
+                        } else {
+                            container.appendChild(sourceElem);
+                        }
                     } else {
-                        container.appendChild(sourceElem);
+                        // Вставляем перед targetElem
+                        container.insertBefore(sourceElem, targetElem);
                     }
-                } else {
-                    // Вставляем перед targetElem
-                    container.insertBefore(sourceElem, targetElem);
                 }
-            }
-        });
+            });
+        }
 
         // Обработчик mousedown для начала перетаскивания
         function addDragEndDropEvent(divElement) {
