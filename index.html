@@ -352,7 +352,7 @@
         }
     </style>
 
-        <meta name="version" content="1.0.28.1">
+        <meta name="version" content="1.1.4.1">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -362,17 +362,17 @@
             <!-- Неделя -->
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <button id="prevWeek" class="m-1">&lt;&lt; </button>
-                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Wednesday, January 28, 2026</div>
+                <div id="fullDateDisplay" class="text-center" style="font-weight: bold;">Wednesday, February 4, 2026</div>
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day" data-day="2026-01-25"><div>Sun</div><div>25</div></div>
-                <div class="text-center day" data-day="2026-01-26"><div>Mon</div><div>26</div></div>
-                <div class="text-center day" data-day="2026-01-27"><div>Tue</div><div>27</div></div>
-                <div class="text-center day active" data-day="2026-01-28"><div>Wed</div><div>28</div></div>
-                <div class="text-center day" data-day="2026-01-29"><div>Thu</div><div>29</div></div>
-                <div class="text-center day" data-day="2026-01-30"><div>Fri</div><div>30</div></div>
-                <div class="text-center day" data-day="2026-01-31"><div>Sat</div><div>31</div></div>
+                <div class="text-center day" data-day="2026-02-01"><div>Sun</div><div>1</div></div>
+                <div class="text-center day" data-day="2026-02-02"><div>Mon</div><div>2</div></div>
+                <div class="text-center day" data-day="2026-02-03"><div>Tue</div><div>3</div></div>
+                <div class="text-center day active" data-day="2026-02-04"><div>Wed</div><div>4</div></div>
+                <div class="text-center day" data-day="2026-02-05"><div>Thu</div><div>5</div></div>
+                <div class="text-center day" data-day="2026-02-06"><div>Fri</div><div>6</div></div>
+                <div class="text-center day" data-day="2026-02-07"><div>Sat</div><div>7</div></div>
             </div>
         </div>
     </div>
@@ -399,7 +399,7 @@
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.0.28.1</span>
+        <span>Version: 1.1.4.1</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -963,6 +963,7 @@
                         count: 3600,
                     },
                     dateStart: '2026-01-01',
+                    dateEnd: '2026-04-30',
                     timeStart: '12:00',
                     completion: {
                         2026: {
@@ -1079,6 +1080,13 @@
                 const lastDateDate = (new Date(new Date(lastDate).toDateString()));
                 if (date < lastDateDate) return false;
                 dateStart = lastDateDate;
+            }
+
+            if (task.dateEnd != null) {
+                const dateEnd = (new Date(new Date(task.dateEnd).toDateString()));
+                if (date > dateEnd && (fromLastDate !== true || lastDate != null || date > lastDate || !isTaskDue(task, dateEnd))) {
+                    return false;
+                }
             }
 
             switch (type) {
@@ -1646,7 +1654,7 @@
             formFields.id.value = note.id;
             formFields.icon.value = note.icon ?? '';
             formFields.title.value = note.title;
-            formFields.description.value = note.description;
+            formFields.description.value = note.description ?? '';
             formFields.folder.value = note.folder ?? '';
             formFields.parent.value = note.parent ?? '';
             if (note.task != null) {
