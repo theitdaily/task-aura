@@ -615,7 +615,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.6.2">
+        <meta name="version" content="1.3.6.3">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -703,7 +703,7 @@
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.3.6.2</span>
+        <span>Version: 1.3.6.3</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -2128,7 +2128,7 @@
                     totalTasks: 0,
                     doneScore: 0,
                     percent: 0,
-                    rating: null,
+                    rating: 'empty',
                     fullDoneCount: 0,
                     partialDoneCount: 0,
                     notDoneCount: 0
@@ -3055,7 +3055,7 @@
                 : (score.rating === 'gold'
                     ? 'Gold'
                     : (score.rating === 'silver'
-                            ? 'Silver'
+                        ? 'Silver'
                         : (score.rating === 'bronze'
                             ? 'Bronze'
                             : (score.rating === 'participant' ? 'Participant' : (score.rating === 'empty' ? 'Completion medal' : 'Without medal')))));
@@ -3473,9 +3473,14 @@
 
             if (isTask) {
                 const goalType = formFields.goalType.value;
+                const dateStart = formFields.dateStart.value;
                 const timeStart = formFields.timeType.value !== 'null' ? formFields.timeStart.value : null;
                 const dateEnd = formFields.dateEnd.value;
                 const repeatable = formFields.repeat.value !== 'null' ? formFields.repeat.value : null;
+
+                if (dateStart != null && dateStart !== '') {
+                    task.dateStart = dateStart;
+                }
 
                 if (dateEnd != null && dateEnd !== '') {
                     task.dateEnd = dateEnd;
