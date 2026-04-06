@@ -73,6 +73,8 @@
             padding: 5px 10px;
             border-radius: 5px;
             transition: background-color 0.2s;
+            position: relative;
+            overflow: visible;
         }
         .day:hover {
             background-color: #e8e8e8;
@@ -202,6 +204,67 @@
         }
         .add-note-btn:hover {
             background-color: #0056b3;
+        }
+
+        .finish-day-btn {
+            position: fixed;
+            bottom: 105px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 190px;
+            z-index: 1030;
+            display: none;
+            border-radius: 999px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 8px;
+        }
+
+        .day.day-rated-gold {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        .day.day-rated-silver {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        .day.day-rated-bronze {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        .day-rating-badge {
+            position: absolute;
+            top: -7px;
+            right: -7px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border: 1px solid rgba(255,255,255,0.95);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+        }
+
+        .day-rating-badge.gold {
+            background: radial-gradient(circle at 30% 30%, #fff6bd, #e8b72e);
+        }
+
+        .day-rating-badge.silver {
+            background: radial-gradient(circle at 30% 30%, #ffffff, #bfc7d6);
+        }
+
+        .day-rating-badge.bronze {
+            background: radial-gradient(circle at 30% 30%, #ffe3c8, #be7a45);
         }
 
         .notes-footer-actions {
@@ -512,7 +575,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.5.1">
+        <meta name="version" content="1.3.6.0">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -526,8 +589,8 @@
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day active" data-day="2026-04-05"><div>Вс</div><div>5</div></div>
-                <div class="text-center day" data-day="2026-04-06"><div>Пн</div><div>6</div></div>
+                <div class="text-center day" data-day="2026-04-05"><div>Вс</div><div>5</div></div>
+                <div class="text-center day active" data-day="2026-04-06"><div>Пн</div><div>6</div></div>
                 <div class="text-center day" data-day="2026-04-07"><div>Вт</div><div>7</div></div>
                 <div class="text-center day" data-day="2026-04-08"><div>Ср</div><div>8</div></div>
                 <div class="text-center day" data-day="2026-04-09"><div>Чт</div><div>9</div></div>
@@ -600,11 +663,13 @@
             <option value="en">English</option>
             <option value="ru" selected="">Русский</option>
         </select>
-        <span>Версия: 1.3.5.1</span>
+        <span>Версия: 1.3.6.0</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
     <button class="btn btn-primary add-note-btn" title="Добавить заметку/задачу" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
+    <button class="btn btn-success finish-day-btn" id="finishDayBtn" title="Завершить день" style="display: inline-flex;">
+        <i class="bi bi-award"></i> Завершить день    </button>
 
     <!-- Модальное окно для уведомления -->
     <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
@@ -1375,7 +1440,8 @@
                 notes: {},
                 tasks: {},
                 folders: {},
-                structure: []
+                structure: [],
+                dayRatings: {}
             };
             afterLoadData();
             save();
@@ -1418,6 +1484,9 @@
             }
             if (data.settings.noteClickAction !== 'view' && data.settings.noteClickAction !== 'edit') {
                 data.settings.noteClickAction = DEFAULT_CLICK_ACTION;
+            }
+            if (!data.dayRatings || typeof data.dayRatings !== 'object') {
+                data.dayRatings = {};
             }
         }
 
@@ -1733,11 +1802,11 @@
             return '';
         }
 
-        function GetTaskCompletionResult(task) {
+        function GetTaskCompletionResult(task, date = selectedDate) {
             if (task.regularity) {
-                const year = selectedDate.getFullYear();
-                const weekNumber = selectedDate.getWeekNumber();
-                const dayOfWeek = selectedDate.getDay();
+                const year = date.getFullYear();
+                const weekNumber = date.getWeekNumber();
+                const dayOfWeek = date.getDay();
 
                 if (task.completion != null &&
                     task.completion[year] &&
@@ -1940,6 +2009,154 @@
         const notesSortModeBtn = document.getElementById('notesSortModeBtn');
         const taskClickActionSelect = document.getElementById('taskClickActionSelect');
         const noteClickActionSelect = document.getElementById('noteClickActionSelect');
+        const finishDayBtn = document.getElementById('finishDayBtn');
+
+        function getDayRating(date) {
+            const year = date.getFullYear();
+            const weekNumber = date.getWeekNumber();
+            const dayOfWeek = date.getDay();
+
+            if (!data.dayRatings?.[year]?.[weekNumber]) {
+                return null;
+            }
+
+            return data.dayRatings[year][weekNumber][dayOfWeek] ?? null;
+        }
+
+        function setDayRating(date, rating) {
+            const year = date.getFullYear();
+            const weekNumber = date.getWeekNumber();
+            const dayOfWeek = date.getDay();
+
+            if (!data.dayRatings[year]) {
+                data.dayRatings[year] = {};
+            }
+            if (!data.dayRatings[year][weekNumber]) {
+                data.dayRatings[year][weekNumber] = {};
+            }
+            data.dayRatings[year][weekNumber][dayOfWeek] = rating;
+        }
+
+        function getDailyTasksForDate(date) {
+            const dailyTasks = [];
+
+            for (const taskId in data.tasks) {
+                const task = data.tasks[taskId];
+                if (!task.regularity || task.regularity.type !== 'daily') {
+                    continue;
+                }
+
+                const isDue = isTaskDue(task, date);
+                const done = IsTaskCompleted(task, date);
+                if (isDue || done) {
+                    dailyTasks.push(task);
+                }
+            }
+
+            return dailyTasks;
+        }
+
+        function getDayCompletionFraction(task, date) {
+            const result = GetTaskCompletionResult(task, date);
+            if (result == null) return 0;
+
+            if (task.goal != null && Number(task.goal.count) > 0) {
+                return Math.max(0, Math.min(Number(result) / Number(task.goal.count), 1));
+            }
+
+            return result === true ? 1 : 0;
+        }
+
+        function calculateDayScore(date) {
+            const dayTasks = getDailyTasksForDate(date);
+            const totalTasks = dayTasks.length;
+            let fullDoneCount = 0;
+            let partialDoneCount = 0;
+            let notDoneCount = 0;
+
+            if (totalTasks === 0) {
+                return {
+                    totalTasks: 0,
+                    doneScore: 0,
+                    percent: 0,
+                    rating: null,
+                    fullDoneCount: 0,
+                    partialDoneCount: 0,
+                    notDoneCount: 0
+                };
+            }
+
+            const doneScore = dayTasks.reduce((sum, task) => {
+                const fraction = getDayCompletionFraction(task, date);
+                if (fraction >= 1) fullDoneCount++;
+                else if (fraction > 0) partialDoneCount++;
+                else notDoneCount++;
+                return sum + fraction;
+            }, 0);
+            const percent = (doneScore / totalTasks) * 100;
+            let rating = null;
+
+            if (percent >= 90) rating = 'gold';
+            else if (percent >= 80) rating = 'silver';
+            else if (percent >= 70) rating = 'bronze';
+
+            return { totalTasks, doneScore, percent, rating, fullDoneCount, partialDoneCount, notDoneCount };
+        }
+
+        function refreshWeekDayRatings() {
+            document.querySelectorAll('.day').forEach(dayElem => {
+                dayElem.classList.remove('day-rated-gold', 'day-rated-silver', 'day-rated-bronze');
+                dayElem.querySelector('.day-rating-badge')?.remove();
+
+                const dateValue = dayElem.getAttribute('data-day');
+                if (!dateValue) return;
+                const rating = getDayRating(new Date((new Date(dateValue)).toDateString()));
+                if (rating) {
+                    dayElem.classList.add(`day-rated-${rating}`);
+
+                    const badge = document.createElement('span');
+                    badge.className = `day-rating-badge ${rating}`;
+                    badge.textContent = rating === 'gold' ? '🥇' : (rating === 'silver' ? '🥈' : '🥉');
+                    dayElem.appendChild(badge);
+                }
+            });
+        }
+
+        function areAllSelectedDateTasksCompleted() {
+            const dayTasks = getDailyTasksForDate(selectedDate);
+            if (dayTasks.length === 0) return false;
+            return dayTasks.every(task => IsTaskCompleted(task, selectedDate));
+        }
+
+        function getCurrentActiveTabId() {
+            const activeBtn = document.querySelector('.nav-button.active');
+            return activeBtn ? activeBtn.getAttribute('data-target') : null;
+        }
+
+        function updateFinishDayButtonVisibility() {
+            const today = new Date(new Date().toDateString());
+            const activeTabId = getCurrentActiveTabId();
+            const isTaskTabActive = activeTabId === 'routineContainer';
+            const diff = getCalendarDayDiff(today, selectedDate);
+            const dailyTasksCount = getDailyTasksForDate(selectedDate).length;
+
+            let canShow = false;
+            let reason = 'Дата в будущем';
+            if (diff < 0) {
+                canShow = true;
+                reason = 'Прошедший день можно завершить';
+            } else if (diff === 0) {
+                const currentHour = new Date().getHours();
+                const allDone = areAllSelectedDateTasksCompleted();
+                const after18 = currentHour >= 18;
+                canShow = allDone || after18;
+                reason = allDone
+                    ? 'Все ежедневные задачи на сегодня выполнены'
+                    : (after18 ? 'Сейчас после 18:00' : 'Сегодня день ещё нельзя завершить');
+            }
+
+            finishDayBtn.style.display = (isTaskTabActive && canShow) ? 'inline-flex' : 'none';
+        }
 
         function formatGoalSeconds(totalSeconds) {
             const normalized = Math.max(0, Number(totalSeconds) || 0);
@@ -1983,6 +2200,7 @@
             } else {
                 refreshTasks();
             }
+            updateFinishDayButtonVisibility();
         }
 
         goalTimerStartBtn.addEventListener('click', () => {
@@ -2467,7 +2685,9 @@
 
         function showNotification(message) {
             // Установка текста сообщения
-            document.getElementById('notificationModalBody').textContent = message;
+            const notificationBody = document.getElementById('notificationModalBody');
+            notificationBody.style.whiteSpace = 'pre-line';
+            notificationBody.textContent = message;
 
             // Показ модального окна
             const notifModal = new bootstrap.Modal(document.getElementById('notificationModal'));
@@ -2737,6 +2957,7 @@
                                 } else {
                                     refreshTasks();
                                 }
+                                updateFinishDayButtonVisibility();
                             }
                         } else {
                             // Можно добавить сообщение об ошибке
@@ -2761,8 +2982,28 @@
                 } else {
                     refreshTasks();
                 }
+                updateFinishDayButtonVisibility();
             }
         }
+
+        finishDayBtn.addEventListener('click', () => {
+            const score = calculateDayScore(selectedDate);
+            setDayRating(selectedDate, score.rating);
+            save();
+            refreshWeekDayRatings();
+            updateFinishDayButtonVisibility();
+
+            const roundedPercent = Math.round(score.percent);
+            const ratingText = score.rating === 'gold'
+                ? 'Золото'
+                : (score.rating === 'silver' ? 'Серебро' : (score.rating === 'bronze' ? 'Бронза' : 'Без медали'));
+            showNotification(
+                `День завершён: ${roundedPercent}% — ${ratingText}\n`
+                + `Полностью выполнено задач: ${score.fullDoneCount}\n`
+                + `Частично выполнено задач: ${score.partialDoneCount}\n`
+                + `Не выполнено задач: ${score.notDoneCount}`
+            );
+        });
 
         // Переключение активных кнопок навигации
         document.querySelectorAll('.nav-button').forEach(btn => {
@@ -2800,6 +3041,7 @@
                 }
 
                 localStorage.setItem('activeTab', targetId);
+                updateFinishDayButtonVisibility();
             });
         });
 
@@ -2858,6 +3100,8 @@
             updateFullDateDisplay();
             refreshRoutine();
             refreshTasks();
+            refreshWeekDayRatings();
+            updateFinishDayButtonVisibility();
         }
 
         // Обработчик клика по дню
@@ -2877,6 +3121,7 @@
 
                 refreshRoutine();
                 refreshTasks();
+                updateFinishDayButtonVisibility();
             });
         });
 
@@ -3272,6 +3517,7 @@
             if (isTask || taskDeleted) {
                 refreshRoutine();
                 refreshTasks();
+                updateFinishDayButtonVisibility();
             }
             refreshNotes();
 
