@@ -575,7 +575,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.6.0">
+        <meta name="version" content="1.3.6.1">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -663,7 +663,7 @@
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.3.6.0</span>
+        <span>Version: 1.3.6.1</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -1010,8 +1010,15 @@
             const firstDayOfYear = new Date(tempDate.getFullYear(), 0, 0);
             const daysOffset = firstDayOfYear.getDay();
             firstDayOfYear.setDate(firstDayOfYear.getDate() - daysOffset);
-            const diff = Math.floor((tempDate - firstDayOfYear) / (24 * 60 * 60 * 1000));
-            return Math.ceil((diff + 1) / 7);
+            // Считаем разницу в календарных днях через UTC-компоненты,
+            // чтобы переходы DST не "съедали" час и не ломали номер недели.
+            const diff = Math.floor(
+                (
+                    Date.UTC(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate()) -
+                    Date.UTC(firstDayOfYear.getFullYear(), firstDayOfYear.getMonth(), firstDayOfYear.getDate())
+                ) / (24 * 60 * 60 * 1000)
+            );
+            return Math.floor(diff / 7) + 1;
         };
 
         Date.prototype.getWeekStart = function () {
@@ -1021,20 +1028,21 @@
             return start;
         };
 
-        // Вспомогательная функция для преобразования в формат YYYY-MM-DD
+        // Вспомогательная функция для преобразования (год, неделя, день недели) в формат YYYY-MM-DD
+        // Логика недели полностью соответствует Date.prototype.getWeekNumber:
+        // неделя начинается в воскресенье, day: 0 (Sun) ... 6 (Sat)
         function getDateFromYearWeekDay(year, week, day) {
-            // Неделя считается с понедельника
-            const simpleDate = new Date(Date.UTC(year, 0, 4)); // 4 января — в любой год, это день, где 1-я неделя
-            const dayOfWeek = simpleDate.getUTCDay() || 7; // делаем понедельник = 1, воскресенье=7
+            const firstDayOfYear = new Date(year, 0, 0);
+            const daysOffset = firstDayOfYear.getDay();
+            firstDayOfYear.setDate(firstDayOfYear.getDate() - daysOffset);
 
-            // Находим первый день первой недели
-            const diff = (week - 1) * 7 + (day - dayOfWeek);
-            simpleDate.setUTCDate(simpleDate.getUTCDate() + diff);
+            const targetDate = new Date(firstDayOfYear);
+            const diff = ((week - 1) * 7) + day;
+            targetDate.setDate(firstDayOfYear.getDate() + diff);
 
-            // Форматируем как YYYY-MM-DD
-            const yyyy = simpleDate.getUTCFullYear();
-            const mm = String(simpleDate.getUTCMonth() + 1).padStart(2, '0');
-            const dd = String(simpleDate.getUTCDate()).padStart(2, '0');
+            const yyyy = targetDate.getFullYear();
+            const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(targetDate.getDate()).padStart(2, '0');
 
             return `${yyyy}-${mm}-${dd}`;
         }
@@ -1412,6 +1420,7 @@
         };
         let selectedDate = (new Date(new Date().toDateString()));
         let currentWeekStart = null; // начало текущей недели (воскресенье или понедельник)
+        let lastDateSelectionDebug = 'init';
         let note_delete_mode = false;
         let TodayJson = {
             regular: [],
@@ -3076,7 +3085,10 @@
         }
 
         // Обновление недельных дней
-        function updateWeek(weekDate) {
+        function updateWeek(weekDate, source = null) {
+            if (source) {
+                lastDateSelectionDebug = source;
+            }
             selectedDate = weekDate;
             // вычисляем дату начала недели
             currentWeekStart = weekDate.getWeekStart();
@@ -3114,6 +3126,7 @@
                 document.querySelectorAll('.day').forEach(d => d.classList.remove('active'));
                 day.classList.add('active');
                 const dateStr = day.getAttribute('data-day');
+                lastDateSelectionDebug = `dayClick:data-day=${dateStr}`;
                 selectedDate = new Date((new Date(dateStr)).toDateString());
                 updateFullDateDisplay();
 
@@ -3312,20 +3325,21 @@
 
         fullDatePicker.addEventListener('change', () => {
             if (!fullDatePicker.value) return;
+            lastDateSelectionDebug = `datePicker:value=${fullDatePicker.value}`;
             const pickedDate = new Date((new Date(fullDatePicker.value)).toDateString());
-            updateWeek(pickedDate);
+            updateWeek(pickedDate, 'datePicker:confirmed');
             taskContainerAnimatedUpdate();
             datePickerModal.hide();
         });
 
         document.getElementById('prevWeek').addEventListener('click', () => {
             currentWeekStart.setDate(currentWeekStart.getDate() - 1);
-            updateWeek(currentWeekStart);
+            updateWeek(currentWeekStart, 'nav:prevDay');
             taskContainerAnimatedUpdate();
         });
         document.getElementById('nextWeek').addEventListener('click', () => {
             currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-            updateWeek(currentWeekStart);
+            updateWeek(currentWeekStart, 'nav:nextWeek');
             taskContainerAnimatedUpdate();
         });
 
