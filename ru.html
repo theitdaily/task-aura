@@ -186,8 +186,8 @@
         /* Кнопка + снизу справа */
         .add-note-btn {
             position: fixed;
-            bottom: 105px; /* чуть выше навигации */
-            right: 20px;
+            bottom: 95px; /* чуть выше навигации */
+            right: 15px;
             width: 60px;
             height: 60px;
             border-radius: 50%;
@@ -208,7 +208,7 @@
 
         .finish-day-btn {
             position: fixed;
-            bottom: 105px;
+            bottom: 95px;
             left: 50%;
             transform: translateX(-50%);
             min-width: 190px;
@@ -220,6 +220,70 @@
             justify-content: center;
             text-align: center;
             gap: 8px;
+        }
+
+        .finish-day-btn.finish-day-btn-gold {
+            background: linear-gradient(135deg, #c89618, #8c6200);
+            border-color: #7d5600;
+            color: #fff3cf;
+        }
+
+        .finish-day-btn.finish-day-btn-silver {
+            background: linear-gradient(135deg, #949cac, #656d7f);
+            border-color: #586174;
+            color: #f4f7ff;
+        }
+
+        .finish-day-btn.finish-day-btn-bronze {
+            background: linear-gradient(135deg, #a5673e, #744124);
+            border-color: #65371d;
+            color: #ffe5d3;
+        }
+
+        .finish-day-btn.finish-day-btn-platinum {
+            background: linear-gradient(135deg, #2d7fb0, #2b4ea8);
+            border-color: #254693;
+            color: #eff8ff;
+        }
+
+        .finish-day-btn.finish-day-btn-participant {
+            background: linear-gradient(135deg, #6f6b96, #4f4b78);
+            border-color: #46426d;
+            color: #f1eeff;
+        }
+
+        .finish-day-btn.finish-day-btn-empty {
+            background: linear-gradient(135deg, #8f8f8f, #666666);
+            border-color: #5b5b5b;
+            color: #fafafa;
+        }
+
+        .goal-modal-meta {
+            margin-bottom: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: #f7f7ff;
+            border: 1px solid #e7e4ff;
+            font-size: 0.92rem;
+        }
+
+        .goal-number-animate {
+            animation: goal-number-pop 0.45s ease;
+        }
+
+        @keyframes goal-number-pop {
+            0% {
+                transform: scale(1);
+                background-color: #fff;
+            }
+            50% {
+                transform: scale(1.03);
+                background-color: #f4eeff;
+            }
+            100% {
+                transform: scale(1);
+                background-color: #fff;
+            }
         }
 
         .day.day-rated-gold {
@@ -343,7 +407,7 @@
         }
 
         /* Общий контейнер для папок и заметок */
-        #notesContainer, #routineContainer, #tasksContainer, #profileContainer {
+        #notesContainer, #routineContainer, #tasksContainer, #newsContainer, #profileContainer {
             opacity: 0;
             max-height: 0;
             overflow: hidden;
@@ -351,7 +415,7 @@
         }
 
         /* Активный контейнер */
-        #notesContainer.show, #routineContainer.show, #tasksContainer.show, #profileContainer.show {
+        #notesContainer.show, #routineContainer.show, #tasksContainer.show, #newsContainer.show, #profileContainer.show {
             opacity: 1;
             max-height: fit-content; /* или другой подходящий максимум, чтобы плавно раскрыть */
         }
@@ -398,6 +462,87 @@
         #languageSelect {
             width: auto;
             display: block;
+        }
+
+        .news-feed {
+            width: 100%;
+            margin-top: 14px;
+            background: linear-gradient(160deg, #fcfaff, #f4eeff);
+            border: 1px solid #e4d7ff;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 10px 24px rgba(91, 45, 173, 0.08);
+        }
+
+        .news-feed-title {
+            margin: 0;
+            font-size: 1.08rem;
+            font-weight: 800;
+            color: #432675;
+        }
+
+        .news-feed-subtitle {
+            margin: 3px 0 0;
+            color: #675f7d;
+            font-size: 0.87rem;
+        }
+
+        .news-feed-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .news-feed-head-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #efe4ff;
+            color: #5b2dad;
+            font-size: 1.1rem;
+        }
+
+        .news-feed-item {
+            background: #fff;
+            border: 1px solid #ebe2ff;
+            border-radius: 14px;
+            padding: 11px 12px;
+            box-shadow: 0 4px 14px rgba(75, 35, 142, 0.07);
+        }
+
+        .news-feed-item + .news-feed-item {
+            margin-top: 8px;
+        }
+
+        .news-feed-date {
+            font-size: 0.74rem;
+            color: #5f4d83;
+            margin-bottom: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border-radius: 999px;
+            background: #f3edff;
+            border: 1px solid #e3d8ff;
+            padding: 3px 9px;
+        }
+
+        .news-feed-item-title {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #2f1e53;
+        }
+
+        .news-feed-item-description {
+            margin: 5px 0 0;
+            font-size: 0.9rem;
+            color: #2e2e35;
         }
 
         /* Стиль папки */
@@ -615,7 +760,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.6.3">
+        <meta name="version" content="1.3.7.0">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -630,8 +775,8 @@
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
                 <div class="text-center day" data-day="2026-04-05"><div>Вс</div><div>5</div></div>
-                <div class="text-center day active" data-day="2026-04-06"><div>Пн</div><div>6</div></div>
-                <div class="text-center day" data-day="2026-04-07"><div>Вт</div><div>7</div></div>
+                <div class="text-center day" data-day="2026-04-06"><div>Пн</div><div>6</div></div>
+                <div class="text-center day active" data-day="2026-04-07"><div>Вт</div><div>7</div></div>
                 <div class="text-center day" data-day="2026-04-08"><div>Ср</div><div>8</div></div>
                 <div class="text-center day" data-day="2026-04-09"><div>Чт</div><div>9</div></div>
                 <div class="text-center day" data-day="2026-04-10"><div>Пт</div><div>10</div></div>
@@ -657,7 +802,26 @@
         </div>
     </div>
 
-    <!-- Блок с заметками -->
+    <div class="container" id="newsContainer">
+        <section class="news-feed" aria-label="Лента новостей">
+            <div class="news-feed-head">
+                <div>
+                    <h2 class="news-feed-title">Лента новостей</h2>
+                    <p class="news-feed-subtitle">Последние обновления</p>
+                </div>
+                <span class="news-feed-head-icon"><i class="bi bi-megaphone"></i></span>
+            </div>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Опубликовано: 2026-04-07
+                    </div>
+                    <h3 class="news-feed-item-title">Обновление до версии 1.3.7.0</h3>
+                    <p class="news-feed-item-description">В приложении добавлена новостная лента. Все будущие обновления будут публиковаться в этой ленте.</p>
+                </article>
+                    </section>
+    </div>
+
+    <!-- Блок профиля -->
     <div class="container" id="profileContainer">
         <div class="profile-click-settings">
             <div class="profile-select-block">
@@ -703,13 +867,14 @@
             <option value="en">English</option>
             <option value="ru" selected="">Русский</option>
         </select>
-        <span>Версия: 1.3.6.3</span>
+        <span>Версия: 1.3.7.0</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
     <button class="btn btn-primary add-note-btn" title="Добавить заметку/задачу" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
     <button class="btn btn-success finish-day-btn" id="finishDayBtn" title="Завершить день" style="display: inline-flex;">
-        <i class="bi bi-award"></i> Завершить день    </button>
+        <i class="bi bi-award"></i> <span id="finishDayBtnText">Завершить день</span>
+    </button>
 
     <!-- Модальное окно для уведомления -->
     <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
@@ -775,7 +940,11 @@
                 </div>
                 <div class="modal-body">
                     <input type="number" id="task" style="display: none">
-                    <input type="number" class="form-control" id="goalNumberInput" placeholder="Enter a number">
+                    <div class="goal-modal-meta">
+                        <div><strong>Цель:</strong> <span id="goalInputModalGoalValue">0</span></div>
+                        <div><strong>Текущее значение:</strong> <span id="goalInputModalCurrentValue">0</span></div>
+                    </div>
+                    <input type="number" step="any" inputmode="decimal" class="form-control" id="goalNumberInput" placeholder="Enter a number">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
@@ -1020,9 +1189,13 @@
             <i class="bi bi-journal-text"></i>
             <span>Заметки</span>
         </button>
+        <button class="nav-button" data-target="newsContainer">
+            <i class="bi bi-newspaper"></i>
+            <span>Новости</span>
+        </button>
         <button class="nav-button" data-target="profileContainer">
-            <i class="bi bi-person-circle"></i>
-            <span>Профиль</span>
+            <i class="bi bi-gear-fill"></i>
+            <span>Настройки</span>
         </button>
     </nav>
         
@@ -1555,23 +1728,11 @@
                 return false;
             }
 
-            const { type, interval, daysOfWeek, daysOfMonth, fromLastDate, lastDate } = task.regularity;
-
-            // Для режима fromLastDate опираемся на последнюю дату выполнения.
-            // Если поле lastDate ещё не заполнено, пробуем восстановить его из истории выполнения.
-            const effectiveLastDate = fromLastDate === true
-                ? (lastDate != null ? lastDate : getLastDoneDay(task))
-                : null;
-
-            if (fromLastDate === true && effectiveLastDate != null) {
-                const lastDateDate = (new Date(new Date(effectiveLastDate).toDateString()));
-                if (date < lastDateDate) return false;
-                dateStart = lastDateDate;
-            }
+            const { type, interval, daysOfWeek, daysOfMonth, fromLastDate } = task.regularity;
 
             if (task.dateEnd != null) {
                 const dateEnd = (new Date(new Date(task.dateEnd).toDateString()));
-                if (date > dateEnd && (fromLastDate !== true || lastDate != null || date > lastDate || !isTaskDue(task, dateEnd))) {
+                if (date > dateEnd) {
                     return false;
                 }
             }
@@ -1579,14 +1740,10 @@
             switch (type) {
                 case 'daily':
                     // Проверка разницы в днях между базовой датой и текущим днём
-                    const diffDays = getCalendarDayDiff(dateStart, date);
                     if (fromLastDate) {
-                        // До первого выполнения соблюдаем обычный интервал от даты старта,
-                        // после первого выполнения: в день ожидания и далее каждый день,
-                        // пока задача не будет выполнена.
-                        if (effectiveLastDate == null) return diffDays % interval === 0;
-                        return diffDays >= interval;
+                        return getFromLastDateDailyDueWindowStart(task, date) != null;
                     }
+                    const diffDays = getCalendarDayDiff(dateStart, date);
                     return diffDays % interval === 0;
 
                 case 'weekly':
@@ -1635,7 +1792,8 @@
                 // Функция для определения, должна ли задача выполниться сегодня
                 const isDue = isTaskDue(task, date);
                 const done = IsTaskCompleted(task, date);
-                if (isDue || done) {
+                const hasProgress = hasTaskProgressForDate(task, date);
+                if (isDue || hasProgress) {
                     // Разделение по выполненности
                     if (done) {
                         completedTasks.push(task);
@@ -1878,6 +2036,13 @@
             return IsTaskCompletedFromResult(task, result);
         }
 
+        function hasTaskProgressForDate(task, date) {
+            const result = GetTaskCompletionResult(task, date);
+            if (result === true) return true;
+            if (typeof result === 'number') return result > 0;
+            return false;
+        }
+
         function IsTaskCompletedFromResult(task, result) {
             if (result !== null) {
                 if (task.goal != null) {
@@ -1893,68 +2058,73 @@
             if (!task.regularity) {
                 return task.dateEnd != null && (date > (new Date(new Date(task.dateEnd).toDateString())));
             } else {
-                let { type, interval, daysOfWeek, daysOfMonth, fromLastDate, lastDate } = task.regularity;
-                if (fromLastDate === true) {
-                    const lastDateDate = (lastDate == null) ? (new Date(new Date(task.dateStart).toDateString())) : (new Date(new Date(lastDate).toDateString()));
-                    if (date < lastDateDate) return false;
-                    switch (type) {
-                        case 'daily':
-                            // Проверка разницы в днях между последним выполнением и сегодня
-                            const diffDays = getCalendarDayDiff(lastDateDate, date);
-                            return diffDays > interval || lastDate == null && diffDays !== 0;
-                    }
+                const { type, fromLastDate } = task.regularity;
+                if (fromLastDate === true && type === 'daily') {
+                    const dueWindowStart = getFromLastDateDailyDueWindowStart(task, date);
+                    return dueWindowStart != null && getCalendarDayDiff(dueWindowStart, date) > 0;
                 }
             }
             return false;
         }
 
-        function getLastDoneDay(task) {
-            let lastYear = -Infinity;
-            let lastWeek = -Infinity;
-            let lastDay = -Infinity;
+        function getCompletedDays(task) {
+            const completedDays = [];
+            if (!task.completion || typeof task.completion !== 'object') return completedDays;
 
-            if (!task.completion || typeof task.completion !== 'object') return null;
-
-            // Перебираем все года
             for (const yearStr in task.completion) {
                 const year = parseInt(yearStr);
                 if (isNaN(year)) continue;
 
                 const weeks = task.completion[year];
 
-                // Перебираем все недели этого года
                 for (const weekStr in weeks) {
                     const week = parseInt(weekStr);
                     if (isNaN(week)) continue;
 
                     const days = weeks[week];
 
-                    // Перебираем все дни этой недели
                     for (const dayStr in days) {
                         const day = parseInt(dayStr);
-                        const data = days[dayStr];
+                        const result = days[dayStr];
+                        if (!result || !IsTaskCompletedFromResult(task, result)) continue;
 
-                        if (data && IsTaskCompletedFromResult(task, data)) {
-                            // Проверяем, является ли эта дата более поздней
-                            if (
-                                year > lastYear ||
-                                (year === lastYear && week > lastWeek) ||
-                                (year === lastYear && week === lastWeek && day > lastDay)
-                            ) {
-                                lastYear = year;
-                                lastWeek = week;
-                                lastDay = day;
-                            }
+                        const dateStr = getDateFromYearWeekDay(year, week, day);
+                        if (dateStr) {
+                            completedDays.push(new Date(new Date(dateStr).toDateString()));
                         }
                     }
                 }
             }
 
-            if (lastYear === -Infinity) return null; // Нет выполненных задач
+            completedDays.sort((a, b) => a - b);
+            return completedDays;
+        }
 
-            // Преобразуем (год, неделя, день) в конкретную дату
-            const dateStr = getDateFromYearWeekDay(lastYear, lastWeek, lastDay);
-            return dateStr || null;
+        function getFromLastDateDailyDueWindowStart(task, date) {
+            if (!task.regularity || task.regularity.type !== 'daily' || task.regularity.fromLastDate !== true) {
+                return null;
+            }
+
+            const interval = Number(task.regularity.interval) || 1;
+            let dueWindowStart = (new Date(new Date(task.dateStart).toDateString()));
+            if (date < dueWindowStart) return null;
+
+            const completedDays = getCompletedDays(task) ?? [];
+            for (const completedDay of completedDays) {
+                if (completedDay < dueWindowStart) continue;
+
+                if (date <= completedDay) {
+                    return dueWindowStart;
+                }
+
+                const nextDueWindowStart = new Date(completedDay);
+                nextDueWindowStart.setDate(nextDueWindowStart.getDate() + interval);
+                dueWindowStart = nextDueWindowStart;
+
+                if (date < dueWindowStart) return null;
+            }
+
+            return date >= dueWindowStart ? dueWindowStart : null;
         }
 
         function SetTaskComplete(task, result, date) {
@@ -1972,14 +2142,8 @@
                     task.completion[year][weekNumber] = {};
                 }
                 task.completion[year][weekNumber][dayOfWeek] = result;
-                if (task.regularity.fromLastDate === true) {
-                    if (IsTaskCompleted(task, date)) {
-                        task.regularity.lastDate = date.toStringWithoutTime();
-                    } else {
-                        const lastDone = getLastDoneDay(task);
-                        if (lastDone !== null) task.regularity.lastDate = lastDone;
-                        else delete task.regularity.lastDate;
-                    }
+                if (task.regularity.fromLastDate === true && 'lastDate' in task.regularity) {
+                    delete task.regularity.lastDate;
                 }
             }
             else {
@@ -2010,7 +2174,7 @@
         let goalTimerIntervalId = null;
 
         // массив ID всех контейнеров
-        const containers = ['notesContainer', 'routineContainer', 'tasksContainer', 'profileContainer'];
+        const containers = ['notesContainer', 'routineContainer', 'tasksContainer', 'newsContainer', 'profileContainer'];
         const navTop = document.querySelector('.nav-top');
 
         const formIsTaskSwitch = document.getElementById('isTaskSwitch');
@@ -2096,8 +2260,8 @@
                 }
 
                 const isDue = isTaskDue(task, date);
-                const done = IsTaskCompleted(task, date);
-                if (isDue || done) {
+                const hasProgress = hasTaskProgressForDate(task, date);
+                if (isDue || hasProgress) {
                     dailyTasks.push(task);
                 }
             }
@@ -2194,7 +2358,7 @@
             const activeTabId = getCurrentActiveTabId();
             const isTaskTabActive = activeTabId === 'routineContainer';
             const diff = getCalendarDayDiff(today, selectedDate);
-            const dailyTasksCount = getDailyTasksForDate(selectedDate).length;
+            const existingRating = getDayRating(selectedDate);
 
             let canShow = false;
             let reason = 'Дата в будущем';
@@ -2212,6 +2376,46 @@
             }
 
             finishDayBtn.style.display = (isTaskTabActive && canShow) ? 'inline-flex' : 'none';
+            const finishDayBtnText = document.getElementById('finishDayBtnText');
+            const buttonLabel = existingRating ? 'Пересчитать день' : 'Завершить день';
+            finishDayBtn.title = existingRating ? 'Пересчитать завершённый день' : 'Завершить день';
+            if (finishDayBtnText) {
+                finishDayBtnText.textContent = buttonLabel;
+            }
+            finishDayBtn.classList.remove(
+                'finish-day-btn-gold',
+                'finish-day-btn-silver',
+                'finish-day-btn-bronze',
+                'finish-day-btn-platinum',
+                'finish-day-btn-participant',
+                'finish-day-btn-empty'
+            );
+            if (existingRating) {
+                finishDayBtn.classList.add(`finish-day-btn-${existingRating}`);
+            }
+        }
+
+        function animateGoalInputValue(inputElem, fromValue, toValue) {
+            const startValue = Number(fromValue) || 0;
+            const endValue = Number(toValue) || 0;
+            const duration = 320;
+            const startAt = performance.now();
+
+            inputElem.classList.remove('goal-number-animate');
+            void inputElem.offsetWidth;
+            inputElem.classList.add('goal-number-animate');
+
+            const frame = (time) => {
+                const progress = Math.min((time - startAt) / duration, 1);
+                const current = startValue + (endValue - startValue) * progress;
+                inputElem.value = Number(current.toFixed(2));
+                if (progress < 1) {
+                    requestAnimationFrame(frame);
+                } else {
+                    inputElem.value = Number(endValue.toFixed(2));
+                }
+            };
+            requestAnimationFrame(frame);
         }
 
         function formatGoalSeconds(totalSeconds) {
@@ -2981,8 +3185,13 @@
                     // Установка значения поля task
                     document.getElementById('task').value = task.id; // Предположим, что у задачи есть поле id
 
-                    // Очистка поля ввода
-                    document.getElementById('goalNumberInput').value = GetTaskCompletionResult(task);
+                    const currentValue = Number(GetTaskCompletionResult(task) ?? 0);
+                    const nextValue = currentValue + 1;
+                    const goalValue = Number(task.goal.count ?? 0);
+                    const goalNumberInput = document.getElementById('goalNumberInput');
+                    document.getElementById('goalInputModalGoalValue').textContent = goalValue;
+                    document.getElementById('goalInputModalCurrentValue').textContent = currentValue;
+                    animateGoalInputValue(goalNumberInput, currentValue, nextValue);
 
                     // Показать модальное окно
                     var modal = new bootstrap.Modal(document.getElementById('goalInputModal'));
@@ -3043,6 +3252,9 @@
         }
 
         finishDayBtn.addEventListener('click', () => {
+            if (getDayRating(selectedDate) && !confirm('День уже завершён. Пересчитать день?')) {
+                return;
+            }
             const score = calculateDayScore(selectedDate);
             setDayRating(selectedDate, score.rating);
             save();
@@ -3522,10 +3734,6 @@
                 }
 
                 if (repeatable != null && repeatable !== '') {
-                    const previousRegularity = (task.regularity && typeof task.regularity === 'object')
-                        ? { ...task.regularity }
-                        : null;
-
                     switch (repeatable) {
                         case 'daily':
                             let dailyInterval = formFields.dailyInterval.value ?? 1;
@@ -3537,10 +3745,6 @@
                             let isTaskShowFromLastDate = formFields.isTaskShowFromLastDate.checked;
                             if (isTaskShowFromLastDate) {
                                 task.regularity.fromLastDate = true;
-                                // При изменении интервала не теряем дату последнего выполнения.
-                                if (previousRegularity?.type === 'daily' && previousRegularity?.lastDate != null) {
-                                    task.regularity.lastDate = previousRegularity.lastDate;
-                                }
                             }
                             else delete task.regularity.fromLastDate;
                             break;
