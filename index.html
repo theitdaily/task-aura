@@ -434,6 +434,16 @@
             margin-bottom: 88px;
         }
 
+        #routineContainer,
+        #tasksContainer {
+            min-height: 0;
+        }
+
+        #routineContainer.show,
+        #tasksContainer.show {
+            min-height: calc(100vh - 220px);
+        }
+
         #profileContainer button {
             border: none;
             padding: 8px 12px;
@@ -543,6 +553,7 @@
             margin: 5px 0 0;
             font-size: 0.9rem;
             color: #2e2e35;
+            white-space: pre-line;
         }
 
         /* Стиль папки */
@@ -758,9 +769,63 @@
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 6px 12px;
         }
+
+        .quick-add-panel {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .quick-add-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #67429b;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .quick-add-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .quick-add-btn {
+            border: 1px solid #d7c5f3;
+            background: #fff;
+            color: #5b3a8a;
+            border-radius: 12px;
+            padding: 8px 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1.2;
+            transition: all 0.2s ease;
+        }
+
+        .quick-add-btn:hover {
+            background: #f7f1ff;
+            border-color: #be9ef0;
+        }
+
+        .quick-add-btn.active {
+            border-color: var(--accent-color-dark);
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-color-dark));
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(105, 67, 170, 0.25);
+        }
+
+        .quick-add-hint {
+            margin: 0;
+            border-radius: 10px;
+            background: #f2ebff;
+            border: 1px solid #e0d3f7;
+            padding: 8px 10px;
+            font-size: 0.85rem;
+            color: #5e3f90;
+        }
     </style>
 
-        <meta name="version" content="1.3.7.0">
+        <meta name="version" content="1.3.9">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -776,9 +841,9 @@
             <div class="d-flex justify-content-around" id="weekDays">
                 <div class="text-center day" data-day="2026-04-05"><div>Sun</div><div>5</div></div>
                 <div class="text-center day" data-day="2026-04-06"><div>Mon</div><div>6</div></div>
-                <div class="text-center day active" data-day="2026-04-07"><div>Tue</div><div>7</div></div>
+                <div class="text-center day" data-day="2026-04-07"><div>Tue</div><div>7</div></div>
                 <div class="text-center day" data-day="2026-04-08"><div>Wed</div><div>8</div></div>
-                <div class="text-center day" data-day="2026-04-09"><div>Thu</div><div>9</div></div>
+                <div class="text-center day active" data-day="2026-04-09"><div>Thu</div><div>9</div></div>
                 <div class="text-center day" data-day="2026-04-10"><div>Fri</div><div>10</div></div>
                 <div class="text-center day" data-day="2026-04-11"><div>Sat</div><div>11</div></div>
             </div>
@@ -813,9 +878,19 @@
             </div>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Published on: 2026-04-09
+                    </div>
+                    <h3 class="news-feed-item-title">Update to version 1.3.9</h3>
+                    <p class="news-feed-item-description">- Localized create/edit headers were added.
+- Added viewport-based minimum task area height.
+- Added configurable increment step for count goals.
+- Added quick fill modes for regular tasks, one-time tasks, and notes in the add form.</p>
+                </article>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Published on: 2026-04-07
                     </div>
-                    <h3 class="news-feed-item-title">Update to version 1.3.7.0</h3>
+                    <h3 class="news-feed-item-title">Update to version 1.3.7</h3>
                     <p class="news-feed-item-description">News feed has been added to the app. All future updates will be published in this feed.</p>
                 </article>
                     </section>
@@ -867,12 +942,12 @@
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.3.7.0</span>
+        <span>Version: 1.3.9</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
     <button class="btn btn-primary add-note-btn" title="Add a note/task" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
-    <button class="btn btn-success finish-day-btn" id="finishDayBtn" title="Complete day" style="display: inline-flex;">
+    <button class="btn btn-success finish-day-btn" id="finishDayBtn" title="Complete day" style="display: none;">
         <i class="bi bi-award"></i> <span id="finishDayBtnText">Complete day</span>
     </button>
 
@@ -1004,6 +1079,15 @@
                 <div class="modal-body">
                     <form id="formNoteForm">
                         <input type="text" name="id" id="formNoteID" class="d-none">
+                        <div class="quick-add-panel" id="quickAddPanel">
+                            <div class="quick-add-title">Quick fill mode</div>
+                            <div class="quick-add-actions">
+                                <button type="button" class="quick-add-btn" id="quickPresetRoutineBtn">Regular task mode</button>
+                                <button type="button" class="quick-add-btn" id="quickPresetTaskBtn">One-time task mode</button>
+                                <button type="button" class="quick-add-btn" id="quickPresetNoteBtn">Note mode</button>
+                            </div>
+                            <p class="quick-add-hint" id="quickAddHint">Fields stay available, but recommended values are applied for faster input.</p>
+                        </div>
                         <div class="form-section">
                             <div class="form-section-title">Basic information</div>
                             <div class="input-group mb-3">
@@ -1113,6 +1197,9 @@
                             <div id="taskGoalCount" style="display: none;">
                                 <label for="taskRepeatCount" class="form-label mt-2">Quantity</label>
                                 <input type="number" class="form-control" id="taskRepeatCount">
+
+                                <label for="taskGoalCountStep" class="form-label mt-2">Increment step when opening quantity input</label>
+                                <input type="number" step="any" class="form-control" id="taskGoalCountStep" placeholder="No increment">
                             </div>
 
                             <!-- Для "Время выполнения" -->
@@ -2208,6 +2295,7 @@
             countGoal: document.getElementById('taskGoalCount'),
             timeGoal: document.getElementById('taskTimeGoal'),
             repeatCount: document.getElementById('taskRepeatCount'),
+            goalCountStep: document.getElementById('taskGoalCountStep'),
             goalMinutes: document.getElementById('taskGoalMinutes'),
             goalSeconds: document.getElementById('taskGoalSeconds')
         };
@@ -2223,6 +2311,112 @@
         const taskClickActionSelect = document.getElementById('taskClickActionSelect');
         const noteClickActionSelect = document.getElementById('noteClickActionSelect');
         const finishDayBtn = document.getElementById('finishDayBtn');
+        const formNoteModalLabel = document.getElementById('formNoteModalLabel');
+        const formNoteSaveBtn = document.getElementById('formNoteSaveBtn');
+        const quickAddPanel = document.getElementById('quickAddPanel');
+        const quickAddHint = document.getElementById('quickAddHint');
+        const quickPresetRoutineBtn = document.getElementById('quickPresetRoutineBtn');
+        const quickPresetTaskBtn = document.getElementById('quickPresetTaskBtn');
+        const quickPresetNoteBtn = document.getElementById('quickPresetNoteBtn');
+        const addNoteBtn = document.querySelector('.add-note-btn');
+        let currentActiveTab = 'routineContainer';
+        let activeQuickPreset = 'note';
+
+        function setNoteFormMode(isEditMode) {
+            formNoteModalLabel.textContent = isEditMode ? 'Edit' : 'Add a note';
+            formNoteSaveBtn.textContent = isEditMode ? 'Save' : 'Create';
+        }
+
+        function getDefaultPresetByTab(targetId) {
+            if (targetId === 'routineContainer') return 'routine';
+            if (targetId === 'tasksContainer') return 'task';
+            return 'note';
+        }
+
+        function updateQuickPresetButtons() {
+            quickPresetRoutineBtn.classList.toggle('active', activeQuickPreset === 'routine');
+            quickPresetTaskBtn.classList.toggle('active', activeQuickPreset === 'task');
+            quickPresetNoteBtn.classList.toggle('active', activeQuickPreset === 'note');
+        }
+
+        function setQuickAddHintByPreset(preset) {
+            if (preset === 'routine') {
+                quickAddHint.textContent = 'Preset for habits: task mode is enabled, daily repetition is selected, and the date starts from the chosen day.';
+                return;
+            }
+            if (preset === 'task') {
+                quickAddHint.textContent = 'Preset for one-time tasks: task mode is enabled without repetition, with focus on date and execution details.';
+                return;
+            }
+            quickAddHint.textContent = 'Preset for notes: task mode is disabled so you can quickly capture text, folder, and parent note.';
+        }
+
+        function detectQuickPresetFromForm() {
+            if (!formIsTaskSwitch.checked) {
+                return 'note';
+            }
+            if (formFields.repeat.value !== 'null') {
+                return 'routine';
+            }
+            return 'task';
+        }
+
+        function syncQuickPresetFromForm() {
+            const preset = detectQuickPresetFromForm();
+            if (activeQuickPreset === preset) return;
+            activeQuickPreset = preset;
+            updateQuickPresetButtons();
+            setQuickAddHintByPreset(preset);
+        }
+
+        function applyQuickPreset(preset) {
+            activeQuickPreset = preset;
+            updateQuickPresetButtons();
+            setQuickAddHintByPreset(preset);
+
+            if (preset === 'routine') {
+                formIsTaskSwitch.checked = true;
+                formFields.repeat.value = 'daily';
+                formFields.dailyInterval.value = 1;
+                formFields.timeType.value = 'null';
+                formFields.goalType.value = 'null';
+                if (!formFields.dateStart.value) {
+                    formFields.dateStart.value = selectedDate.toStringWithoutTime();
+                }
+                formFields.dateEnd.value = '';
+            } else if (preset === 'task') {
+                formIsTaskSwitch.checked = true;
+                formFields.repeat.value = 'null';
+                formFields.timeType.value = 'null';
+                formFields.goalType.value = 'null';
+                if (!formFields.dateStart.value) {
+                    formFields.dateStart.value = selectedDate.toStringWithoutTime();
+                }
+                formFields.dateEnd.value = '';
+            } else {
+                formIsTaskSwitch.checked = false;
+                formFields.repeat.value = 'null';
+                formFields.timeType.value = 'null';
+                formFields.goalType.value = 'null';
+            }
+
+            toggleTaskFields(formIsTaskSwitch.checked);
+            handleRepeatChange();
+            showTimeType(formFields.timeType.value);
+            showGoalType(formFields.goalType.value);
+        }
+
+        function updateAddButtonContext(targetId) {
+            if (targetId === 'routineContainer') {
+                addNoteBtn.title = 'Add a regular task';
+                return;
+            }
+            if (targetId === 'tasksContainer') {
+                addNoteBtn.title = 'Add a one-time task';
+                return;
+            }
+            addNoteBtn.title = 'Add a note/task';
+        }
 
         function getDayRating(date) {
             const year = date.getFullYear();
@@ -2398,7 +2592,7 @@
         function animateGoalInputValue(inputElem, fromValue, toValue) {
             const startValue = Number(fromValue) || 0;
             const endValue = Number(toValue) || 0;
-            const duration = 320;
+            const duration = 1000;
             const startAt = performance.now();
 
             inputElem.classList.remove('goal-number-animate');
@@ -2742,6 +2936,7 @@
                 // Можно добавить обработчик клика для добавления заметки в этот папку
                 plusIcon.addEventListener('click', () => {
                     ResetNoteForm();
+                    setNoteFormMode(false);
                     formNoteModal.show();
                     formFields.folder.value = folderId;
                 });
@@ -2958,6 +3153,7 @@
             const note = data.notes[note_id];
 
             ResetNoteForm();
+            setNoteFormMode(true);
             formFields.id.value = note.id;
             formFields.icon.value = note.icon ?? '';
             formFields.title.value = note.title;
@@ -3023,6 +3219,7 @@
                 switch (goalType) {
                     case 'count':
                         formFields.repeatCount.value = task.goal.count;
+                        formFields.goalCountStep.value = task.goal.step ?? '';
                         break;
                     case 'time':
                         const time = task.goal.count;
@@ -3186,7 +3383,9 @@
                     document.getElementById('task').value = task.id; // Предположим, что у задачи есть поле id
 
                     const currentValue = Number(GetTaskCompletionResult(task) ?? 0);
-                    const nextValue = currentValue + 1;
+                    const incrementStep = Number(task.goal.step);
+                    const safeIncrementStep = Number.isFinite(incrementStep) ? incrementStep : 0;
+                    const nextValue = currentValue + safeIncrementStep;
                     const goalValue = Number(task.goal.count ?? 0);
                     const goalNumberInput = document.getElementById('goalNumberInput');
                     document.getElementById('goalInputModalGoalValue').textContent = goalValue;
@@ -3314,6 +3513,8 @@
                     targetContainer.classList.add('show');
                 }
 
+                currentActiveTab = targetId;
+                updateAddButtonContext(targetId);
                 localStorage.setItem('activeTab', targetId);
                 updateFinishDayButtonVisibility();
             });
@@ -3327,6 +3528,8 @@
                 if (btn && !btn.classList.contains('active')) {
                     btn.click();  // Или аналогичный код, чтобы активировать вкладку
                 }
+            } else {
+                updateAddButtonContext(currentActiveTab);
             }
         });
 
@@ -3578,7 +3781,6 @@
             container.addEventListener('touchend', finishSwipe, { passive: true });
             container.addEventListener('touchcancel', finishSwipe, { passive: true });
         }
-
         bindDaySwipe('tasksContainer');
         bindDaySwipe('routineContainer');
 
@@ -3708,6 +3910,15 @@
                     task.goal.count = goalType === 'count' ?
                         (formFields.repeatCount.value * 1 ?? 1) :
                         (formFields.goalMinutes.value * 60 ?? 0) + (formFields.goalSeconds.value * 1 ?? 0);
+
+                    if (goalType === 'count') {
+                        const goalStepValue = formFields.goalCountStep.value.trim();
+                        if (goalStepValue !== '' && !isNaN(goalStepValue)) {
+                            task.goal.step = Number(goalStepValue);
+                        } else if ('step' in task.goal) {
+                            delete task.goal.step;
+                        }
+                    }
                 } else {
                     if ('goal' in task) {
                         delete task.goal;
@@ -3817,6 +4028,12 @@
         }
 
         formNoteModalEl.addEventListener('show.bs.modal', () => {
+            const isEditMode = !!formFields.id.value;
+            quickAddPanel.style.display = isEditMode ? 'none' : 'grid';
+            if (!isEditMode) {
+                setNoteFormMode(false);
+                applyQuickPreset(getDefaultPresetByTab(currentActiveTab));
+            }
             toggleTaskFields(formIsTaskSwitch.checked);
         });
 
@@ -3824,6 +4041,9 @@
             if (formFields.id.value > 0) {
                 ResetNoteForm();
             }
+            quickAddPanel.style.display = 'grid';
+            applyQuickPreset('note');
+            setNoteFormMode(false);
         });
 
         function toggleTaskFields(show) {
@@ -3869,6 +4089,7 @@
                 formFields.timeGoal.style.display = 'none';
 
                 formFields.repeatCount.disabled = false;
+                formFields.goalCountStep.disabled = false;
                 formFields.goalMinutes.disabled = true;
                 formFields.goalSeconds.disabled = true;
             } else if (type === 'time') {
@@ -3876,18 +4097,27 @@
                 formFields.timeGoal.style.display = 'block';
 
                 formFields.repeatCount.disabled = true;
+                formFields.goalCountStep.disabled = true;
                 formFields.goalMinutes.disabled = false;
                 formFields.goalSeconds.disabled = false;
             } else {
                 formFields.countGoal.style.display = 'none';
                 formFields.timeGoal.style.display = 'none';
+
+                formFields.repeatCount.disabled = true;
+                formFields.goalCountStep.disabled = true;
             }
         }
 
         // Обработчики переключателя
         formIsTaskSwitch.addEventListener('change', () => {
             toggleTaskFields(formIsTaskSwitch.checked);
+            syncQuickPresetFromForm();
         });
+
+        quickPresetRoutineBtn.addEventListener('click', () => applyQuickPreset('routine'));
+        quickPresetTaskBtn.addEventListener('click', () => applyQuickPreset('task'));
+        quickPresetNoteBtn.addEventListener('click', () => applyQuickPreset('note'));
 
         // Обработчики выборов
         document.getElementById('taskTimeType').addEventListener('change', (e) => {
@@ -3923,6 +4153,7 @@
             } else if (value === 'monthly') {
                 formFields.repeatMonthlyContainer.style.display = 'block';
             }
+            syncQuickPresetFromForm();
         }
         formFields.repeat.addEventListener('change', handleRepeatChange);
 
