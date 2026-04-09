@@ -825,7 +825,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.9">
+        <meta name="version" content="1.3.9.1">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -876,6 +876,16 @@
                 </div>
                 <span class="news-feed-head-icon"><i class="bi bi-megaphone"></i></span>
             </div>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Published on: 2026-04-09
+                    </div>
+                    <h3 class="news-feed-item-title">Update to version 1.3.9.1</h3>
+                    <p class="news-feed-item-description">- Improved task sorting in task tabs: execution time now has a higher priority than manual moves.
+- Tasks are sorted by time from earlier to later.
+- For tasks without a specified time, the nearest timed task above is used as an anchor and saved for stable sorting.
+- Drag-and-drop blocks impossible manual orders that contradict time-priority sorting.</p>
+                </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Published on: 2026-04-09
@@ -942,7 +952,7 @@
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.3.9</span>
+        <span>Version: 1.3.9.1</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -1890,36 +1900,66 @@
                 }
             }
 
-            const getRegularSortOrder = (task) => Number.isFinite(Number(task.sortOrderRegular))
-                ? Number(task.sortOrderRegular)
-                : null;
-            const compareByTimeStart = (a, b) => {
-                if (!a.timeStart && !b.timeStart) return 0;
-                if (!a.timeStart) return 1;   // без времени в конец
-                if (!b.timeStart) return -1;
+            const compareByTimedPriority = (a, b, settings) => {
+                const getGroupOrder = settings.getGroupOrder;
+                const getStoredAnchor = settings.getStoredAnchor;
+                const getLegacySortOrder = settings.getLegacySortOrder;
 
-                // Преобразуем HH:MM в минуты
-                const [aH, aM] = a.timeStart.split(':').map(Number);
-                const [bH, bM] = b.timeStart.split(':').map(Number);
+                const toMinutes = (time) => {
+                    if (typeof time !== 'string' || !time.includes(':')) return null;
+                    const [hours, minutes] = time.split(':').map(Number);
+                    if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+                    return hours * 60 + minutes;
+                };
 
-                const aMinutes = aH * 60 + aM;
-                const bMinutes = bH * 60 + bM;
+                const getAnchorTime = (task) => task.timeStart ?? getStoredAnchor(task) ?? null;
+                const anchorDiff = (() => {
+                    const aMinutes = toMinutes(getAnchorTime(a));
+                    const bMinutes = toMinutes(getAnchorTime(b));
+                    if (aMinutes == null && bMinutes == null) return 0;
+                    if (aMinutes == null) return 1;
+                    if (bMinutes == null) return -1;
+                    return aMinutes - bMinutes;
+                })();
+                if (anchorDiff !== 0) return anchorDiff;
 
-                return aMinutes - bMinutes; // по возрастанию
+                const aOrder = getGroupOrder(a);
+                const bOrder = getGroupOrder(b);
+                if (aOrder != null && bOrder != null && aOrder !== bOrder) {
+                    return aOrder - bOrder;
+                }
+
+                const aLegacySort = getLegacySortOrder(a);
+                const bLegacySort = getLegacySortOrder(b);
+                if (aLegacySort != null && bLegacySort != null && aLegacySort !== bLegacySort) {
+                    return aLegacySort - bLegacySort;
+                }
+
+                return Number(a.id) - Number(b.id);
             };
 
             // Сортировка невыполненных по timeStart (HH:MM)
             notCompletedTasks.sort((a, b) => {
-                const aSort = getRegularSortOrder(a);
-                const bSort = getRegularSortOrder(b);
-                if (aSort != null && bSort != null) return aSort - bSort;
-                return compareByTimeStart(a, b);
+                return compareByTimedPriority(a, b, {
+                    getGroupOrder: (task) => Number.isFinite(Number(task.sortOrderByTimeRegular))
+                        ? Number(task.sortOrderByTimeRegular)
+                        : null,
+                    getStoredAnchor: (task) => task.sortAnchorTimeRegular ?? null,
+                    getLegacySortOrder: (task) => Number.isFinite(Number(task.sortOrderRegular))
+                        ? Number(task.sortOrderRegular)
+                        : null,
+                });
             });
             completedTasks.sort((a, b) => {
-                const aSort = getRegularSortOrder(a);
-                const bSort = getRegularSortOrder(b);
-                if (aSort != null && bSort != null) return aSort - bSort;
-                return compareByTimeStart(a, b);
+                return compareByTimedPriority(a, b, {
+                    getGroupOrder: (task) => Number.isFinite(Number(task.sortOrderByTimeRegular))
+                        ? Number(task.sortOrderByTimeRegular)
+                        : null,
+                    getStoredAnchor: (task) => task.sortAnchorTimeRegular ?? null,
+                    getLegacySortOrder: (task) => Number.isFinite(Number(task.sortOrderRegular))
+                        ? Number(task.sortOrderRegular)
+                        : null,
+                });
             });
 
             // Сохраняем в TodayJson
@@ -1996,12 +2036,14 @@
                 }
 
                 // ---- Сравнение timeStart ----
-                if (!a.timeStart && !b.timeStart) return 0;
-                if (!a.timeStart) return 1;   // без времени → в конец
-                if (!b.timeStart) return -1;
+                const aAnchor = a.timeStart ?? a.sortAnchorTimeOnetime ?? null;
+                const bAnchor = b.timeStart ?? b.sortAnchorTimeOnetime ?? null;
+                if (!aAnchor && !bAnchor) return 0;
+                if (!aAnchor) return 1;   // без времени → в конец
+                if (!bAnchor) return -1;
 
-                const [aH, aM] = a.timeStart.split(':').map(Number);
-                const [bH, bM] = b.timeStart.split(':').map(Number);
+                const [aH, aM] = aAnchor.split(':').map(Number);
+                const [bH, bM] = bAnchor.split(':').map(Number);
 
                 const aMinutes = aH * 60 + aM;
                 const bMinutes = bH * 60 + bM;
@@ -2011,15 +2053,29 @@
 
             // Сортировка невыполненных по dateEnd
             notCompletedTasks.sort((a, b) => {
+                const aSortByTime = Number.isFinite(Number(a.sortOrderByTimeOnetime))
+                    ? Number(a.sortOrderByTimeOnetime)
+                    : null;
+                const bSortByTime = Number.isFinite(Number(b.sortOrderByTimeOnetime))
+                    ? Number(b.sortOrderByTimeOnetime)
+                    : null;
+                if (aSortByTime != null && bSortByTime != null && aSortByTime !== bSortByTime) return aSortByTime - bSortByTime;
                 const aSort = getOnetimeSortOrder(a);
                 const bSort = getOnetimeSortOrder(b);
-                if (aSort != null && bSort != null) return aSort - bSort;
+                if (aSort != null && bSort != null && aSort !== bSort) return aSort - bSort;
                 return compareOnetimeByDefaultRules(a, b);
             });
             completedTasks.sort((a, b) => {
+                const aSortByTime = Number.isFinite(Number(a.sortOrderByTimeOnetime))
+                    ? Number(a.sortOrderByTimeOnetime)
+                    : null;
+                const bSortByTime = Number.isFinite(Number(b.sortOrderByTimeOnetime))
+                    ? Number(b.sortOrderByTimeOnetime)
+                    : null;
+                if (aSortByTime != null && bSortByTime != null && aSortByTime !== bSortByTime) return aSortByTime - bSortByTime;
                 const aSort = getOnetimeSortOrder(a);
                 const bSort = getOnetimeSortOrder(b);
-                if (aSort != null && bSort != null) return aSort - bSort;
+                if (aSort != null && bSort != null && aSort !== bSort) return aSort - bSort;
                 return compareOnetimeByDefaultRules(a, b);
             });
 
@@ -2592,7 +2648,7 @@
         function animateGoalInputValue(inputElem, fromValue, toValue) {
             const startValue = Number(fromValue) || 0;
             const endValue = Number(toValue) || 0;
-            const duration = 1000;
+            const duration = 550;
             const startAt = performance.now();
 
             inputElem.classList.remove('goal-number-animate');
@@ -4392,8 +4448,19 @@
                 const sourceId = ev.dataTransfer.getData("text/plain");
                 const sourceElem = document.getElementById(sourceId);
                 const targetElem = document.getElementById(targetId);
+                const sourceTaskId = Number(sourceId?.replace('task-', ''));
+                const targetTaskId = Number(targetId?.replace('task-', ''));
+                const sourceTask = data.tasks[sourceTaskId];
+                const targetTask = data.tasks[targetTaskId];
 
-                if (sourceElem && targetElem && sourceElem !== targetElem) {
+                if (
+                    sourceElem
+                    && targetElem
+                    && sourceElem !== targetElem
+                    && canDropTaskByTimePriority(sourceTask, targetTask, container, sourceElem, targetElem)
+                ) {
+                    const sourceParent = sourceElem.parentNode;
+                    const sourceNextSibling = sourceElem.nextSibling;
                     const rect = targetElem.getBoundingClientRect();
                     const middleY = rect.top + rect.height / 2;
                     const cursorY = ev.clientY;
@@ -4410,23 +4477,153 @@
                         container.insertBefore(sourceElem, targetElem);
                     }
 
-                    persistTaskSortOrder(container);
+                    if (isTaskTimeSequenceValid(container)) {
+                        persistTaskSortOrder(container);
+                    } else {
+                        if (sourceParent) {
+                            if (sourceNextSibling && sourceNextSibling.parentNode === sourceParent) {
+                                sourceParent.insertBefore(sourceElem, sourceNextSibling);
+                            } else {
+                                sourceParent.appendChild(sourceElem);
+                            }
+                        }
+                    }
                 }
             });
+        }
+
+        function isTaskTimeSequenceValid(container) {
+            const taskElements = Array.from(container.querySelectorAll('.task[id^="task-"]'));
+            let prevMinutes = null;
+
+            for (const taskElem of taskElements) {
+                const taskId = Number(taskElem.id.replace('task-', ''));
+                const task = data.tasks[taskId];
+                if (!task?.timeStart) continue;
+                const [hours, minutes] = task.timeStart.split(':').map(Number);
+                if (!Number.isFinite(hours) || !Number.isFinite(minutes)) continue;
+
+                const currentMinutes = hours * 60 + minutes;
+                if (prevMinutes != null && currentMinutes < prevMinutes) {
+                    return false;
+                }
+                prevMinutes = currentMinutes;
+            }
+
+            return true;
+        }
+
+        function findNearestTimedTaskAbove(container, taskElem) {
+            if (!container || !taskElem) return null;
+
+            let prevElem = taskElem.previousElementSibling;
+            while (prevElem) {
+                if (prevElem.matches('.task[id^="task-"]')) {
+                    const prevTaskId = Number(prevElem.id.replace('task-', ''));
+                    const prevTask = data.tasks[prevTaskId];
+                    if (prevTask?.timeStart) {
+                        return prevTask.timeStart;
+                    }
+                }
+                prevElem = prevElem.previousElementSibling;
+            }
+
+            return null;
+        }
+
+        function getTaskEffectiveTime(task, container, taskElem = null) {
+            if (!task) return null;
+            if (task.timeStart) return task.timeStart;
+            const nearestTimedAbove = findNearestTimedTaskAbove(container, taskElem);
+            if (nearestTimedAbove) return nearestTimedAbove;
+            if (container.id === 'routineContainer') {
+                return task.sortAnchorTimeRegular ?? null;
+            }
+            if (container.id === 'tasksContainer') {
+                return task.sortAnchorTimeOnetime ?? null;
+            }
+            return null;
+        }
+
+        function canDropTaskByTimePriority(sourceTask, targetTask, container, sourceElem = null, targetElem = null) {
+            const sourceId = sourceTask?.id ?? null;
+            const targetId = targetTask?.id ?? null;
+            const containerId = container?.id ?? null;
+
+            if (!sourceTask || !targetTask) {
+                return true;
+            }
+            const sourceTime = getTaskEffectiveTime(sourceTask, container, sourceElem);
+            const targetTime = getTaskEffectiveTime(targetTask, container, targetElem);
+
+            // Нельзя вручную переставить задачи с разным временем между собой:
+            // такие позиции всё равно недостижимы из-за приоритета сортировки по времени.
+            if (sourceTask.timeStart && targetTask.timeStart && sourceTask.timeStart !== targetTask.timeStart) {
+                return false;
+            }
+
+            // Для задачи без времени перенос разрешаем:
+            // при сохранении сортировки якорь времени будет пересчитан по новому положению.
+            if (!sourceTask.timeStart) {
+                const currentAnchor = sourceTime;
+                return true;
+            }
+
+            return true;
         }
 
         function persistTaskSortOrder(container) {
             const sortField = container.id === 'routineContainer'
                 ? 'sortOrderRegular'
                 : (container.id === 'tasksContainer' ? 'sortOrderOnetime' : null);
+            const sortByTimeField = container.id === 'routineContainer'
+                ? 'sortOrderByTimeRegular'
+                : (container.id === 'tasksContainer' ? 'sortOrderByTimeOnetime' : null);
+            const sortAnchorTimeField = container.id === 'routineContainer'
+                ? 'sortAnchorTimeRegular'
+                : (container.id === 'tasksContainer' ? 'sortAnchorTimeOnetime' : null);
 
-            if (!sortField) return;
+            if (!sortField || !sortByTimeField || !sortAnchorTimeField) return;
 
             const taskElements = Array.from(container.querySelectorAll('.task[id^="task-"]'));
+            const nearestTimedBelowByIndex = {};
+            let nearestTimedBelow = null;
+            for (let index = taskElements.length - 1; index >= 0; index -= 1) {
+                nearestTimedBelowByIndex[index] = nearestTimedBelow;
+                const taskId = parseInt(taskElements[index].id.replace('task-', ''), 10);
+                const task = data.tasks[taskId];
+                if (task?.timeStart) {
+                    nearestTimedBelow = task.timeStart;
+                }
+            }
+
+            let nearestTimeAbove = null;
+            const groupIndexes = {};
             taskElements.forEach((taskElem, index) => {
                 const taskId = parseInt(taskElem.id.replace('task-', ''), 10);
-                if (data.tasks[taskId]) {
-                    data.tasks[taskId][sortField] = index;
+                const task = data.tasks[taskId];
+                if (task) {
+                    task[sortField] = index;
+                    if (task.timeStart) {
+                        nearestTimeAbove = task.timeStart;
+                    }
+
+                    const effectiveTime = task.timeStart
+                        ?? nearestTimeAbove
+                        ?? nearestTimedBelowByIndex[index]
+                        ?? null;
+                    if (effectiveTime) {
+                        task[sortAnchorTimeField] = effectiveTime;
+                    } else if (sortAnchorTimeField in task) {
+                        delete task[sortAnchorTimeField];
+                    }
+
+                    const groupKey = effectiveTime ?? '__no_time__';
+                    if (!(groupKey in groupIndexes)) {
+                        groupIndexes[groupKey] = 0;
+                    }
+                    task[sortByTimeField] = groupIndexes[groupKey];
+                    groupIndexes[groupKey] += 1;
                 }
             });
             save();
