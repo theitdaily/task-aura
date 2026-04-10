@@ -147,34 +147,203 @@
             font-size: 35px;
         }
 
+        .daily-goal-zone {
+            border: 2px dashed #b28af0;
+            background: linear-gradient(135deg, #fbf7ff, #f2e8ff);
+            border-radius: 14px;
+            padding: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0 6px 16px rgba(111, 66, 193, 0.12);
+        }
+
+        .daily-goal-zone.dragover {
+            border-color: #6f42c1;
+            background: #efe3ff;
+        }
+
+        .daily-goal-zone-title {
+            font-weight: 700;
+            color: #4d2f8a;
+            margin-bottom: 4px;
+        }
+
+        .daily-goal-zone-subtitle {
+            font-size: 0.85rem;
+            color: #5f4f80;
+            margin-bottom: 10px;
+        }
+
         /* Нижняя навигация */
         .bottom-nav {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
+            align-items: center;
             background-color: #ffffff;
-            padding: 10px 0;
+            padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+            gap: 6px;
             box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
         }
         .nav-button {
             flex: 1;
             text-align: center;
-            padding: 8px 0;
+            padding: 8px 0 6px;
             font-weight: bold;
             border: none;
             background: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             transition: all 0.2s;
-            color: #5f5f5f;
+            color: #150b46;
             border-radius: 12px;
-            margin: 0 4px;
+            margin: 0 2px;
+            min-width: 0;
+            height: 50px;
+            place-content: center;
+        }
+        .nav-button i {
+            font-size: 1.08rem;
+            line-height: 1.1;
+        }
+        .nav-button span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+            font-size: 14px;
+            line-height: 1.15;
+        }
+        .achievement-nav-button span {
+            font-size: clamp(0.64rem, 2.3vw, 0.875rem);
+            padding: 3px 0 1.3px;
         }
         .nav-button.active {
             color: var(--accent-color-dark);
             background: var(--accent-soft);
+        }
+        .nav-more-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 0;
+        }
+        .nav-more-toggle {
+            width: 100%;
+        }
+        .secondary-nav {
+            position: absolute;
+            right: 0;
+            bottom: calc(100% + 10px);
+            background: #fff;
+            border: 1px solid #e3d9f7;
+            border-radius: 14px;
+            box-shadow: 0 12px 28px rgba(44, 22, 77, 0.2);
+            padding: 8px;
+            width: min(230px, 84vw);
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 1045;
+        }
+        .secondary-nav.open {
+            display: flex;
+        }
+        .secondary-nav .nav-button {
+            margin: 0;
+            width: 100%;
+            flex: 0 0 auto;
+            text-align: left;
+            padding: 8px 10px;
+            font-size: 13px;
+            flex-direction: row;
+            gap: 8px;
+        }
+        .secondary-nav .nav-button i {
+            font-size: 1rem;
+        }
+        .achievements-panel {
+            border: 1px solid #e5d9f8;
+            border-radius: 16px;
+            padding: 16px;
+            background: linear-gradient(180deg, #ffffff, #faf7ff);
+            margin-bottom: 100px;
+        }
+        .achievements-top {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .achievements-top-card {
+            border-radius: 12px;
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid transparent;
+            box-shadow: 0 8px 18px rgba(53, 35, 90, 0.16);
+            position: relative;
+            overflow: hidden;
+        }
+        .achievements-top-card::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
+            pointer-events: none;
+        }
+        .achievements-top-card.ultra {
+            background: linear-gradient(145deg, #ff7f7f, #d91414);
+            border-color: #a40f0f;
+            color: #fff8f8;
+        }
+        .achievements-top-card.platinum {
+            background: linear-gradient(145deg, #92dbff, #3b76ff);
+            border-color: #2f58cb;
+            color: #f5fbff;
+        }
+        .achievements-top-card.gold {
+            background: linear-gradient(145deg, #ffe184, #d39a13);
+            border-color: #a47813;
+            color: #fff9eb;
+        }
+        .achievements-top-card.ultra .achievements-top-label,
+        .achievements-top-card.platinum .achievements-top-label,
+        .achievements-top-card.gold .achievements-top-label {
+            color: inherit;
+            opacity: 0.95;
+        }
+        .achievements-top-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .achievements-top-label {
+            font-size: 0.76rem;
+            color: #5b4f73;
+        }
+        .achievements-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .achievements-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee6fa;
+            padding: 6px 2px;
+        }
+        .achievements-list-value {
+            font-weight: 700;
+            color: #4e2f87;
+        }
+        @media (min-width: 640px) {
+            .achievements-top {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
         }
 
         /* Иконки в задачах и навигации */
@@ -246,6 +415,13 @@
             color: #eff8ff;
         }
 
+        .finish-day-btn.finish-day-btn-ultra {
+            background: linear-gradient(135deg, #ff6b6b, #d51f1f);
+            border-color: #b11818;
+            color: #fff4f4;
+            box-shadow: 0 0 18px rgba(236, 58, 58, 0.5);
+        }
+
         .finish-day-btn.finish-day-btn-participant {
             background: linear-gradient(135deg, #6f6b96, #4f4b78);
             border-color: #46426d;
@@ -310,6 +486,12 @@
             box-shadow: none;
         }
 
+        .day.day-rated-ultra {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
         .day.day-rated-participant {
             background: transparent;
             border: none;
@@ -356,6 +538,12 @@
             background: radial-gradient(circle at 30% 30%, #ffffff, #7fd6ff 55%, #3d7bff);
             border-color: rgba(255,255,255,1);
             box-shadow: 0 0 0 2px rgba(255,255,255,0.45), 0 0 14px rgba(86,176,255,0.95), 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .day-rating-badge.ultra {
+            background: radial-gradient(circle at 30% 30%, #fff1f1, #ff8c8c 50%, #ff2f2f);
+            border-color: rgba(255,255,255,1);
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.48), 0 0 18px rgba(255,58,58,1), 0 10px 18px rgba(126, 8, 8, 0.42);
         }
 
         .day-rating-badge.participant {
@@ -407,7 +595,7 @@
         }
 
         /* Общий контейнер для папок и заметок */
-        #notesContainer, #routineContainer, #tasksContainer, #newsContainer, #profileContainer {
+        #notesContainer, #routineContainer, #tasksContainer, #achievementsContainer, #newsContainer, #profileContainer {
             opacity: 0;
             max-height: 0;
             overflow: hidden;
@@ -415,7 +603,7 @@
         }
 
         /* Активный контейнер */
-        #notesContainer.show, #routineContainer.show, #tasksContainer.show, #newsContainer.show, #profileContainer.show {
+        #notesContainer.show, #routineContainer.show, #tasksContainer.show, #achievementsContainer.show, #newsContainer.show, #profileContainer.show {
             opacity: 1;
             max-height: fit-content; /* или другой подходящий максимум, чтобы плавно раскрыть */
         }
@@ -427,11 +615,6 @@
             grid-gap: 10px;
             flex-direction: column;
             align-items: center;
-        }
-
-        #routineContainer .task:last-child,
-        #tasksContainer .task:last-child {
-            margin-bottom: 88px;
         }
 
         #routineContainer,
@@ -825,7 +1008,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.9.1">
+        <meta name="version" content="1.3.10">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -843,8 +1026,8 @@
                 <div class="text-center day" data-day="2026-04-06"><div>Mon</div><div>6</div></div>
                 <div class="text-center day" data-day="2026-04-07"><div>Tue</div><div>7</div></div>
                 <div class="text-center day" data-day="2026-04-08"><div>Wed</div><div>8</div></div>
-                <div class="text-center day active" data-day="2026-04-09"><div>Thu</div><div>9</div></div>
-                <div class="text-center day" data-day="2026-04-10"><div>Fri</div><div>10</div></div>
+                <div class="text-center day" data-day="2026-04-09"><div>Thu</div><div>9</div></div>
+                <div class="text-center day active" data-day="2026-04-10"><div>Fri</div><div>10</div></div>
                 <div class="text-center day" data-day="2026-04-11"><div>Sat</div><div>11</div></div>
             </div>
         </div>
@@ -854,7 +1037,10 @@
     <div class="container flex-fill show" id="routineContainer"></div>
 
     <!-- Блок задач без регулярности -->
-    <div class="container flex-fill" id="tasksContainer"></div>
+    <div class="container flex-fill" id="tasksContainer"><div class="daily-goal-zone" id="dailyGoalZone">
+                <div class="daily-goal-zone-title">Day goals</div>
+                <div class="daily-goal-zone-subtitle">Drag one-time tasks here. Progress is saved for the selected day.</div>
+            </div><div id="regularTasksZone" style="min-height: 60px;"></div></div>
 
     <!-- Блок с заметками -->
     <div class="container" style="display: grid;" id="notesContainer">
@@ -867,6 +1053,36 @@
         </div>
     </div>
 
+    <div class="container" id="achievementsContainer">
+        <section class="achievements-panel" aria-label="Statistics">
+            <h2 class="news-feed-title mb-2">Statistics</h2>
+            <p class="news-feed-subtitle mb-3">Medal statistics</p>
+            <div class="achievements-top">
+                <div class="achievements-top-card ultra">
+                    <div class="achievements-top-value" id="achievementUltraDaysTop">0</div>
+                    <div class="achievements-top-label">Ultra-shining cup</div>
+                </div>
+                <div class="achievements-top-card platinum">
+                    <div class="achievements-top-value" id="achievementPlatinumDaysTop">0</div>
+                    <div class="achievements-top-label">Platinum</div>
+                </div>
+                <div class="achievements-top-card gold">
+                    <div class="achievements-top-value" id="achievementGoldDaysTop">0</div>
+                    <div class="achievements-top-label">Gold</div>
+                </div>
+            </div>
+            <ul class="achievements-list">
+                <li class="achievements-list-item"><span>Ultra-shining cup</span><span class="achievements-list-value" id="achievementUltraDays">0</span></li>
+                <li class="achievements-list-item"><span>Platinum</span><span class="achievements-list-value" id="achievementPlatinumDays">0</span></li>
+                <li class="achievements-list-item"><span>Gold</span><span class="achievements-list-value" id="achievementGoldDays">0</span></li>
+                <li class="achievements-list-item"><span>Silver</span><span class="achievements-list-value" id="achievementSilverDays">0</span></li>
+                <li class="achievements-list-item"><span>Bronze</span><span class="achievements-list-value" id="achievementBronzeDays">0</span></li>
+                <li class="achievements-list-item"><span>Participant</span><span class="achievements-list-value" id="achievementParticipantDays">0</span></li>
+                <li class="achievements-list-item"><span>Completion medal</span><span class="achievements-list-value" id="achievementEmptyDays">0</span></li>
+            </ul>
+        </section>
+    </div>
+
     <div class="container" id="newsContainer">
         <section class="news-feed" aria-label="News feed">
             <div class="news-feed-head">
@@ -876,6 +1092,26 @@
                 </div>
                 <span class="news-feed-head-icon"><i class="bi bi-megaphone"></i></span>
             </div>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Published on: 2026-04-10
+                    </div>
+                    <h3 class="news-feed-item-title">Update to version 1.3.10</h3>
+                    <p class="news-feed-item-description">- Added a Day Goals area in the Tasks section with a highlighted frame at the top.
+- One-time tasks can be moved to Day Goals, where progress is tracked separately for the selected day.
+- For count/time goals, the app asks for a daily target value when adding to Day Goals.
+- If Day Goals are completed and all routine tasks are done, an Ultra-shining cup is awarded.
+- Without Day Goals for a date, the Ultra-shining cup cannot be received.</p>
+                </article>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Published on: 2026-04-10
+                    </div>
+                    <h3 class="news-feed-item-title">Update to version 1.3.10</h3>
+                    <p class="news-feed-item-description">- The bottom panel was redesigned for better mobile navigation and now includes the Achievements tab.
+- Main tabs are now Routine, Tasks, Achievements, and Notes.
+- News and Settings were moved into a compact More menu to keep the bar uncluttered.</p>
+                </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Published on: 2026-04-09
@@ -952,7 +1188,7 @@
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.3.9.1</span>
+        <span>Version: 1.3.10</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -1282,18 +1518,30 @@
             <i class="bi bi-list-task"></i>
             <span>Tasks</span>
         </button>
+        <button class="nav-button achievement-nav-button" data-target="achievementsContainer">
+            <i class="bi bi-trophy"></i>
+            <span>Achievements</span>
+        </button>
         <button class="nav-button" data-target="notesContainer">
             <i class="bi bi-journal-text"></i>
             <span>Notes</span>
         </button>
-        <button class="nav-button" data-target="newsContainer">
-            <i class="bi bi-newspaper"></i>
-            <span>News</span>
-        </button>
-        <button class="nav-button" data-target="profileContainer">
-            <i class="bi bi-gear-fill"></i>
-            <span>Settings</span>
-        </button>
+        <div class="nav-more-wrap">
+            <button class="nav-button nav-more-toggle" id="navMoreToggle" type="button" aria-expanded="false" aria-controls="secondaryNavMenu">
+                <i class="bi bi-three-dots"></i>
+                <span>More</span>
+            </button>
+            <div class="secondary-nav" id="secondaryNavMenu">
+                <button class="nav-button secondary-nav-button" data-target="newsContainer">
+                    <i class="bi bi-newspaper"></i>
+                    <span>News</span>
+                </button>
+                <button class="nav-button secondary-nav-button" data-target="profileContainer">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Settings</span>
+                </button>
+            </div>
+        </div>
     </nav>
         
     <!-- Подключение Bootstrap JS и Popper -->
@@ -1807,6 +2055,59 @@
             if (!data.dayRatings || typeof data.dayRatings !== 'object') {
                 data.dayRatings = {};
             }
+            if (!data.dailyGoals || typeof data.dailyGoals !== 'object') {
+                data.dailyGoals = {};
+            }
+        }
+
+        function getDateKey(date) {
+            return new Date(new Date(date).toDateString()).toStringWithoutTime();
+        }
+
+        function getDailyGoalsForDate(date) {
+            const dateKey = getDateKey(date);
+            if (!data.dailyGoals[dateKey] || typeof data.dailyGoals[dateKey] !== 'object') {
+                data.dailyGoals[dateKey] = {};
+            }
+            return data.dailyGoals[dateKey];
+        }
+
+        function isTaskInDailyGoal(taskId, date = selectedDate) {
+            const goals = getDailyGoalsForDate(date);
+            return !!goals[String(taskId)];
+        }
+
+        function getDailyGoalTargetCompletion(task, dailyGoalEntry, date) {
+            const currentResult = GetTaskCompletionResult(task, date);
+            const startResult = Number(dailyGoalEntry.startResult ?? 0);
+            if (dailyGoalEntry.mode === 'goal') {
+                const targetValue = Number(dailyGoalEntry.target ?? 0);
+                const currentValue = Number(currentResult ?? 0) - startResult;
+                return {
+                    value: Math.max(0, currentValue),
+                    target: Math.max(0, targetValue),
+                    done: currentValue >= targetValue
+                };
+            }
+
+            return {
+                value: IsTaskCompleted(task, date) ? 1 : 0,
+                target: 1,
+                done: IsTaskCompleted(task, date)
+            };
+        }
+
+        function areDailyGoalsCompleted(date) {
+            const goals = getDailyGoalsForDate(date);
+            const ids = Object.keys(goals);
+            if (ids.length === 0) return false;
+
+            return ids.every((taskId) => {
+                const task = data.tasks[taskId];
+                if (!task) return false;
+                const result = getDailyGoalTargetCompletion(task, goals[taskId], date);
+                return result.done;
+            });
         }
 
         // =================================== //
@@ -2317,7 +2618,7 @@
         let goalTimerIntervalId = null;
 
         // массив ID всех контейнеров
-        const containers = ['notesContainer', 'routineContainer', 'tasksContainer', 'newsContainer', 'profileContainer'];
+        const containers = ['notesContainer', 'routineContainer', 'tasksContainer', 'achievementsContainer', 'newsContainer', 'profileContainer'];
         const navTop = document.querySelector('.nav-top');
 
         const formIsTaskSwitch = document.getElementById('isTaskSwitch');
@@ -2374,6 +2675,8 @@
         const quickPresetRoutineBtn = document.getElementById('quickPresetRoutineBtn');
         const quickPresetTaskBtn = document.getElementById('quickPresetTaskBtn');
         const quickPresetNoteBtn = document.getElementById('quickPresetNoteBtn');
+        const navMoreToggle = document.getElementById('navMoreToggle');
+        const secondaryNavMenu = document.getElementById('secondaryNavMenu');
         const addNoteBtn = document.querySelector('.add-note-btn');
         let currentActiveTab = 'routineContainer';
         let activeQuickPreset = 'note';
@@ -2559,7 +2862,13 @@
             const percent = (doneScore / totalTasks) * 100;
             let rating = null;
 
-            if (percent >= 100) rating = 'platinum';
+            if (percent >= 100) {
+                if (areDailyGoalsCompleted(date)) {
+                    rating = 'ultra';
+                } else {
+                    rating = 'platinum';
+                }
+            }
             else if (percent >= 90) rating = 'gold';
             else if (percent >= 75) rating = 'silver';
             else if (percent >= 60) rating = 'bronze';
@@ -2571,7 +2880,7 @@
 
         function refreshWeekDayRatings() {
             document.querySelectorAll('.day').forEach(dayElem => {
-                dayElem.classList.remove('day-rated-platinum', 'day-rated-gold', 'day-rated-silver', 'day-rated-bronze', 'day-rated-participant', 'day-rated-empty');
+                dayElem.classList.remove('day-rated-ultra', 'day-rated-platinum', 'day-rated-gold', 'day-rated-silver', 'day-rated-bronze', 'day-rated-participant', 'day-rated-empty');
                 dayElem.querySelector('.day-rating-badge')?.remove();
 
                 const dateValue = dayElem.getAttribute('data-day');
@@ -2582,14 +2891,52 @@
 
                     const badge = document.createElement('span');
                     badge.className = `day-rating-badge ${rating}`;
-                    badge.textContent = rating === 'platinum'
+                    badge.textContent = rating === 'ultra'
+                        ? '🏆'
+                        : (rating === 'platinum'
                         ? '🏆'
                         : (rating === 'gold'
                             ? '🥇'
-                            : (rating === 'silver' ? '🥈' : (rating === 'bronze' ? '🥉' : (rating === 'participant' ? '🎖️' : ' '))));
+                            : (rating === 'silver' ? '🥈' : (rating === 'bronze' ? '🥉' : (rating === 'participant' ? '🎖️' : ' ')))));
                     dayElem.appendChild(badge);
                 }
             });
+        }
+
+        function refreshAchievements() {
+            const medals = {
+                ultra: 0,
+                platinum: 0,
+                gold: 0,
+                silver: 0,
+                bronze: 0,
+                participant: 0,
+                empty: 0
+            };
+
+            for (const year in (data.dayRatings ?? {})) {
+                for (const week in data.dayRatings[year]) {
+                    for (const dayOfWeek in data.dayRatings[year][week]) {
+                        const rating = data.dayRatings[year][week][dayOfWeek];
+                        if (!rating) continue;
+                        if (rating in medals) {
+                            medals[rating] += 1;
+                        }
+                    }
+                }
+            }
+
+            document.getElementById('achievementUltraDaysTop').textContent = String(medals.ultra);
+            document.getElementById('achievementPlatinumDaysTop').textContent = String(medals.platinum);
+            document.getElementById('achievementGoldDaysTop').textContent = String(medals.gold);
+
+            document.getElementById('achievementUltraDays').textContent = String(medals.ultra);
+            document.getElementById('achievementPlatinumDays').textContent = String(medals.platinum);
+            document.getElementById('achievementGoldDays').textContent = String(medals.gold);
+            document.getElementById('achievementSilverDays').textContent = String(medals.silver);
+            document.getElementById('achievementBronzeDays').textContent = String(medals.bronze);
+            document.getElementById('achievementParticipantDays').textContent = String(medals.participant);
+            document.getElementById('achievementEmptyDays').textContent = String(medals.empty);
         }
 
         function areAllSelectedDateTasksCompleted() {
@@ -2606,7 +2953,7 @@
         function updateFinishDayButtonVisibility() {
             const today = new Date(new Date().toDateString());
             const activeTabId = getCurrentActiveTabId();
-            const isTaskTabActive = activeTabId === 'routineContainer';
+            const isTaskTabActive = activeTabId === 'routineContainer' || activeTabId === 'tasksContainer';
             const diff = getCalendarDayDiff(today, selectedDate);
             const existingRating = getDayRating(selectedDate);
 
@@ -2633,6 +2980,7 @@
                 finishDayBtnText.textContent = buttonLabel;
             }
             finishDayBtn.classList.remove(
+                'finish-day-btn-ultra',
                 'finish-day-btn-gold',
                 'finish-day-btn-silver',
                 'finish-day-btn-bronze',
@@ -2774,18 +3122,121 @@
             });
         }
 
+        function addTaskToDailyGoals(taskId, date = selectedDate) {
+            const task = data.tasks[taskId];
+            if (!task || task.regularity) return;
+
+            const dateGoals = getDailyGoalsForDate(date);
+            if (dateGoals[String(taskId)]) return;
+
+            const entry = {
+                mode: 'complete',
+                startResult: Number(GetTaskCompletionResult(task, date) ?? 0),
+            };
+
+            if (task.goal && (task.goal.type === 'count' || task.goal.type === 'time')) {
+                const userInput = prompt('Enter day goal value', String(task.goal.count ?? ''));
+                if (userInput == null) return;
+                const target = Number(userInput);
+                if (!Number.isFinite(target) || target <= 0) {
+                    showNotification('Day goal value must be greater than zero');
+                    return;
+                }
+                entry.mode = 'goal';
+                entry.target = target;
+            }
+
+            dateGoals[String(taskId)] = entry;
+            save();
+            refreshTasks();
+            updateFinishDayButtonVisibility();
+        }
+
+        function removeTaskFromDailyGoals(taskId, date = selectedDate) {
+            const dateGoals = getDailyGoalsForDate(date);
+            if (!(String(taskId) in dateGoals)) return;
+            delete dateGoals[String(taskId)];
+            save();
+            refreshTasks();
+            updateFinishDayButtonVisibility();
+        }
+
         function refreshTasks() {
             const container = document.getElementById('tasksContainer');
 
             // Очищаем текущий список задач
             container.innerHTML = '';
 
+            const goalsForDate = getDailyGoalsForDate(selectedDate);
+            Object.keys(goalsForDate).forEach((taskId) => {
+                const task = data.tasks[taskId];
+                if (!task || task.regularity) {
+                    delete goalsForDate[taskId];
+                }
+            });
+            const dailyGoalZone = document.createElement('div');
+            dailyGoalZone.className = 'daily-goal-zone';
+            dailyGoalZone.id = 'dailyGoalZone';
+            dailyGoalZone.innerHTML = `
+                <div class="daily-goal-zone-title">Day goals</div>
+                <div class="daily-goal-zone-subtitle">Drag one-time tasks here. Progress is saved for the selected day.</div>
+            `;
+            dailyGoalZone.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                dailyGoalZone.classList.add('dragover');
+            });
+            dailyGoalZone.addEventListener('dragleave', () => {
+                dailyGoalZone.classList.remove('dragover');
+            });
+            dailyGoalZone.addEventListener('drop', (event) => {
+                event.preventDefault();
+                dailyGoalZone.classList.remove('dragover');
+                const sourceId = event.dataTransfer.getData('text/plain');
+                const sourceTaskId = Number(sourceId?.replace('task-', ''));
+                if (!Number.isFinite(sourceTaskId)) return;
+                addTaskToDailyGoals(sourceTaskId, selectedDate);
+            });
+            container.appendChild(dailyGoalZone);
+            const regularTasksZone = document.createElement('div');
+            regularTasksZone.id = 'regularTasksZone';
+            regularTasksZone.style.minHeight = '60px';
+            regularTasksZone.addEventListener('dragover', (event) => {
+                event.preventDefault();
+            });
+            regularTasksZone.addEventListener('drop', (event) => {
+                event.preventDefault();
+                const sourceId = event.dataTransfer.getData('text/plain');
+                const sourceTaskId = Number(sourceId?.replace('task-', ''));
+                if (!Number.isFinite(sourceTaskId)) return;
+                const sourceElem = document.getElementById(sourceId);
+                if (sourceElem?.dataset?.dailyGoalTask === '1') {
+                    removeTaskFromDailyGoals(sourceTaskId, selectedDate);
+                }
+            });
+            container.appendChild(regularTasksZone);
+
             // Получаем задачи без регулярности
             const onetimeTasks = getOnetimeTasksFromDate(selectedDate);
+            const assignedIds = new Set(Object.keys(goalsForDate).map(Number));
+
+            onetimeTasks
+                .filter(task => assignedIds.has(Number(task.id)))
+                .forEach(task => {
+                    const taskElem = renderTaskHtmlBlock(task, { isDailyGoalTask: true });
+                    const entry = goalsForDate[String(task.id)];
+                    const progress = getDailyGoalTargetCompletion(task, entry, selectedDate);
+                    const progressHint = document.createElement('div');
+                    progressHint.className = 'task-time';
+                    progressHint.textContent = `Day goal progress: ${progress.value}/${progress.target}`;
+                    taskElem.querySelector('.task-center')?.appendChild(progressHint);
+                    dailyGoalZone.appendChild(taskElem);
+                });
 
             // Для каждой задачи создаем элемент и добавляем в контейнер
-            onetimeTasks.forEach(task => {
-                container.appendChild(renderTaskHtmlBlock(task));
+            onetimeTasks
+                .filter(task => !assignedIds.has(Number(task.id)))
+                .forEach(task => {
+                regularTasksZone.appendChild(renderTaskHtmlBlock(task));
             });
         }
 
@@ -3320,16 +3771,18 @@
             noteModal.show();
         }
 
-        function renderTaskHtmlBlock(task) {
+        function renderTaskHtmlBlock(task, options = {}) {
             // Получаем название задачи из note
             const note = data.notes[task.note];
             const taskTitle = note ? note.title : 'Untitled';
             const done = IsTaskCompleted(task, selectedDate);
+            const isDailyGoalTask = options.isDailyGoalTask === true;
 
             // Создаем основной блок задачи
             const taskDiv = document.createElement('div');
             taskDiv.setAttribute('id', 'task-' + task.id);
             taskDiv.setAttribute('draggable', 'true');
+            taskDiv.dataset.dailyGoalTask = isDailyGoalTask ? '1' : '0';
             addDragStartEvent(taskDiv);
             let taskDivClassName = done ? 'task done' : 'task';
             taskDivClassName += IsTaskExpired(task, selectedDate) ? ' expired' : '';
@@ -3514,18 +3967,18 @@
             setDayRating(selectedDate, score.rating);
             save();
             refreshWeekDayRatings();
+            refreshAchievements();
             updateFinishDayButtonVisibility();
 
             const roundedPercent = Math.round(score.percent);
-            const ratingText = score.rating === 'platinum'
-                ? 'Platinum'
-                : (score.rating === 'gold'
-                    ? 'Gold'
-                    : (score.rating === 'silver'
-                        ? 'Silver'
-                        : (score.rating === 'bronze'
-                            ? 'Bronze'
-                            : (score.rating === 'participant' ? 'Participant' : (score.rating === 'empty' ? 'Completion medal' : 'Without medal')))));
+            let ratingText = 'Without medal';
+            if (score.rating === 'ultra') ratingText = 'Ultra-shining cup';
+            else if (score.rating === 'platinum') ratingText = 'Platinum';
+            else if (score.rating === 'gold') ratingText = 'Gold';
+            else if (score.rating === 'silver') ratingText = 'Silver';
+            else if (score.rating === 'bronze') ratingText = 'Bronze';
+            else if (score.rating === 'participant') ratingText = 'Participant';
+            else if (score.rating === 'empty') ratingText = 'Completion medal';
             showNotification(
                 `Day is completed: ${roundedPercent}% — ${ratingText}\n`
                 + `Fully completed tasks: ${score.fullDoneCount}\n`
@@ -3534,16 +3987,42 @@
             );
         });
 
+        function closeSecondaryNav() {
+            secondaryNavMenu.classList.remove('open');
+            navMoreToggle.setAttribute('aria-expanded', 'false');
+        }
+
+        navMoreToggle.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const shouldOpen = !secondaryNavMenu.classList.contains('open');
+            secondaryNavMenu.classList.toggle('open', shouldOpen);
+            navMoreToggle.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!secondaryNavMenu.classList.contains('open')) {
+                return;
+            }
+            if (secondaryNavMenu.contains(event.target) || navMoreToggle.contains(event.target)) {
+                return;
+            }
+            closeSecondaryNav();
+        });
+
         // Переключение активных кнопок навигации
         document.querySelectorAll('.nav-button').forEach(btn => {
             btn.addEventListener('click', () => {
                 const targetId = btn.getAttribute('data-target'); // например, 'notesContainer'
+                if (!targetId) {
+                    return;
+                }
 
                 // Проверяем, активна ли уже выбранная вкладка
                 if (btn.classList.contains('active')) {
                     // Если активна — ничего не делаем
                     return;
                 }
+                closeSecondaryNav();
 
                 if (targetId === 'tasksContainer' || targetId === 'routineContainer') {
                     // Разблокировать
@@ -3637,6 +4116,7 @@
             refreshRoutine();
             refreshTasks();
             refreshWeekDayRatings();
+            refreshAchievements();
             updateFinishDayButtonVisibility();
         }
 
@@ -3658,6 +4138,7 @@
 
                 refreshRoutine();
                 refreshTasks();
+                refreshAchievements();
                 updateFinishDayButtonVisibility();
             });
         });
