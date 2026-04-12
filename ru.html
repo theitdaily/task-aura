@@ -82,7 +82,6 @@
         .day.active {
             font-weight: bold;
             color: #007bff;
-            background-color: #f2e4fb85;
         }
 
         /* Блок задач */
@@ -120,6 +119,21 @@
             font-size: 12px;
         }
 
+        .task-progress-updated-badge {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 6px;
+            padding: 1px 6px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #5b2f00;
+            background: #ffe29a;
+            border: 1px solid #f2c14e;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
         .task-title {
             font-size: 16px;
             font-weight: bold;
@@ -145,6 +159,13 @@
             margin: 0 6px;
             cursor: pointer;
             font-size: 35px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .task-right button {
+            height: fit-content;
         }
 
         .daily-goal-zone {
@@ -216,7 +237,7 @@
             line-height: 1.15;
         }
         .achievement-nav-button span {
-            font-size: clamp(0.64rem, 2.3vw, 0.875rem);
+            font-size: clamp(0.56rem, 2.3vw, 0.875rem);
             padding: 3px 0 1.3px;
         }
         .nav-button.active {
@@ -262,11 +283,17 @@
         .secondary-nav .nav-button i {
             font-size: 1rem;
         }
+        .statistics-panel,
         .achievements-panel {
             border: 1px solid #e5d9f8;
             border-radius: 16px;
             padding: 16px;
             background: linear-gradient(180deg, #ffffff, #faf7ff);
+        }
+        .statistics-panel {
+            margin-bottom: 12px;
+        }
+        .achievements-panel {
             margin-bottom: 100px;
         }
         .achievements-top {
@@ -339,6 +366,96 @@
         .achievements-list-value {
             font-weight: 700;
             color: #4e2f87;
+        }
+        .custom-achievements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 0 8px;
+        }
+        .custom-achievements-subtitle {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #5f4f80;
+        }
+        .custom-achievements-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .custom-achievement-item {
+            border: 1px solid #e5d9f8;
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 4px 14px rgba(53, 35, 90, 0.08);
+        }
+        .custom-achievement-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .custom-achievement-title {
+            font-weight: 700;
+            color: #2d1d4f;
+        }
+        .custom-achievement-meta {
+            font-size: 0.78rem;
+            color: #5f4f80;
+            margin-bottom: 7px;
+        }
+        .custom-achievement-progress-wrap {
+            height: 10px;
+            background: #eee7fb;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .custom-achievement-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #7a4ddb, #4ea1ff);
+            transition: width 0.2s;
+        }
+        .custom-achievement-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .custom-achievement-controls .btn-group .btn {
+            min-width: 36px;
+        }
+        .custom-achievement-title-row .btn-group .btn,
+        .custom-achievement-controls .btn-group .btn {
+            min-height: 44px;
+            padding: 0.45rem 0.7rem;
+            font-size: 0.95rem;
+        }
+        .custom-achievement-title-row .btn-group .btn {
+            min-width: 46px;
+        }
+        .custom-achievement-title-row .btn-group {
+            gap: 6px;
+        }
+        @media (max-width: 576px) {
+            .custom-achievement-controls {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .custom-achievement-controls .btn-group {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .custom-achievement-controls .btn-group .btn {
+                width: 100%;
+            }
         }
         @media (min-width: 640px) {
             .achievements-top {
@@ -432,6 +549,18 @@
             background: linear-gradient(135deg, #8f8f8f, #666666);
             border-color: #5b5b5b;
             color: #fafafa;
+        }
+
+        .completed-toggle-btn {
+            display: flex;
+            margin: 12px auto 6px;
+            border-radius: 999px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        .completed-toggle-btn i {
+            margin-right: 6px;
         }
 
         .goal-modal-meta {
@@ -639,6 +768,7 @@
             width: 100%;
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .profile-click-settings .profile-select-block {
@@ -646,6 +776,9 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
+        }
+        .profile-click-settings .profile-select-block.week-start-block {
+            flex: 1 0 100%;
         }
 
         #deleteAllBtn, #resetToFactoryBtn {
@@ -857,10 +990,21 @@
             padding: 8px 12px;
             border-radius: 12px;
             transition: background-color 0.2s ease;
+            font-size: clamp(0.78rem, 3vw, 1rem);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1 1 auto;
+            min-width: 0;
+            margin: 0 8px;
         }
 
         #fullDateDisplay:hover {
             background-color: var(--accent-soft);
+        }
+
+        #weekDays {
+            margin-top: 8px;
         }
 
         .create-folder-btn {
@@ -1008,7 +1152,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.10">
+        <meta name="version" content="1.3.11">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -1022,25 +1166,25 @@
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day" data-day="2026-04-05"><div>Вс</div><div>5</div></div>
                 <div class="text-center day" data-day="2026-04-06"><div>Пн</div><div>6</div></div>
                 <div class="text-center day" data-day="2026-04-07"><div>Вт</div><div>7</div></div>
                 <div class="text-center day" data-day="2026-04-08"><div>Ср</div><div>8</div></div>
                 <div class="text-center day" data-day="2026-04-09"><div>Чт</div><div>9</div></div>
-                <div class="text-center day active" data-day="2026-04-10"><div>Пт</div><div>10</div></div>
+                <div class="text-center day" data-day="2026-04-10"><div>Пт</div><div>10</div></div>
                 <div class="text-center day" data-day="2026-04-11"><div>Сб</div><div>11</div></div>
+                <div class="text-center day active" data-day="2026-04-12"><div>Вс</div><div>12</div></div>
             </div>
         </div>
     </div>
 
     <!-- Основной блок задач -->
-    <div class="container flex-fill show" id="routineContainer"></div>
+    <div class="container flex-fill show" id="routineContainer"><button class="btn btn-outline-secondary completed-toggle-btn" title="Показать выполненные задачи"><i class="bi bi-eye"></i> Показать выполненные задачи</button></div>
 
     <!-- Блок задач без регулярности -->
     <div class="container flex-fill" id="tasksContainer"><div class="daily-goal-zone" id="dailyGoalZone">
                 <div class="daily-goal-zone-title">Задания дня</div>
                 <div class="daily-goal-zone-subtitle">Перетащите сюда нерегулярные задачи. Прогресс сохраняется для выбранного дня.</div>
-            </div><div id="regularTasksZone" style="min-height: 60px;"></div></div>
+            </div><div id="regularTasksZone" style="min-height: 60px;"></div><button class="btn btn-outline-secondary completed-toggle-btn" title="Показать выполненные задачи"><i class="bi bi-eye"></i> Показать выполненные задачи</button></div>
 
     <!-- Блок с заметками -->
     <div class="container" style="display: grid;" id="notesContainer">
@@ -1054,13 +1198,13 @@
     </div>
 
     <div class="container" id="achievementsContainer">
-        <section class="achievements-panel" aria-label="Статистика">
+        <section class="statistics-panel" aria-label="Статистика">
             <h2 class="news-feed-title mb-2">Статистика</h2>
             <p class="news-feed-subtitle mb-3">Статистика по медалям</p>
             <div class="achievements-top">
                 <div class="achievements-top-card ultra">
                     <div class="achievements-top-value" id="achievementUltraDaysTop">0</div>
-                    <div class="achievements-top-label">Ультра-сияющий кубок</div>
+                    <div class="achievements-top-label">Рубиновый кубок</div>
                 </div>
                 <div class="achievements-top-card platinum">
                     <div class="achievements-top-value" id="achievementPlatinumDaysTop">0</div>
@@ -1072,7 +1216,7 @@
                 </div>
             </div>
             <ul class="achievements-list">
-                <li class="achievements-list-item"><span>Ультра-сияющий кубок</span><span class="achievements-list-value" id="achievementUltraDays">0</span></li>
+                <li class="achievements-list-item"><span>Рубиновый кубок</span><span class="achievements-list-value" id="achievementUltraDays">0</span></li>
                 <li class="achievements-list-item"><span>Платина</span><span class="achievements-list-value" id="achievementPlatinumDays">0</span></li>
                 <li class="achievements-list-item"><span>Золото</span><span class="achievements-list-value" id="achievementGoldDays">0</span></li>
                 <li class="achievements-list-item"><span>Серебро</span><span class="achievements-list-value" id="achievementSilverDays">0</span></li>
@@ -1080,6 +1224,16 @@
                 <li class="achievements-list-item"><span>Участник</span><span class="achievements-list-value" id="achievementParticipantDays">0</span></li>
                 <li class="achievements-list-item"><span>Медаль за завершение</span><span class="achievements-list-value" id="achievementEmptyDays">0</span></li>
             </ul>
+        </section>
+
+        <section class="achievements-panel" aria-label="Мои достижения">
+            <div class="custom-achievements-header">
+                <div>
+                    <h3 class="news-feed-title mb-1">Мои достижения</h3>
+                    <p class="custom-achievements-subtitle">Отслеживайте прогресс и уровни по каждому достижению</p>
+                </div>
+            </div>
+            <ul class="custom-achievements-list" id="customAchievementsList"></ul>
         </section>
     </div>
 
@@ -1094,23 +1248,46 @@
             </div>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
-                        <i class="bi bi-calendar3"></i> Опубликовано: 2026-04-10
+                        <i class="bi bi-calendar3"></i> Опубликовано: 2026-04-12
                     </div>
-                    <h3 class="news-feed-item-title">Обновление до версии 1.3.10</h3>
-                    <p class="news-feed-item-description">- Добавлен блок «Задания дня» в разделе «Задачи» в специальной рамке сверху.
-- В «Задания дня» можно переносить нерегулярные задачи; для выбранного дня ведётся отдельное отслеживание прогресса.
-- Для целей типа «Количество» и «Время» при добавлении запрашивается дневная цель.
-- Если цели дня выполнены и одновременно закрыты все рутинные задачи, выдается ультра-сияющий кубок.
-- Если для даты нет заданий дня, ультра-сияющий кубок получить нельзя.</p>
+                    <h3 class="news-feed-item-title">Обновление до версии 1.3.11</h3>
+                    <p class="news-feed-item-description">Достижения:
+- Добавлен полноценный список достижений со шкалой прогресса и уровнями, включая бесконечные уровни. Можно создавать, редактировать, удалять достижений и привязывать задачи к достижению для автоматической работы шкалы прогресса.
+
+Привязка задач к достижениям:
+- При привязке задачи приложение рассчитывает накопленную статистику выполнения и предлагает добавить это число в прогресс достижения.
+- Для регулярных задач без цели считается количество выполнений.
+- Для задач с целью суммируются значения за все дни; для целей по времени прогресс достижения ведётся в секундах/минутах/часах.
+- При отвязке задачи ранее добавленный прогресс не уменьшается.
+
+Прочее:
+- Уменьшен минимальный размер шрифта во вкладке «Достижения», чтобы подписи лучше помещались на небольших экранах.
+- Награда «Ультра-сияющий кубок» переименована в «Рубиновый кубок».
+- Для обычных задач с целями исправлено отображение прогресса по дням: теперь значение берётся из состояния на выбранную дату.
+- Добавлено предупреждение при попытке изменить значение в прошлом, если в будущих датах уже есть более новые записи прогресса.
+- Добавлен визуальный ярлык для задач, у которых прогресс цели был изменён сегодня.
+- Для обычных задач без цели выполненность теперь не показывается в датах до дня фактического выполнения.
+- Запрещено менять статус выполнения обычной задачи без цели в прошлых днях.
+- Добавлена кнопка автоматического скрытия/показа выполненных задач в списке.
+- В настройках добавлен выбор первого дня недели (воскресенье или понедельник) для верхнего календарного меню.
+- Добавлена цель «Выполнение дочерних задач» с опцией автозавершения и группировкой дочерних задач под родительской в списке.</p>
                 </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Опубликовано: 2026-04-10
                     </div>
                     <h3 class="news-feed-item-title">Обновление до версии 1.3.10</h3>
-                    <p class="news-feed-item-description">- Нижняя панель переработана для удобной мобильной навигации: добавлена вкладка «Достижения».
+                    <p class="news-feed-item-description">Навигация:
+- Нижняя панель переработана для удобной мобильной навигации: добавлена вкладка «Достижения».
 - Основные вкладки теперь: Рутина, Задачи, Достижения и Заметки.
-- Новости и Настройки перенесены в компактное меню «Ещё», чтобы не перегружать экран.</p>
+- Новости и Настройки перенесены в компактное меню «Ещё», чтобы не перегружать экран.
+
+Задания дня:
+- Добавлен блок «Задания дня» в разделе «Задачи» в специальной рамке сверху.
+- В «Задания дня» можно переносить нерегулярные задачи; для выбранного дня ведётся отдельное отслеживание прогресса.
+- Для целей типа «Количество» и «Время» при добавлении запрашивается дневная цель.
+- Если цели дня выполнены и одновременно закрыты все рутинные задачи, выдается рубиновый кубок.
+- Если для даты нет заданий дня, рубиновый кубок получить нельзя.</p>
                 </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
@@ -1159,6 +1336,13 @@
                     <option value="edit">Редактировать</option>
                 </select>
             </div>
+            <div class="profile-select-block week-start-block">
+                <label for="weekStartSelect" class="form-label mb-0">Первый день недели</label>
+                <select id="weekStartSelect" class="form-select">
+                    <option value="monday">Неделя начинается с понедельника</option>
+                    <option value="sunday">Неделя начинается с воскресенья</option>
+                </select>
+            </div>
         </div>
         <div style="width: 100%;">
             <textarea id="gptPromptInput" class="form-control" rows="10" placeholder="Введите промпт..." style="height: 151px;">                Сегодня дата: TODAY_DATE_FROM_APP.\n\nВот список моих задач:\nTODAY_TASKS_JSON\n\nТы — мой дружелюбный личный ассистент.\n\nТвоя роль:\n- Проанализировать список задач и определить приоритеты на сегодня.\n- Сначала учитывать срочность (просроченные и ближайшие дедлайны), затем пользу и реалистичность выполнения.\n- Игнорировать задачи, где completed = true.\n\nПравила ответа:\n1. Сначала кратко перечисли 1–3 самые актуальные задачи на сегодня в порядке приоритета.\n2. Предложи, с какой задачи начать прямо сейчас (или 2 варианта, если приоритет близкий).\n3. Коротко объясни выбор (1–2 предложения).\n4. НЕ давай пошаговый план, пока я прямо не попрошу план/шаги.\n5. Если я попрошу план, дай короткие и понятные шаги.\n\nСтиль:\n- Поддерживающий, спокойный, практичный.\n- Кратко и структурированно.            </textarea>
@@ -1188,11 +1372,11 @@
             <option value="en">English</option>
             <option value="ru" selected="">Русский</option>
         </select>
-        <span>Версия: 1.3.10</span>
+        <span>Версия: 1.3.11</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
-    <button class="btn btn-primary add-note-btn" title="Добавить регулярную задачу" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
+    <button class="btn btn-primary add-note-btn" title="Добавить заметку/задачу" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
     <button class="btn btn-success finish-day-btn" id="finishDayBtn" title="Завершить день" style="display: none;">
         <i class="bi bi-award"></i> <span id="finishDayBtnText">Завершить день</span>
     </button>
@@ -1437,6 +1621,7 @@
                                 <option value="null">Выполнить задачу</option>
                                 <option value="count">Количество</option>
                                 <option value="time">Время выполнения</option>
+                                <option value="children">Выполнение дочерних задач</option>
                             </select>
 
                             <!-- Для "Количество повторений" -->
@@ -1456,6 +1641,12 @@
                                 <label for="taskGoalSeconds" class="form-label mt-2">Секунды</label>
                                 <input type="number" class="form-control" id="taskGoalSeconds">
                             </div>
+                            <div id="taskGoalChildren" style="display: none;">
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="taskGoalChildrenAutoComplete">
+                                    <label class="form-check-label" for="taskGoalChildrenAutoComplete">Автоматически завершать задачу, когда выполнены все дочерние</label>
+                                </div>
+                            </div>
                         </div>
                         </div>
                     </form>
@@ -1463,6 +1654,72 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary tab-action-btn" id="formNoteCancelBtn" data-bs-dismiss="modal">Отмена</button>
                     <button type="submit" class="btn btn-primary tab-action-btn" id="formNoteSaveBtn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="achievementModal" tabindex="-1" aria-labelledby="achievementModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="achievementForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="achievementModalLabel">Добавить достижение</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="achievementIdInput">
+                        <div class="mb-2">
+                            <label class="form-label" for="achievementTitleInput">Название достижения</label>
+                            <input type="text" class="form-control" id="achievementTitleInput" required="" maxlength="120">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="achievementMaxLevelInput">Максимальный уровень (0 = без ограничений)</label>
+                            <input type="number" min="0" class="form-control" id="achievementMaxLevelInput" value="0" required="">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="achievementProgressPerLevelInput">Прогресс для каждого уровня</label>
+                            <input type="number" min="1" class="form-control" id="achievementProgressPerLevelInput" value="10" required="">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="achievementStepInput">Шаг изменения прогресса</label>
+                            <input type="number" min="1" class="form-control" id="achievementStepInput" value="1" required="">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="achievementMetricTypeInput">Единица измерения достижения</label>
+                            <select class="form-select" id="achievementMetricTypeInput">
+                                <option value="count">Количество</option>
+                                <option value="time">Секунды</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary" id="achievementSaveBtn">Создать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="achievementTasksModal" tabindex="-1" aria-labelledby="achievementTasksModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="achievementTasksModalLabel">Привязка задач к достижению</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="achievementTasksAchievementId">
+                    <label for="achievementTaskSelect" class="form-label">Выберите задачу</label>
+                    <div class="d-flex gap-2 mb-2">
+                        <select class="form-select" id="achievementTaskSelect"></select>
+                        <button class="btn btn-primary" type="button" id="achievementLinkTaskBtn">Привязать</button>
+                    </div>
+                    <div id="achievementLinkedTasksList"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                 </div>
             </div>
         </div>
@@ -1581,8 +1838,10 @@
 
         Date.prototype.getWeekStart = function () {
             const day = this.getDay(); // 0 (Sunday) - 6 (Saturday)
+            const weekStart = data?.settings?.weekStart === 'monday' ? 1 : 0;
+            const offset = (day - weekStart + 7) % 7;
             const start = new Date(this);
-            start.setDate(this.getDate() - day); // сдвиг на начало недели
+            start.setDate(this.getDate() - offset); // сдвиг на начало недели
             return start;
         };
 
@@ -1923,8 +2182,8 @@
                     dateStart: '2026-01-01',
                     completion: {
                         2026: {
-                            1: [null, null, null, null, 8, 5, 5],
-                            2: [3, 0, 14, null, null, null, null],
+                            1: [null, null, null, null, 2, 5, 5],
+                            2: [3, 0, 2, null, null, null, null],
                         }
                     }
                 },
@@ -1975,6 +2234,20 @@
                 {id: 1, children: []},
                 {id: 2, children: [{id: 3, children: [{id: 4, children: []}]}]}
             ], // иерархия папок в заметках (по ID)
+            achievements: {
+                1: {
+                    id: 1,
+                    title: 'Погладить кота',
+                    maxLevel: 10,
+                    progressPerLevel: 35,
+                    step: 1,
+                    progress: 17,
+                    metricType: 'count',
+                    linkedTasks: {
+                        8: { lastValue: 17 }
+                    }
+                }
+            }
         };
         let selectedDate = (new Date(new Date().toDateString()));
         let currentWeekStart = null; // начало текущей недели (воскресенье или понедельник)
@@ -1997,6 +2270,7 @@
 
         // Сохранение в localStorage
         function save() {
+            syncAchievementLinkedTasksProgress();
             localStorage.setItem('appData', JSON.stringify(data));
         }
 
@@ -2008,7 +2282,8 @@
                 tasks: {},
                 folders: {},
                 structure: [],
-                dayRatings: {}
+                dayRatings: {},
+                achievements: {}
             };
             afterLoadData();
             save();
@@ -2052,16 +2327,100 @@
             if (data.settings.noteClickAction !== 'view' && data.settings.noteClickAction !== 'edit') {
                 data.settings.noteClickAction = DEFAULT_CLICK_ACTION;
             }
+            if (typeof data.settings.hideCompletedOnetimeTasks !== 'boolean') {
+                data.settings.hideCompletedOnetimeTasks = true;
+            }
+            if (typeof data.settings.hideCompletedRegularTasks !== 'boolean') {
+                data.settings.hideCompletedRegularTasks = true;
+            }
+            if (data.settings.weekStart !== 'monday' && data.settings.weekStart !== 'sunday') {
+                data.settings.weekStart = 'monday';
+            }
             if (!data.dayRatings || typeof data.dayRatings !== 'object') {
                 data.dayRatings = {};
             }
             if (!data.dailyGoals || typeof data.dailyGoals !== 'object') {
                 data.dailyGoals = {};
             }
+            if (!data.achievements || typeof data.achievements !== 'object') {
+                data.achievements = {};
+            }
+            if (data.achievement_max_id == null) {
+                data.achievement_max_id = 0;
+                if (Object.keys(data.achievements).length > 0) {
+                    data.achievement_max_id = Math.max(...Object.keys(data.achievements).map(id => parseInt(id)));
+                }
+            }
+            for (const achievementId in data.achievements) {
+                const achievement = data.achievements[achievementId];
+                if (!achievement || typeof achievement !== 'object') continue;
+                if (!achievement.linkedTasks || typeof achievement.linkedTasks !== 'object') {
+                    achievement.linkedTasks = {};
+                }
+                if (achievement.metricType !== 'time') {
+                    achievement.metricType = 'count';
+                }
+            }
+            for (const taskId in data.tasks) {
+                const task = data.tasks[taskId];
+                if (task?.goal?.type === 'children') {
+                    if (typeof task.goal.autoComplete !== 'boolean') {
+                        task.goal.autoComplete = false;
+                    }
+                }
+                normalizeOneTimeTaskGoalProgress(data.tasks[taskId]);
+            }
         }
 
         function getDateKey(date) {
             return new Date(new Date(date).toDateString()).toStringWithoutTime();
+        }
+
+        function normalizeOneTimeTaskGoalProgress(task) {
+            if (!task || task.regularity || task.goal == null || task.goal.type === 'children') return;
+            if (!task.completionHistory || typeof task.completionHistory !== 'object' || Array.isArray(task.completionHistory)) {
+                task.completionHistory = {};
+            }
+
+            const hasHistory = Object.keys(task.completionHistory).length > 0;
+            if (!hasHistory && task.completion != null) {
+                const fallbackDate = task.completedAt ?? new Date().toStringWithoutTime();
+                task.completionHistory[fallbackDate] = task.completion;
+            }
+        }
+
+        function getOneTimeTaskGoalProgressEntries(task) {
+            if (!task || task.regularity || task.goal == null) return [];
+            normalizeOneTimeTaskGoalProgress(task);
+
+            return Object.entries(task.completionHistory)
+                .filter(([dateKey]) => /^\d{4}-\d{2}-\d{2}$/.test(dateKey))
+                .map(([dateKey, value]) => ({ dateKey, value }))
+                .sort((a, b) => a.dateKey.localeCompare(b.dateKey));
+        }
+
+        function getOneTimeTaskGoalProgressForDate(task, date) {
+            const dateKey = getDateKey(date);
+            const entries = getOneTimeTaskGoalProgressEntries(task);
+            let result = null;
+            for (const entry of entries) {
+                if (entry.dateKey > dateKey) break;
+                result = entry.value;
+            }
+            return result;
+        }
+
+        function hasFutureOneTimeTaskGoalProgressEntry(task, date) {
+            const dateKey = getDateKey(date);
+            return getOneTimeTaskGoalProgressEntries(task).some((entry) => entry.dateKey > dateKey);
+        }
+
+        function hasOneTimeTaskGoalProgressEntryForDate(task, date) {
+            if (!task || task.regularity || task.goal == null) return false;
+            if (task.goal.type === 'children') return false;
+            normalizeOneTimeTaskGoalProgress(task);
+            if (!task.completionHistory || typeof task.completionHistory !== 'object') return false;
+            return Object.prototype.hasOwnProperty.call(task.completionHistory, getDateKey(date));
         }
 
         function getDailyGoalsForDate(date) {
@@ -2079,10 +2438,15 @@
 
         function getDailyGoalTargetCompletion(task, dailyGoalEntry, date) {
             const currentResult = GetTaskCompletionResult(task, date);
-            const startResult = Number(dailyGoalEntry.startResult ?? 0);
             if (dailyGoalEntry.mode === 'goal') {
                 const targetValue = Number(dailyGoalEntry.target ?? 0);
-                const currentValue = Number(currentResult ?? 0) - startResult;
+                let currentValue = Number(currentResult ?? 0);
+                if (!task.regularity && task.goal != null) {
+                    const prevDate = new Date(new Date(date).toDateString());
+                    prevDate.setDate(prevDate.getDate() - 1);
+                    const previousResult = Number(GetTaskCompletionResult(task, prevDate) ?? 0);
+                    currentValue -= previousResult;
+                }
                 return {
                     value: Math.max(0, currentValue),
                     target: Math.max(0, targetValue),
@@ -2410,8 +2774,48 @@
             return [...notCompletedTasks, ...completedTasks];
         }
 
+        function getChildTasksForParentTask(task) {
+            if (!task || task.note == null) return [];
+            const childTasks = [];
+            for (const noteId in data.notes) {
+                const note = data.notes[noteId];
+                if (!note || String(note.parent ?? '') !== String(task.note)) continue;
+                if (note.task == null) continue;
+                const childTask = data.tasks?.[note.task];
+                if (childTask) {
+                    childTasks.push(childTask);
+                }
+            }
+            return childTasks;
+        }
+
+        function getChildTaskGoalStats(task, date = selectedDate) {
+            const childTasks = getChildTasksForParentTask(task);
+            const total = childTasks.length;
+            let completed = 0;
+            for (const childTask of childTasks) {
+                if (IsTaskCompleted(childTask, date)) {
+                    completed++;
+                }
+            }
+            return { total, completed, childTasks };
+        }
+
+        function getParentTaskId(task) {
+            const note = data.notes?.[task?.note];
+            if (!note || note.parent == null) return null;
+            const parentNote = data.notes?.[note.parent];
+            if (!parentNote || parentNote.task == null) return null;
+            return Number(parentNote.task);
+        }
+
         function GetTaskGoalPercent(task) {
             if (task.goal != null) {
+                if (task.goal.type === 'children') {
+                    const stats = getChildTaskGoalStats(task, selectedDate);
+                    if (stats.total <= 0) return 0;
+                    return (stats.completed * 100) / stats.total;
+                }
                 if (task.goal.type === 'count') {
                     return GetTaskCompletionResult(task)*100/task.goal.count;
                 } else {
@@ -2423,6 +2827,10 @@
 
         function GetTaskGoalText(task) {
             if (task.goal != null) {
+                if (task.goal.type === 'children') {
+                    const stats = getChildTaskGoalStats(task, selectedDate);
+                    return `${stats.completed}/${stats.total}`;
+                }
                 if (task.goal.type === 'count') {
                     return (GetTaskCompletionResult(task) ?? 0) + '/' + task.goal.count;
                 } else {
@@ -2454,6 +2862,34 @@
         }
 
         function GetTaskCompletionResult(task, date = selectedDate) {
+            if (task.goal?.type === 'children') {
+                const stats = getChildTaskGoalStats(task, date);
+                const autoCompleted = stats.total > 0 && stats.completed >= stats.total;
+
+                if (task.regularity) {
+                    const year = date.getFullYear();
+                    const weekNumber = date.getWeekNumber();
+                    const dayOfWeek = date.getDay();
+                    if (!task.completion || typeof task.completion !== 'object') task.completion = {};
+                    if (!task.completion[year]) task.completion[year] = {};
+                    if (!task.completion[year][weekNumber]) task.completion[year][weekNumber] = {};
+
+                    if (task.goal.autoComplete === true) {
+                        task.completion[year][weekNumber][dayOfWeek] = autoCompleted;
+                        return autoCompleted;
+                    }
+
+                    return task.completion[year][weekNumber][dayOfWeek] ?? null;
+                }
+
+                if (task.goal.autoComplete === true) {
+                    task.completion = autoCompleted;
+                    return autoCompleted;
+                }
+
+                return task.completion === true;
+            }
+
             if (task.regularity) {
                 const year = date.getFullYear();
                 const weekNumber = date.getWeekNumber();
@@ -2466,7 +2902,17 @@
                     return task.completion[year][weekNumber][dayOfWeek];
                 }
             } else {
+                if (task.goal != null) {
+                    return getOneTimeTaskGoalProgressForDate(task, date);
+                }
                 if (task.completion != null) {
+                    if (task.completion === true && task.completedAt) {
+                        const completedDate = new Date(new Date(task.completedAt).toDateString());
+                        const viewedDate = new Date(new Date(date).toDateString());
+                        if (viewedDate < completedDate) {
+                            return false;
+                        }
+                    }
                     return task.completion;
                 }
             }
@@ -2477,7 +2923,7 @@
         function IsTaskCompleted(task, date) {
             const result = GetTaskCompletionResult(task, date);
 
-            return IsTaskCompletedFromResult(task, result);
+            return IsTaskCompletedFromResult(task, result, date);
         }
 
         function hasTaskProgressForDate(task, date) {
@@ -2487,9 +2933,12 @@
             return false;
         }
 
-        function IsTaskCompletedFromResult(task, result) {
+        function IsTaskCompletedFromResult(task, result, date = selectedDate) {
             if (result !== null) {
                 if (task.goal != null) {
+                    if (task.goal.type === 'children') {
+                        return result === true;
+                    }
                     return result >= task.goal.count;
                 }
                 return result === true;
@@ -2591,13 +3040,40 @@
                 }
             }
             else {
-                task.completion = result;
-
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const day = date.getDate().toString().padStart(2, '0');
-
-                task.completedAt = `${year}-${month}-${day}`;
+                if (task.goal != null) {
+                    if (task.goal.type === 'children') {
+                        task.completion = result === true;
+                        if (task.completion) {
+                            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                            const day = date.getDate().toString().padStart(2, '0');
+                            task.completedAt = `${year}-${month}-${day}`;
+                        } else {
+                            delete task.completedAt;
+                        }
+                        refreshAchievements();
+                        return true;
+                    }
+                    normalizeOneTimeTaskGoalProgress(task);
+                    const dateKey = getDateKey(date);
+                    task.completionHistory[dateKey] = result;
+                    const entries = getOneTimeTaskGoalProgressEntries(task);
+                    task.completion = entries.length > 0 ? entries[entries.length - 1].value : result;
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    task.completedAt = `${year}-${month}-${day}`;
+                } else {
+                    task.completion = result;
+                    if (result === true) {
+                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        const day = date.getDate().toString().padStart(2, '0');
+                        task.completedAt = `${year}-${month}-${day}`;
+                    } else {
+                        delete task.completedAt;
+                    }
+                }
             }
+            refreshAchievements();
+            return true;
         }
 
         // ================================ //
@@ -2607,6 +3083,10 @@
         const noteModal = new bootstrap.Modal(document.getElementById('noteModal'));
         const formNoteModalEl = document.getElementById('formNoteModal');
         const formNoteModal = new bootstrap.Modal(formNoteModalEl);
+        const achievementModalEl = document.getElementById('achievementModal');
+        const achievementModal = new bootstrap.Modal(achievementModalEl);
+        const achievementTasksModalEl = document.getElementById('achievementTasksModal');
+        const achievementTasksModal = new bootstrap.Modal(achievementTasksModalEl);
         const goalTimeModalEl = document.getElementById('goalTimeModal');
         const goalTimeModal = new bootstrap.Modal(goalTimeModalEl);
         const goalTimerDisplay = document.getElementById('goalTimerDisplay');
@@ -2651,10 +3131,12 @@
             goalTypeContainer: document.getElementById('taskGoalContainer'),
             countGoal: document.getElementById('taskGoalCount'),
             timeGoal: document.getElementById('taskTimeGoal'),
+            childrenGoal: document.getElementById('taskGoalChildren'),
             repeatCount: document.getElementById('taskRepeatCount'),
             goalCountStep: document.getElementById('taskGoalCountStep'),
             goalMinutes: document.getElementById('taskGoalMinutes'),
-            goalSeconds: document.getElementById('taskGoalSeconds')
+            goalSeconds: document.getElementById('taskGoalSeconds'),
+            childrenAutoComplete: document.getElementById('taskGoalChildrenAutoComplete')
         };
         const noteForm = document.getElementById('formNoteForm');
         const fullDateDisplay = document.getElementById('fullDateDisplay');
@@ -2667,6 +3149,7 @@
         const notesSortModeBtn = document.getElementById('notesSortModeBtn');
         const taskClickActionSelect = document.getElementById('taskClickActionSelect');
         const noteClickActionSelect = document.getElementById('noteClickActionSelect');
+        const weekStartSelect = document.getElementById('weekStartSelect');
         const finishDayBtn = document.getElementById('finishDayBtn');
         const formNoteModalLabel = document.getElementById('formNoteModalLabel');
         const formNoteSaveBtn = document.getElementById('formNoteSaveBtn');
@@ -2678,8 +3161,23 @@
         const navMoreToggle = document.getElementById('navMoreToggle');
         const secondaryNavMenu = document.getElementById('secondaryNavMenu');
         const addNoteBtn = document.querySelector('.add-note-btn');
+        const achievementForm = document.getElementById('achievementForm');
+        const achievementModalLabel = document.getElementById('achievementModalLabel');
+        const achievementIdInput = document.getElementById('achievementIdInput');
+        const achievementTitleInput = document.getElementById('achievementTitleInput');
+        const achievementMaxLevelInput = document.getElementById('achievementMaxLevelInput');
+        const achievementProgressPerLevelInput = document.getElementById('achievementProgressPerLevelInput');
+        const achievementStepInput = document.getElementById('achievementStepInput');
+        const achievementMetricTypeInput = document.getElementById('achievementMetricTypeInput');
+        const achievementSaveBtn = document.getElementById('achievementSaveBtn');
+        const achievementTasksAchievementId = document.getElementById('achievementTasksAchievementId');
+        const achievementTaskSelect = document.getElementById('achievementTaskSelect');
+        const achievementLinkTaskBtn = document.getElementById('achievementLinkTaskBtn');
+        const achievementLinkedTasksList = document.getElementById('achievementLinkedTasksList');
+        const customAchievementsList = document.getElementById('customAchievementsList');
         let currentActiveTab = 'routineContainer';
         let activeQuickPreset = 'note';
+        const expandedTaskChildren = new Set();
 
         function setNoteFormMode(isEditMode) {
             formNoteModalLabel.textContent = isEditMode ? 'Редактировать' : 'Добавить заметку';
@@ -2768,14 +3266,164 @@
         function updateAddButtonContext(targetId) {
             if (targetId === 'routineContainer') {
                 addNoteBtn.title = 'Добавить регулярную задачу';
+                addNoteBtn.setAttribute('data-bs-toggle', 'modal');
+                addNoteBtn.setAttribute('data-bs-target', '#formNoteModal');
                 return;
             }
             if (targetId === 'tasksContainer') {
                 addNoteBtn.title = 'Добавить обычную задачу';
+                addNoteBtn.setAttribute('data-bs-toggle', 'modal');
+                addNoteBtn.setAttribute('data-bs-target', '#formNoteModal');
+                return;
+            }
+            if (targetId === 'achievementsContainer') {
+                addNoteBtn.title = 'Добавить достижение';
+                addNoteBtn.removeAttribute('data-bs-toggle');
+                addNoteBtn.removeAttribute('data-bs-target');
                 return;
             }
             addNoteBtn.title = 'Добавить заметку/задачу';
+            addNoteBtn.setAttribute('data-bs-toggle', 'modal');
+            addNoteBtn.setAttribute('data-bs-target', '#formNoteModal');
         }
+
+        function resetAchievementFormToCreateMode() {
+            achievementIdInput.value = '';
+            achievementForm.reset();
+            achievementMaxLevelInput.value = '0';
+            achievementProgressPerLevelInput.value = '10';
+            achievementStepInput.value = '1';
+            achievementMetricTypeInput.value = 'count';
+            achievementSaveBtn.textContent = 'Создать';
+            achievementModalLabel.textContent = 'Добавить достижение';
+        }
+
+        function openAchievementTaskLinkModal(achievementId) {
+            const achievement = data.achievements?.[achievementId];
+            if (!achievement) return;
+            achievementTasksAchievementId.value = String(achievementId);
+            renderAchievementTaskSelection(achievementId);
+            renderLinkedAchievementTasks(achievementId);
+            achievementTasksModal.show();
+        }
+
+        function renderAchievementTaskSelection(achievementId) {
+            const achievement = data.achievements?.[achievementId];
+            if (!achievement) return;
+            const linkedTaskIds = new Set(Object.keys(achievement.linkedTasks ?? {}).map(id => String(id)));
+
+            achievementTaskSelect.innerHTML = '<option value="">Выберите задачу</option>';
+            Object.keys(data.tasks ?? {}).forEach((taskId) => {
+                if (linkedTaskIds.has(String(taskId))) return;
+                const option = document.createElement('option');
+                option.value = String(taskId);
+                option.textContent = getTaskTitle(taskId);
+                achievementTaskSelect.appendChild(option);
+            });
+        }
+
+        function renderLinkedAchievementTasks(achievementId) {
+            const achievement = data.achievements?.[achievementId];
+            if (!achievement) return;
+
+            const linkedTaskIds = Object.keys(achievement.linkedTasks ?? {});
+            if (linkedTaskIds.length === 0) {
+                achievementLinkedTasksList.innerHTML = '<div class="text-muted small">Пока нет привязанных задач</div>';
+                return;
+            }
+
+            const ul = document.createElement('ul');
+            ul.className = 'list-group';
+            linkedTaskIds.forEach((taskId) => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                const linkData = achievement.linkedTasks[taskId] ?? {};
+                li.innerHTML = `
+                    <span>${getTaskTitle(taskId)} <small class="text-muted">(Отслеживаемое значение: ${Math.round(Number(linkData.lastValue ?? 0))})</small></span>
+                    <button class="btn btn-outline-danger btn-sm" type="button">Отвязать</button>
+                `;
+                li.querySelector('button').addEventListener('click', () => {
+                    delete achievement.linkedTasks[taskId];
+                    save();
+                    renderAchievementTaskSelection(achievementId);
+                    renderLinkedAchievementTasks(achievementId);
+                    refreshAchievements();
+                });
+                ul.appendChild(li);
+            });
+
+            achievementLinkedTasksList.innerHTML = '';
+            achievementLinkedTasksList.appendChild(ul);
+        }
+
+        addNoteBtn.addEventListener('click', (event) => {
+            if (currentActiveTab !== 'achievementsContainer') return;
+            event.preventDefault();
+            event.stopPropagation();
+            resetAchievementFormToCreateMode();
+            achievementModal.show();
+        });
+
+        achievementForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const title = achievementTitleInput.value.trim();
+            const maxLevel = Math.max(0, parseInt(achievementMaxLevelInput.value, 10) || 0);
+            const progressPerLevel = Math.max(1, parseInt(achievementProgressPerLevelInput.value, 10) || 1);
+            const step = Math.max(1, parseInt(achievementStepInput.value, 10) || 1);
+            const metricType = achievementMetricTypeInput.value === 'time' ? 'time' : 'count';
+
+            if (!title) return;
+            const achievementId = parseInt(achievementIdInput.value, 10);
+            if (achievementId > 0 && data.achievements?.[achievementId]) {
+                const existing = data.achievements[achievementId];
+                existing.title = title;
+                existing.maxLevel = maxLevel;
+                existing.progressPerLevel = progressPerLevel;
+                existing.step = step;
+                existing.metricType = metricType;
+            } else {
+                data.achievement_max_id = (data.achievement_max_id ?? 0) + 1;
+                data.achievements[data.achievement_max_id] = {
+                    id: data.achievement_max_id,
+                    title,
+                    maxLevel,
+                    progressPerLevel,
+                    step,
+                    progress: 0,
+                    metricType,
+                    linkedTasks: {}
+                };
+            }
+            save();
+            refreshAchievements();
+            achievementModal.hide();
+            resetAchievementFormToCreateMode();
+        });
+
+        achievementLinkTaskBtn.addEventListener('click', () => {
+            const achievementId = parseInt(achievementTasksAchievementId.value, 10);
+            const achievement = data.achievements?.[achievementId];
+            const taskId = achievementTaskSelect.value;
+            if (!achievement || !taskId || !data.tasks?.[taskId]) return;
+
+            const metric = getTaskAccumulatedProgress(data.tasks[taskId]);
+            if (metric.metricType === 'time') {
+                achievement.metricType = 'time';
+            }
+            achievement.linkedTasks[taskId] = { lastValue: metric.value };
+
+            if (metric.value > 0) {
+                const suffix = metric.metricType === 'time' ? ` sec` : '';
+                if (confirm(`Добавить текущий прогресс задачи в достижение прямо сейчас? (${metric.value}${suffix})`)) {
+                    achievement.progress = Math.max(0, Number(achievement.progress ?? 0) + metric.value);
+                }
+            }
+
+            save();
+            renderAchievementTaskSelection(achievementId);
+            renderLinkedAchievementTasks(achievementId);
+            refreshAchievements();
+        });
 
         function getDayRating(date) {
             const year = date.getFullYear();
@@ -2825,6 +3473,12 @@
         function getDayCompletionFraction(task, date) {
             const result = GetTaskCompletionResult(task, date);
             if (result == null) return 0;
+
+            if (task.goal?.type === 'children') {
+                const stats = getChildTaskGoalStats(task, date);
+                if (stats.total <= 0) return 0;
+                return Math.max(0, Math.min(stats.completed / stats.total, 1));
+            }
 
             if (task.goal != null && Number(task.goal.count) > 0) {
                 return Math.max(0, Math.min(Number(result) / Number(task.goal.count), 1));
@@ -2903,7 +3557,104 @@
             });
         }
 
+        function getTaskTitle(taskId) {
+            const task = data.tasks?.[taskId];
+            if (!task) return `#${taskId}`;
+            const note = data.notes?.[task.note];
+            return note?.title || `#${taskId}`;
+        }
+
+        function getTaskAccumulatedProgress(task) {
+            if (!task) return { value: 0, metricType: 'count' };
+            const isTimeMetric = task.goal?.type === 'time';
+            const metricType = isTimeMetric ? 'time' : 'count';
+            let value = 0;
+
+            if (task.regularity) {
+                if (task.completion && typeof task.completion === 'object') {
+                    for (const year of Object.keys(task.completion)) {
+                        const weeks = task.completion[year] ?? {};
+                        for (const week of Object.keys(weeks)) {
+                            const weekValues = weeks[week];
+                            const dayEntries = Array.isArray(weekValues)
+                                ? weekValues
+                                : Object.values(weekValues ?? {});
+                            for (const dayValue of dayEntries) {
+                                if (task.goal == null) {
+                                    if (dayValue === true) value += 1;
+                                    continue;
+                                }
+                                if (dayValue === true) {
+                                    value += Math.max(0, Number(task.goal?.count ?? 0));
+                                    continue;
+                                }
+                                const numeric = Number(dayValue);
+                                if (Number.isFinite(numeric) && numeric > 0) {
+                                    value += numeric;
+                                }
+                            }
+                        }
+                    }
+                }
+                return { value, metricType };
+            }
+
+            if (task.goal == null) {
+                return { value: task.completion === true ? 1 : 0, metricType: 'count' };
+            }
+
+            if (task.completionHistory && typeof task.completionHistory === 'object') {
+                let maxValue = 0;
+                for (const progressValue of Object.values(task.completionHistory)) {
+                    const numeric = Number(progressValue);
+                    if (Number.isFinite(numeric) && numeric > maxValue) {
+                        maxValue = numeric;
+                    }
+                }
+                return { value: maxValue, metricType };
+            }
+
+            const numeric = Number(task.completion);
+            return { value: Number.isFinite(numeric) && numeric > 0 ? numeric : 0, metricType };
+        }
+
+        function syncAchievementLinkedTasksProgress() {
+            let hasChanges = false;
+            for (const achievement of Object.values(data.achievements ?? {})) {
+                if (!achievement || typeof achievement !== 'object') continue;
+                if (!achievement.linkedTasks || typeof achievement.linkedTasks !== 'object') {
+                    achievement.linkedTasks = {};
+                }
+
+                for (const taskId of Object.keys(achievement.linkedTasks)) {
+                    const task = data.tasks?.[taskId];
+                    if (!task) continue;
+                    const metric = getTaskAccumulatedProgress(task);
+
+                    if (metric.metricType === 'time') {
+                        achievement.metricType = 'time';
+                    }
+
+                    const link = achievement.linkedTasks[taskId];
+                    const lastValue = Number(link?.lastValue ?? 0);
+                    const delta = metric.value - lastValue;
+                    if (delta !== 0) {
+                        achievement.progress = Math.max(0, Number(achievement.progress ?? 0) + delta);
+                        hasChanges = true;
+                    }
+                    achievement.linkedTasks[taskId] = {
+                        lastValue: metric.value
+                    };
+                }
+            }
+            return hasChanges;
+        }
+
         function refreshAchievements() {
+            const linkedProgressChanged = syncAchievementLinkedTasksProgress();
+            if (linkedProgressChanged) {
+                localStorage.setItem('appData', JSON.stringify(data));
+            }
             const medals = {
                 ultra: 0,
                 platinum: 0,
@@ -2937,6 +3688,96 @@
             document.getElementById('achievementBronzeDays').textContent = String(medals.bronze);
             document.getElementById('achievementParticipantDays').textContent = String(medals.participant);
             document.getElementById('achievementEmptyDays').textContent = String(medals.empty);
+            renderCustomAchievements();
+        }
+
+        function renderCustomAchievements() {
+            customAchievementsList.innerHTML = '';
+            const achievements = Object.values(data.achievements ?? {}).sort((a, b) => a.id - b.id);
+
+            achievements.forEach((achievement) => {
+                const levelSize = Math.max(1, Number(achievement.progressPerLevel ?? 1));
+                const totalProgress = Math.max(0, Number(achievement.progress ?? 0));
+                const step = Math.max(1, Number(achievement.step ?? 1));
+                const maxLevelRaw = Number(achievement.maxLevel ?? 0);
+                const isUnlimited = maxLevelRaw <= 0;
+                const computedLevel = Math.floor(totalProgress / levelSize) + 1;
+                const currentLevel = isUnlimited ? computedLevel : Math.min(computedLevel, maxLevelRaw);
+                const isAtMaxLevel = !isUnlimited && currentLevel >= maxLevelRaw;
+                const maxLevelStartProgress = isUnlimited ? 0 : ((maxLevelRaw - 1) * levelSize);
+                const displayedProgress = isAtMaxLevel
+                    ? (levelSize + Math.max(0, totalProgress - maxLevelStartProgress))
+                    : (totalProgress % levelSize);
+                const displayedTarget = levelSize;
+                const barPercent = isAtMaxLevel
+                    ? 100
+                    : Math.max(0, Math.min(100, (displayedProgress / levelSize) * 100));
+                const metricSuffix = achievement.metricType === 'time' ? ` sec` : '';
+                const linkedTasksCount = Object.keys(achievement.linkedTasks ?? {}).length;
+
+                const item = document.createElement('li');
+                item.className = 'custom-achievement-item';
+
+                item.innerHTML = `
+                    <div class="custom-achievement-title-row">
+                        <span class="custom-achievement-title"></span>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-secondary btn-sm" type="button" title="Редактировать достижение"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-outline-secondary btn-sm" type="button" title="Привязать задачи"><i class="bi bi-link-45deg"></i></button>
+                            <button class="btn btn-outline-danger btn-sm" type="button" title="Удалить достижение"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="custom-achievement-meta"></div>
+                    <div class="custom-achievement-progress-wrap"><div class="custom-achievement-progress"></div></div>
+                    <div class="custom-achievement-controls">
+                        <small>${displayedProgress}${metricSuffix} / ${displayedTarget}${metricSuffix} · Привязанные задачи: ${linkedTasksCount}</small>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-secondary btn-sm" type="button">-${step}</button>
+                            <button class="btn btn-outline-primary btn-sm" type="button">+${step}</button>
+                        </div>
+                    </div>
+                `;
+
+                item.querySelector('.custom-achievement-title').textContent = achievement.title;
+                item.querySelector('.custom-achievement-meta').textContent = isUnlimited
+                    ? `Уровень: ${currentLevel} · Без ограничений по уровням`
+                    : `Уровень: ${currentLevel}/${maxLevelRaw}`;
+                item.querySelector('.custom-achievement-progress').style.width = `${barPercent}%`;
+
+                const [editBtn, linkBtn, deleteBtn, minusBtn, plusBtn] = item.querySelectorAll('button');
+                editBtn.addEventListener('click', () => {
+                    achievementIdInput.value = String(achievement.id);
+                    achievementTitleInput.value = achievement.title;
+                    achievementMaxLevelInput.value = String(achievement.maxLevel ?? 0);
+                    achievementProgressPerLevelInput.value = String(levelSize);
+                    achievementStepInput.value = String(step);
+                    achievementMetricTypeInput.value = achievement.metricType === 'time' ? 'time' : 'count';
+                    achievementSaveBtn.textContent = 'Сохранить';
+                    achievementModalLabel.textContent = 'Редактировать достижение';
+                    achievementModal.show();
+                });
+                linkBtn.addEventListener('click', () => {
+                    openAchievementTaskLinkModal(achievement.id);
+                });
+                deleteBtn.addEventListener('click', () => {
+                    if (!confirm('Удалить достижение?')) return;
+                    delete data.achievements[achievement.id];
+                    save();
+                    refreshAchievements();
+                });
+                minusBtn.addEventListener('click', () => {
+                    achievement.progress = Math.max(0, totalProgress - step);
+                    save();
+                    refreshAchievements();
+                });
+                plusBtn.addEventListener('click', () => {
+                    achievement.progress = totalProgress + step;
+                    save();
+                    refreshAchievements();
+                });
+
+                customAchievementsList.appendChild(item);
+            });
         }
 
         function areAllSelectedDateTasksCompleted() {
@@ -2948,6 +3789,46 @@
         function getCurrentActiveTabId() {
             const activeBtn = document.querySelector('.nav-button.active');
             return activeBtn ? activeBtn.getAttribute('data-target') : null;
+        }
+
+        function isCompletedTasksHiddenForTab(tabId) {
+            if (tabId === 'routineContainer') {
+                return data.settings?.hideCompletedRegularTasks !== false;
+            }
+            if (tabId === 'tasksContainer') {
+                return data.settings?.hideCompletedOnetimeTasks !== false;
+            }
+            return true;
+        }
+
+        function setCompletedTasksHiddenForTab(tabId, hidden) {
+            if (tabId === 'routineContainer') {
+                data.settings.hideCompletedRegularTasks = hidden;
+                return;
+            }
+            if (tabId === 'tasksContainer') {
+                data.settings.hideCompletedOnetimeTasks = hidden;
+            }
+        }
+
+        function createCompletedTasksToggleButton(tabId) {
+            const hidden = isCompletedTasksHiddenForTab(tabId);
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'btn btn-outline-secondary completed-toggle-btn';
+            toggleBtn.innerHTML = hidden
+                ? '<i class="bi bi-eye"></i> Показать выполненные задачи'
+                : '<i class="bi bi-eye-slash"></i> Скрыть выполненные задачи';
+            toggleBtn.title = hidden ? 'Показать выполненные задачи' : 'Скрыть выполненные задачи';
+            toggleBtn.addEventListener('click', () => {
+                setCompletedTasksHiddenForTab(tabId, !hidden);
+                save();
+                if (tabId === 'routineContainer') {
+                    refreshRoutine();
+                } else {
+                    refreshTasks();
+                }
+            });
+            return toggleBtn;
         }
 
         function updateFinishDayButtonVisibility() {
@@ -3051,6 +3932,9 @@
             const taskToUpdate = data.tasks[taskId];
             if (!taskToUpdate) return;
 
+            if (!confirmOneTimeGoalPastDateEdit(taskToUpdate, selectedDate)) {
+                return;
+            }
             SetTaskComplete(taskToUpdate, goalTimerSeconds, selectedDate);
             save();
             if (taskToUpdate.regularity) {
@@ -3059,6 +3943,12 @@
                 refreshTasks();
             }
             updateFinishDayButtonVisibility();
+        }
+
+        function confirmOneTimeGoalPastDateEdit(task, date) {
+            if (!task || task.regularity || task.goal == null) return true;
+            if (!hasFutureOneTimeTaskGoalProgressEntry(task, date)) return true;
+            return confirm('Изменение значения в прошлом может конфликтовать с более новыми значениями в будущем. Продолжить?');
         }
 
         goalTimerStartBtn.addEventListener('click', () => {
@@ -3109,17 +3999,48 @@
 
         function refreshRoutine() {
             const container = document.getElementById('routineContainer');
+            const hideCompletedTasks = data.settings?.hideCompletedRegularTasks !== false;
 
             // Очищаем текущий список задач
             container.innerHTML = '';
 
             // Получаем задачи, которые должны быть выполнены сегодня
             const tasksToday = getRegularityTasksFromDate(selectedDate);
-
-            // Для каждой задачи создаем элемент и добавляем в контейнер
-            tasksToday.forEach(task => {
-                container.appendChild(renderTaskHtmlBlock(task));
+            const visibleRoutineTasks = tasksToday
+                .filter(task => !(hideCompletedTasks && IsTaskCompleted(task, selectedDate)));
+            const visibleTaskMap = new Map(visibleRoutineTasks.map(task => [Number(task.id), task]));
+            const childMap = new Map();
+            const childIds = new Set();
+            visibleRoutineTasks.forEach((task) => {
+                const parentTaskId = getParentTaskId(task);
+                if (parentTaskId == null || !visibleTaskMap.has(parentTaskId)) return;
+                if (!childMap.has(parentTaskId)) childMap.set(parentTaskId, []);
+                childMap.get(parentTaskId).push(task);
+                childIds.add(Number(task.id));
             });
+
+            visibleRoutineTasks
+                .filter(task => !childIds.has(Number(task.id)))
+                .forEach((task) => {
+                    const taskId = Number(task.id);
+                    const childTasks = childMap.get(taskId) ?? [];
+                    const isExpanded = expandedTaskChildren.has(taskId);
+                    container.appendChild(renderTaskHtmlBlock(task, {
+                        childCount: childTasks.length,
+                        childrenExpanded: isExpanded,
+                        onToggleChildren: () => {
+                            if (expandedTaskChildren.has(taskId)) expandedTaskChildren.delete(taskId);
+                            else expandedTaskChildren.add(taskId);
+                            refreshRoutine();
+                        }
+                    }));
+                    if (isExpanded) {
+                        childTasks.forEach((childTask) => {
+                            container.appendChild(renderTaskHtmlBlock(childTask, { isChildTask: true }));
+                        });
+                    }
+                });
+            container.appendChild(createCompletedTasksToggleButton('routineContainer'));
         }
 
         function addTaskToDailyGoals(taskId, date = selectedDate) {
@@ -3131,7 +4052,6 @@
 
             const entry = {
                 mode: 'complete',
-                startResult: Number(GetTaskCompletionResult(task, date) ?? 0),
             };
 
             if (task.goal && (task.goal.type === 'count' || task.goal.type === 'time')) {
@@ -3163,6 +4083,7 @@
 
         function refreshTasks() {
             const container = document.getElementById('tasksContainer');
+            const hideCompletedTasks = data.settings?.hideCompletedOnetimeTasks !== false;
 
             // Очищаем текущий список задач
             container.innerHTML = '';
@@ -3213,6 +4134,7 @@
                     removeTaskFromDailyGoals(sourceTaskId, selectedDate);
                 }
             });
+            initDragAndDropForTaskContainer(regularTasksZone);
             container.appendChild(regularTasksZone);
 
             // Получаем задачи без регулярности
@@ -3232,12 +4154,43 @@
                     dailyGoalZone.appendChild(taskElem);
                 });
 
-            // Для каждой задачи создаем элемент и добавляем в контейнер
-            onetimeTasks
+            const visibleRegularTasks = onetimeTasks
                 .filter(task => !assignedIds.has(Number(task.id)))
-                .forEach(task => {
-                regularTasksZone.appendChild(renderTaskHtmlBlock(task));
+                .filter(task => !(hideCompletedTasks && IsTaskCompleted(task, selectedDate)));
+            const visibleTaskMap = new Map(visibleRegularTasks.map(task => [Number(task.id), task]));
+            const childMap = new Map();
+            const childIds = new Set();
+            visibleRegularTasks.forEach((task) => {
+                const parentTaskId = getParentTaskId(task);
+                if (parentTaskId == null || !visibleTaskMap.has(parentTaskId)) return;
+                if (!childMap.has(parentTaskId)) childMap.set(parentTaskId, []);
+                childMap.get(parentTaskId).push(task);
+                childIds.add(Number(task.id));
             });
+
+            visibleRegularTasks
+                .filter(task => !childIds.has(Number(task.id)))
+                .forEach(task => {
+                    const taskId = Number(task.id);
+                    const childTasks = childMap.get(taskId) ?? [];
+                    const isExpanded = expandedTaskChildren.has(taskId);
+                    const taskElem = renderTaskHtmlBlock(task, {
+                        childCount: childTasks.length,
+                        childrenExpanded: isExpanded,
+                        onToggleChildren: () => {
+                            if (expandedTaskChildren.has(taskId)) expandedTaskChildren.delete(taskId);
+                            else expandedTaskChildren.add(taskId);
+                            refreshTasks();
+                        }
+                    });
+                    regularTasksZone.appendChild(taskElem);
+                    if (isExpanded) {
+                        childTasks.forEach((childTask) => {
+                            regularTasksZone.appendChild(renderTaskHtmlBlock(childTask, { isChildTask: true }));
+                        });
+                    }
+                });
+            container.appendChild(createCompletedTasksToggleButton('tasksContainer'));
         }
 
         function ArchiveCompletedAndExpiredTaskNotes() {
@@ -3733,6 +4686,9 @@
                         formFields.goalMinutes.value = Math.floor(time/60);
                         formFields.goalSeconds.value = time - Math.floor(time/60)*60;
                         break;
+                    case 'children':
+                        formFields.childrenAutoComplete.checked = task.goal.autoComplete === true;
+                        break;
                     case 'null':
                         break;
                 }
@@ -3777,6 +4733,7 @@
             const taskTitle = note ? note.title : 'Без названия';
             const done = IsTaskCompleted(task, selectedDate);
             const isDailyGoalTask = options.isDailyGoalTask === true;
+            const isChildTask = options.isChildTask === true;
 
             // Создаем основной блок задачи
             const taskDiv = document.createElement('div');
@@ -3787,6 +4744,10 @@
             let taskDivClassName = done ? 'task done' : 'task';
             taskDivClassName += IsTaskExpired(task, selectedDate) ? ' expired' : '';
             taskDiv.className = taskDivClassName;
+            if (isChildTask) {
+                taskDiv.style.marginLeft = '18px';
+                taskDiv.style.borderStyle = 'dashed';
+            }
             if (!done) {
                 const percent = GetTaskGoalPercent(task);
                 if (percent !== 0) {
@@ -3854,10 +4815,20 @@
                 timeText = goalText;
             }
             timeDiv.textContent = timeText;
+            if (!task.regularity && task.goal != null && hasOneTimeTaskGoalProgressEntryForDate(task, selectedDate)) {
+                const progressBadge = document.createElement('span');
+                progressBadge.className = 'task-progress-updated-badge';
+                progressBadge.textContent = 'Изменено';
+                progressBadge.title = 'Прогресс цели для этой задачи был изменён в этот день';
+                timeDiv.appendChild(progressBadge);
+            }
 
             const titleDiv = document.createElement('div');
             titleDiv.className = 'task-title';
             titleDiv.textContent = taskTitle;
+            if ((options.childCount ?? 0) > 0) {
+                titleDiv.textContent = `${taskTitle} · Дочерние задачи: ${options.childCount}`;
+            }
 
             centerDiv.appendChild(titleDiv);
             centerDiv.appendChild(timeDiv);
@@ -3876,6 +4847,19 @@
                 clickOnTaskCompleteButton(task);
             });
             rightDiv.appendChild(rightIcon);
+
+            if ((options.childCount ?? 0) > 0) {
+                const expandBtn = document.createElement('button');
+                expandBtn.className = 'btn btn-outline-secondary btn-sm ms-1';
+                expandBtn.type = 'button';
+                expandBtn.textContent = options.childrenExpanded ? '▾' : '▸';
+                expandBtn.title = options.childrenExpanded ? 'Скрыть дочерние задачи' : 'Показать дочерние задачи';
+                expandBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    options.onToggleChildren?.();
+                });
+                rightDiv.appendChild(expandBtn);
+            }
 
             // Собираем весь блок
             taskDiv.appendChild(leftDiv);
@@ -3919,6 +4903,9 @@
                             const taskToUpdate = data.tasks[taskId]; // Предположим, есть такая функция
 
                             if (taskToUpdate) {
+                                if (!confirmOneTimeGoalPastDateEdit(taskToUpdate, selectedDate)) {
+                                    return;
+                                }
                                 SetTaskComplete(taskToUpdate, Number(value), selectedDate);
 
                                 // Скрываем модальное окно
@@ -3942,11 +4929,33 @@
                     stopGoalTimer();
                     updateGoalTimerUi();
                     goalTimeModal.show();
+                } else if (task.goal.type === 'children') {
+                    if (task.goal.autoComplete === true) {
+                        showNotification('Эта задача завершается автоматически по дочерним задачам');
+                        return;
+                    }
+                    const done = !IsTaskCompleted(task, selectedDate);
+                    SetTaskComplete(task, done, selectedDate);
+                    save();
+                    if (task.regularity) {
+                        refreshRoutine();
+                    } else {
+                        refreshTasks();
+                    }
+                    updateFinishDayButtonVisibility();
                 } else {
                     alert('Другая цель или не опознанный тип.');
                     return;
                 }
             } else {
+                if (!task.regularity) {
+                    const today = new Date(new Date().toDateString());
+                    const viewedDate = new Date(new Date(selectedDate).toDateString());
+                    if (!task.goal && viewedDate < today) {
+                        showNotification('Нельзя менять статус выполнения обычной задачи без цели в прошлых днях');
+                        return;
+                    }
+                }
                 const done = !IsTaskCompleted(task, selectedDate);
                 SetTaskComplete(task, done, selectedDate);
                 save();
@@ -3972,7 +4981,7 @@
 
             const roundedPercent = Math.round(score.percent);
             let ratingText = 'Без медали';
-            if (score.rating === 'ultra') ratingText = 'Ультра-сияющий кубок';
+            if (score.rating === 'ultra') ratingText = 'Рубиновый кубок';
             else if (score.rating === 'platinum') ratingText = 'Платина';
             else if (score.rating === 'gold') ratingText = 'Золото';
             else if (score.rating === 'silver') ratingText = 'Серебро';
@@ -4444,9 +5453,14 @@
                 if (goalType !== 'null') {
                     task.goal = {};
                     task.goal.type = goalType;
-                    task.goal.count = goalType === 'count' ?
-                        (formFields.repeatCount.value * 1 ?? 1) :
-                        (formFields.goalMinutes.value * 60 ?? 0) + (formFields.goalSeconds.value * 1 ?? 0);
+                    if (goalType === 'count') {
+                        task.goal.count = (formFields.repeatCount.value * 1 ?? 1);
+                    } else if (goalType === 'time') {
+                        task.goal.count = (formFields.goalMinutes.value * 60 ?? 0) + (formFields.goalSeconds.value * 1 ?? 0);
+                    } else if (goalType === 'children') {
+                        task.goal.count = Math.max(1, getChildTaskGoalStats(task, selectedDate).total || 1);
+                        task.goal.autoComplete = formFields.childrenAutoComplete.checked;
+                    }
 
                     if (goalType === 'count') {
                         const goalStepValue = formFields.goalCountStep.value.trim();
@@ -4455,6 +5469,8 @@
                         } else if ('step' in task.goal) {
                             delete task.goal.step;
                         }
+                    } else if (goalType !== 'children' && 'autoComplete' in task.goal) {
+                        delete task.goal.autoComplete;
                     }
                 } else {
                     if ('goal' in task) {
@@ -4583,6 +5599,10 @@
             setNoteFormMode(false);
         });
 
+        achievementModalEl.addEventListener('hide.bs.modal', () => {
+            resetAchievementFormToCreateMode();
+        });
+
         function toggleTaskFields(show) {
             const displayStyle = show ? 'block' : 'none';
 
@@ -4624,25 +5644,43 @@
             if (type === 'count') {
                 formFields.countGoal.style.display = 'block';
                 formFields.timeGoal.style.display = 'none';
+                formFields.childrenGoal.style.display = 'none';
 
                 formFields.repeatCount.disabled = false;
                 formFields.goalCountStep.disabled = false;
                 formFields.goalMinutes.disabled = true;
                 formFields.goalSeconds.disabled = true;
+                formFields.childrenAutoComplete.disabled = true;
             } else if (type === 'time') {
                 formFields.countGoal.style.display = 'none';
                 formFields.timeGoal.style.display = 'block';
+                formFields.childrenGoal.style.display = 'none';
 
                 formFields.repeatCount.disabled = true;
                 formFields.goalCountStep.disabled = true;
                 formFields.goalMinutes.disabled = false;
                 formFields.goalSeconds.disabled = false;
-            } else {
+                formFields.childrenAutoComplete.disabled = true;
+            } else if (type === 'children') {
                 formFields.countGoal.style.display = 'none';
                 formFields.timeGoal.style.display = 'none';
+                formFields.childrenGoal.style.display = 'block';
 
                 formFields.repeatCount.disabled = true;
                 formFields.goalCountStep.disabled = true;
+                formFields.goalMinutes.disabled = true;
+                formFields.goalSeconds.disabled = true;
+                formFields.childrenAutoComplete.disabled = false;
+            } else {
+                formFields.countGoal.style.display = 'none';
+                formFields.timeGoal.style.display = 'none';
+                formFields.childrenGoal.style.display = 'none';
+
+                formFields.repeatCount.disabled = true;
+                formFields.goalCountStep.disabled = true;
+                formFields.goalMinutes.disabled = true;
+                formFields.goalSeconds.disabled = true;
+                formFields.childrenAutoComplete.disabled = true;
             }
         }
 
@@ -4815,6 +5853,11 @@
             data.settings.noteClickAction = this.value;
             save();
         });
+        weekStartSelect.addEventListener('change', function() {
+            data.settings.weekStart = this.value === 'monday' ? 'monday' : 'sunday';
+            save();
+            updateWeek(selectedDate, 'settings:weekStart');
+        });
 
         const textarea = document.getElementById('gptPromptInput');
         const copyBtn = document.getElementById('copyTodayJsonBtn');
@@ -4915,9 +5958,9 @@
         let draggedId = null;
 
         initDragAndDropForTaskContainer(document.getElementById('routineContainer'));
-        initDragAndDropForTaskContainer(document.getElementById('tasksContainer'));
 
         function initDragAndDropForTaskContainer(container) {
+            if (!container) return;
             container.addEventListener('dragover', (ev) => {
                 ev.preventDefault(); // Разрешить сброс
             });
@@ -4933,6 +5976,14 @@
                 const targetTaskId = Number(targetId?.replace('task-', ''));
                 const sourceTask = data.tasks[sourceTaskId];
                 const targetTask = data.tasks[targetTaskId];
+                const isOneTimeContainer = container.id === 'tasksContainer' || container.id === 'regularTasksZone';
+                if (isOneTimeContainer) {
+                    const sourceInRegularZone = sourceElem?.closest('#regularTasksZone');
+                    const targetInRegularZone = targetElem?.closest('#regularTasksZone');
+                    if (!sourceInRegularZone || !targetInRegularZone) {
+                        return;
+                    }
+                }
 
                 if (
                     sourceElem
@@ -5020,7 +6071,7 @@
             if (container.id === 'routineContainer') {
                 return task.sortAnchorTimeRegular ?? null;
             }
-            if (container.id === 'tasksContainer') {
+            if (container.id === 'tasksContainer' || container.id === 'regularTasksZone') {
                 return task.sortAnchorTimeOnetime ?? null;
             }
             return null;
@@ -5056,13 +6107,13 @@
         function persistTaskSortOrder(container) {
             const sortField = container.id === 'routineContainer'
                 ? 'sortOrderRegular'
-                : (container.id === 'tasksContainer' ? 'sortOrderOnetime' : null);
+                : ((container.id === 'tasksContainer' || container.id === 'regularTasksZone') ? 'sortOrderOnetime' : null);
             const sortByTimeField = container.id === 'routineContainer'
                 ? 'sortOrderByTimeRegular'
-                : (container.id === 'tasksContainer' ? 'sortOrderByTimeOnetime' : null);
+                : ((container.id === 'tasksContainer' || container.id === 'regularTasksZone') ? 'sortOrderByTimeOnetime' : null);
             const sortAnchorTimeField = container.id === 'routineContainer'
                 ? 'sortAnchorTimeRegular'
-                : (container.id === 'tasksContainer' ? 'sortAnchorTimeOnetime' : null);
+                : ((container.id === 'tasksContainer' || container.id === 'regularTasksZone') ? 'sortAnchorTimeOnetime' : null);
 
             if (!sortField || !sortByTimeField || !sortAnchorTimeField) return;
 
@@ -5220,6 +6271,7 @@
         load();
         taskClickActionSelect.value = data.settings.taskClickAction ?? DEFAULT_CLICK_ACTION;
         noteClickActionSelect.value = data.settings.noteClickAction ?? DEFAULT_CLICK_ACTION;
+        weekStartSelect.value = data.settings.weekStart ?? 'monday';
         updateWeek(selectedDate);
         refreshNotes();
         updateFolderListInForm();
