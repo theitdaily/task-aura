@@ -140,6 +140,17 @@
             margin-top: -2px;
         }
 
+        .task-title-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .task-title-row .task-title {
+            min-width: 0;
+        }
+
         .task.expired {
             background-color: #ffe7e7;
             color: #b00000;
@@ -152,6 +163,22 @@
         .task.task.done {
             background-color: #c1faeb;
             color: #5d5d5d;
+        }
+
+        .task.task.cancelled {
+            background-color: #f2f4f8;
+            color: #7a8191;
+        }
+
+        .task.task.cancelled .task-title {
+            text-decoration: line-through;
+            text-decoration-style: dashed;
+        }
+
+        .task.task.cancelled .cancelled-label {
+            text-decoration: none;
+            font-weight: 600;
+            white-space: nowrap;
         }
 
         .task-right {
@@ -554,6 +581,14 @@
         .completed-toggle-btn {
             display: flex;
             margin: 12px auto 6px;
+            border-radius: 999px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        .routine-action-btn {
+            display: flex;
+            margin: 6px auto;
             border-radius: 999px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             white-space: nowrap;
@@ -1152,7 +1187,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.11">
+        <meta name="version" content="1.3.12">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -1166,19 +1201,19 @@
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day" data-day="2026-04-06"><div>Mon</div><div>6</div></div>
-                <div class="text-center day" data-day="2026-04-07"><div>Tue</div><div>7</div></div>
-                <div class="text-center day" data-day="2026-04-08"><div>Wed</div><div>8</div></div>
-                <div class="text-center day" data-day="2026-04-09"><div>Thu</div><div>9</div></div>
-                <div class="text-center day" data-day="2026-04-10"><div>Fri</div><div>10</div></div>
-                <div class="text-center day" data-day="2026-04-11"><div>Sat</div><div>11</div></div>
-                <div class="text-center day active" data-day="2026-04-12"><div>Sun</div><div>12</div></div>
+                <div class="text-center day" data-day="2026-04-13"><div>Mon</div><div>13</div></div>
+                <div class="text-center day" data-day="2026-04-14"><div>Tue</div><div>14</div></div>
+                <div class="text-center day" data-day="2026-04-15"><div>Wed</div><div>15</div></div>
+                <div class="text-center day active" data-day="2026-04-16"><div>Thu</div><div>16</div></div>
+                <div class="text-center day" data-day="2026-04-17"><div>Fri</div><div>17</div></div>
+                <div class="text-center day" data-day="2026-04-18"><div>Sat</div><div>18</div></div>
+                <div class="text-center day" data-day="2026-04-19"><div>Sun</div><div>19</div></div>
             </div>
         </div>
     </div>
 
     <!-- Основной блок задач -->
-    <div class="container flex-fill show" id="routineContainer"><button class="btn btn-outline-secondary completed-toggle-btn" title="Show completed tasks"><i class="bi bi-eye"></i> Show completed tasks</button></div>
+    <div class="container flex-fill show" id="routineContainer"><button class="btn btn-outline-secondary completed-toggle-btn" title="Show completed tasks"><i class="bi bi-eye"></i> Show completed tasks</button><button class="btn btn-outline-primary routine-action-btn" title="Add pre-completed regular task for selected day"><i class="bi bi-check2-circle me-1"></i> Pre-complete regular task</button><button class="btn routine-action-btn btn-outline-danger" title="Switch to cancellation mode"><i class="bi bi-check2-square me-1"></i> Completion mode: done</button></div>
 
     <!-- Блок задач без регулярности -->
     <div class="container flex-fill" id="tasksContainer"><div class="daily-goal-zone" id="dailyGoalZone">
@@ -1246,6 +1281,20 @@
                 </div>
                 <span class="news-feed-head-icon"><i class="bi bi-megaphone"></i></span>
             </div>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Published on: 2026-04-16
+                    </div>
+                    <h3 class="news-feed-item-title">Update to version 1.3.12</h3>
+                    <p class="news-feed-item-description">Day goals and medals:
+- Medal/cup calculation now includes all regular tasks (daily, weekly, monthly), not only daily tasks.
+- Added "Cancelled" state for regular tasks on a selected day: cancelled tasks are not completed, but excluded from medal calculations.
+
+Routine:
+- Added "Pre-complete regular task" button with a picker of regular tasks for the selected day.
+- Selected task is instantly added as completed: no goal =&gt; completed, with goal =&gt; 100% goal progress.
+- If pre-completion is fully removed, the task entry disappears from the selected day.</p>
+                </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Published on: 2026-04-12
@@ -1376,7 +1425,7 @@ Day goals:
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.3.11</span>
+        <span>Version: 1.3.12</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -1458,6 +1507,25 @@ Day goals:
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" id="modalConfirmBtn">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="prefillDoneTaskModal" tabindex="-1" aria-labelledby="prefillDoneTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="prefillDoneTaskModalLabel">Pre-complete regular task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted mb-2">Select a regular task to add as completed for the selected day. If full completion is removed, the task disappears from this day.</p>
+                    <select class="form-select" id="prefillDoneTaskSelect"></select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary tab-action-btn" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary tab-action-btn" id="prefillDoneTaskConfirmBtn">Add as completed</button>
                 </div>
             </div>
         </div>
@@ -2257,6 +2325,7 @@ Day goals:
         let currentWeekStart = null; // начало текущей недели (воскресенье или понедельник)
         let lastDateSelectionDebug = 'init';
         let note_delete_mode = false;
+        let routineCompletionMode = 'complete';
         let TodayJson = {
             regular: [],
             onetime: []
@@ -2346,6 +2415,7 @@ Day goals:
             if (!data.dailyGoals || typeof data.dailyGoals !== 'object') {
                 data.dailyGoals = {};
             }
+            normalizeDailyGoalsStorage();
             if (!data.achievements || typeof data.achievements !== 'object') {
                 data.achievements = {};
             }
@@ -2367,6 +2437,9 @@ Day goals:
             }
             for (const taskId in data.tasks) {
                 const task = data.tasks[taskId];
+                if (task?.regularity && (!task.canceled || typeof task.canceled !== 'object')) {
+                    task.canceled = {};
+                }
                 if (task?.goal?.type === 'children') {
                     if (typeof task.goal.autoComplete !== 'boolean') {
                         task.goal.autoComplete = false;
@@ -2378,6 +2451,64 @@ Day goals:
 
         function getDateKey(date) {
             return new Date(new Date(date).toDateString()).toStringWithoutTime();
+        }
+
+        function ensureYearWeekDayBucket(storage, date) {
+            const year = String(date.getFullYear());
+            const week = String(date.getWeekNumber());
+            const day = String(date.getDay());
+
+            if (!storage[year] || typeof storage[year] !== 'object') {
+                storage[year] = {};
+            }
+            if (!storage[year][week] || typeof storage[year][week] !== 'object') {
+                storage[year][week] = {};
+            }
+            if (!storage[year][week][day] || typeof storage[year][week][day] !== 'object') {
+                storage[year][week][day] = {};
+            }
+
+            return storage[year][week][day];
+        }
+
+        function normalizeDailyGoalsStorage() {
+            if (!data.dailyGoals || typeof data.dailyGoals !== 'object') {
+                data.dailyGoals = {};
+                return;
+            }
+
+            const migrated = {};
+            const dateKeyRegex = /^\d{4}-\d{2}-\d{2}$/;
+
+            if (Array.isArray(data.dailyGoals)) {
+                for (const rawDate of data.dailyGoals) {
+                    if (typeof rawDate !== 'string' || !dateKeyRegex.test(rawDate)) continue;
+                    const date = new Date(new Date(rawDate).toDateString());
+                    ensureYearWeekDayBucket(migrated, date);
+                }
+                data.dailyGoals = migrated;
+                return;
+            }
+
+            const keys = Object.keys(data.dailyGoals);
+            const hasOldFlatFormat = keys.some((key) => dateKeyRegex.test(key));
+            if (!hasOldFlatFormat) {
+                return;
+            }
+
+            for (const dateKey of keys) {
+                if (!dateKeyRegex.test(dateKey)) continue;
+                const date = new Date(new Date(dateKey).toDateString());
+                const target = ensureYearWeekDayBucket(migrated, date);
+                const dayGoals = data.dailyGoals[dateKey];
+                if (dayGoals && typeof dayGoals === 'object' && !Array.isArray(dayGoals)) {
+                    for (const taskId of Object.keys(dayGoals)) {
+                        target[String(taskId)] = dayGoals[taskId];
+                    }
+                }
+            }
+
+            data.dailyGoals = migrated;
         }
 
         function normalizeOneTimeTaskGoalProgress(task) {
@@ -2428,11 +2559,7 @@ Day goals:
         }
 
         function getDailyGoalsForDate(date) {
-            const dateKey = getDateKey(date);
-            if (!data.dailyGoals[dateKey] || typeof data.dailyGoals[dateKey] !== 'object') {
-                data.dailyGoals[dateKey] = {};
-            }
-            return data.dailyGoals[dateKey];
+            return ensureYearWeekDayBucket(data.dailyGoals, date);
         }
 
         function isTaskInDailyGoal(taskId, date = selectedDate) {
@@ -2838,28 +2965,18 @@ Day goals:
                 if (task.goal.type === 'count') {
                     return (GetTaskCompletionResult(task) ?? 0) + '/' + task.goal.count;
                 } else {
-                    if (task.goal.count < 60) {
-                        return (GetTaskCompletionResult(task) ?? 0) + '/' + task.goal.count + ' секунд';
-                    }
-                    const result = GetTaskCompletionResult(task) ?? 0;
-                    let text;
-                    if (task.goal.count >= 60) {
-                        if (result >= 300) {
-                            text = Math.floor((result)/60);
-                        } else {
-                            text = Math.floor((result)/6)/10;
-                        }
-                        text += '/';
-                        if (task.goal.count >= 300) {
-                            text += Math.floor(task.goal.count/60);
-                        } else {
-                            text += Math.floor(task.goal.count/6)/10;
-                        }
-                        text += ' минут';
-                    } else {
-                        text = result + '/' + task.goal.count + ' секунд';
-                    }
-                    return text;
+                    const resultSeconds = Number(GetTaskCompletionResult(task) ?? 0);
+                    const targetSeconds = Number(task.goal.count ?? 0);
+                    const useMinutes = targetSeconds > 300;
+                    const divisor = useMinutes ? 60 : 1;
+                    const unit = useMinutes ? 'minutes' : 'seconds';
+                    const normalizeValue = (value) => {
+                        const normalized = Number(value ?? 0) / divisor;
+                        if (!useMinutes) return Math.max(0, Math.round(normalized));
+                        return Math.max(0, Math.round(normalized * 10) / 10);
+                    };
+
+                    return `${normalizeValue(resultSeconds)}/${normalizeValue(targetSeconds)} ${unit}`;
                 }
             }
             return '';
@@ -2924,6 +3041,62 @@ Day goals:
             return null;
         }
 
+        function IsTaskCancelled(task, date = selectedDate) {
+            if (!task?.regularity) return false;
+            const year = date.getFullYear();
+            const weekNumber = date.getWeekNumber();
+            const dayOfWeek = date.getDay();
+            const entry = task.canceled?.[year]?.[weekNumber]?.[dayOfWeek];
+            if (entry == null) return false;
+            if (entry === true) return true;
+            if (typeof entry === 'string') return true;
+            return typeof entry === 'object';
+        }
+
+        function GetTaskCancellationReason(task, date = selectedDate) {
+            if (!task?.regularity) return '';
+            const year = date.getFullYear();
+            const weekNumber = date.getWeekNumber();
+            const dayOfWeek = date.getDay();
+            const entry = task.canceled?.[year]?.[weekNumber]?.[dayOfWeek];
+            if (entry == null || entry === true) return '';
+            if (typeof entry === 'string') return entry;
+            if (typeof entry === 'object') {
+                return String(entry.reason ?? '').trim();
+            }
+            return '';
+        }
+
+        function SetTaskCancelled(task, isCancelled, date = selectedDate, reason = '') {
+            if (!task?.regularity) return;
+            const year = date.getFullYear();
+            const weekNumber = date.getWeekNumber();
+            const dayOfWeek = date.getDay();
+            if (!task.canceled || typeof task.canceled !== 'object') {
+                task.canceled = {};
+            }
+            if (!task.canceled[year] || typeof task.canceled[year] !== 'object') {
+                task.canceled[year] = {};
+            }
+            if (!task.canceled[year][weekNumber] || typeof task.canceled[year][weekNumber] !== 'object') {
+                task.canceled[year][weekNumber] = {};
+            }
+
+            if (isCancelled) {
+                task.canceled[year][weekNumber][dayOfWeek] = {
+                    reason: String(reason ?? '').trim()
+                };
+                if (!task.goal) {
+                    SetTaskComplete(task, null, date);
+                }
+                return;
+            }
+
+            if (task.canceled[year][weekNumber]) {
+                delete task.canceled[year][weekNumber][dayOfWeek];
+            }
+        }
+
         function IsTaskCompleted(task, date) {
             const result = GetTaskCompletionResult(task, date);
 
@@ -2931,6 +3104,7 @@ Day goals:
         }
 
         function hasTaskProgressForDate(task, date) {
+            if (IsTaskCancelled(task, date)) return false;
             const result = GetTaskCompletionResult(task, date);
             if (result === true) return true;
             if (typeof result === 'number') return result > 0;
@@ -2938,6 +3112,7 @@ Day goals:
         }
 
         function IsTaskCompletedFromResult(task, result, date = selectedDate) {
+            if (IsTaskCancelled(task, date)) return false;
             if (result !== null) {
                 if (task.goal != null) {
                     if (task.goal.type === 'children') {
@@ -2983,12 +3158,11 @@ Day goals:
                     for (const dayStr in days) {
                         const day = parseInt(dayStr);
                         const result = days[dayStr];
-                        if (!result || !IsTaskCompletedFromResult(task, result)) continue;
-
                         const dateStr = getDateFromYearWeekDay(year, week, day);
-                        if (dateStr) {
-                            completedDays.push(new Date(new Date(dateStr).toDateString()));
-                        }
+                        if (!dateStr) continue;
+                        const completedDate = new Date(new Date(dateStr).toDateString());
+                        if (!result || !IsTaskCompletedFromResult(task, result, completedDate)) continue;
+                        completedDays.push(completedDate);
                     }
                 }
             }
@@ -3003,25 +3177,22 @@ Day goals:
             }
 
             const interval = Number(task.regularity.interval) || 1;
-            let dueWindowStart = (new Date(new Date(task.dateStart).toDateString()));
-            if (date < dueWindowStart) return null;
+            const dateStart = (new Date(new Date(task.dateStart).toDateString()));
+            if (date < dateStart) return null;
 
-            const completedDays = getCompletedDays(task) ?? [];
-            for (const completedDay of completedDays) {
-                if (completedDay < dueWindowStart) continue;
+            const completedDays = (getCompletedDays(task) ?? [])
+                .filter((completedDay) => completedDay >= dateStart && completedDay <= date)
+                .sort((a, b) => a - b);
 
-                if (date <= completedDay) {
-                    return dueWindowStart;
-                }
-
-                const nextDueWindowStart = new Date(completedDay);
-                nextDueWindowStart.setDate(nextDueWindowStart.getDate() + interval);
-                dueWindowStart = nextDueWindowStart;
-
-                if (date < dueWindowStart) return null;
+            if (completedDays.length === 0) {
+                return dateStart;
             }
 
-            return date >= dueWindowStart ? dueWindowStart : null;
+            const lastCompletedDay = completedDays[completedDays.length - 1];
+            const nextDueWindowStart = new Date(lastCompletedDay);
+            nextDueWindowStart.setDate(nextDueWindowStart.getDate() + interval);
+            if (date < nextDueWindowStart) return null;
+            return nextDueWindowStart;
         }
 
         function SetTaskComplete(task, result, date) {
@@ -3039,6 +3210,9 @@ Day goals:
                     task.completion[year][weekNumber] = {};
                 }
                 task.completion[year][weekNumber][dayOfWeek] = result;
+                if (result !== null && task.goal == null && task.canceled?.[year]?.[weekNumber]) {
+                    delete task.canceled[year][weekNumber][dayOfWeek];
+                }
                 if (task.regularity.fromLastDate === true && 'lastDate' in task.regularity) {
                     delete task.regularity.lastDate;
                 }
@@ -3098,6 +3272,8 @@ Day goals:
         const goalTimerResetBtn = document.getElementById('goalTimerResetBtn');
         const goalTimeHmsInput = document.getElementById('goalTimeHmsInput');
         const datePickerModal = new bootstrap.Modal(document.getElementById('datePickerModal'));
+        const prefillDoneTaskModalEl = document.getElementById('prefillDoneTaskModal');
+        const prefillDoneTaskModal = new bootstrap.Modal(prefillDoneTaskModalEl);
         let goalTimerSeconds = 0;
         let goalTimerIntervalId = null;
 
@@ -3155,6 +3331,8 @@ Day goals:
         const noteClickActionSelect = document.getElementById('noteClickActionSelect');
         const weekStartSelect = document.getElementById('weekStartSelect');
         const finishDayBtn = document.getElementById('finishDayBtn');
+        const prefillDoneTaskSelect = document.getElementById('prefillDoneTaskSelect');
+        const prefillDoneTaskConfirmBtn = document.getElementById('prefillDoneTaskConfirmBtn');
         const formNoteModalLabel = document.getElementById('formNoteModalLabel');
         const formNoteSaveBtn = document.getElementById('formNoteSaveBtn');
         const quickAddPanel = document.getElementById('quickAddPanel');
@@ -3417,8 +3595,14 @@ Day goals:
             achievement.linkedTasks[taskId] = { lastValue: metric.value };
 
             if (metric.value > 0) {
-                const suffix = metric.metricType === 'time' ? ` sec` : '';
-                if (confirm(`Add current task progress to achievement now? (${metric.value}${suffix})`)) {
+                let metricValueDisplay = metric.value;
+                let suffix = '';
+                if (metric.metricType === 'time') {
+                    const metricDisplay = getAchievementTimeMetricDisplay(metric.value, metric.value);
+                    metricValueDisplay = metricDisplay.value;
+                    suffix = ` ${metricDisplay.unit}`;
+                }
+                if (confirm(`Add current task progress to achievement now? (${metricValueDisplay}${suffix})`)) {
                     achievement.progress = Math.max(0, Number(achievement.progress ?? 0) + metric.value);
                 }
             }
@@ -3460,13 +3644,14 @@ Day goals:
 
             for (const taskId in data.tasks) {
                 const task = data.tasks[taskId];
-                if (!task.regularity || task.regularity.type !== 'daily') {
+                if (!task.regularity) {
                     continue;
                 }
 
                 const isDue = isTaskDue(task, date);
                 const hasProgress = hasTaskProgressForDate(task, date);
-                if (isDue || hasProgress) {
+                const isCancelled = IsTaskCancelled(task, date);
+                if (isDue || hasProgress || isCancelled) {
                     dailyTasks.push(task);
                 }
             }
@@ -3493,7 +3678,8 @@ Day goals:
 
         function calculateDayScore(date) {
             const dayTasks = getDailyTasksForDate(date);
-            const totalTasks = dayTasks.length;
+            const activeTasks = dayTasks.filter((task) => !IsTaskCancelled(task, date));
+            const totalTasks = activeTasks.length;
             let fullDoneCount = 0;
             let partialDoneCount = 0;
             let notDoneCount = 0;
@@ -3510,7 +3696,7 @@ Day goals:
                 };
             }
 
-            const doneScore = dayTasks.reduce((sum, task) => {
+            const doneScore = activeTasks.reduce((sum, task) => {
                 const fraction = getDayCompletionFraction(task, date);
                 if (fraction >= 1) fullDoneCount++;
                 else if (fraction > 0) partialDoneCount++;
@@ -3695,6 +3881,27 @@ Day goals:
             renderCustomAchievements();
         }
 
+        function getAchievementTimeMetricDisplay(valueSeconds, targetSeconds) {
+            const target = Math.max(0, Number(targetSeconds ?? 0));
+            const value = Math.max(0, Number(valueSeconds ?? 0));
+            const useMinutes = target > 300;
+            const divisor = useMinutes ? 60 : 1;
+            const unit = useMinutes ? 'min' : 'sec';
+            const normalize = (source) => {
+                const normalized = source / divisor;
+                if (!useMinutes) {
+                    return Math.round(normalized);
+                }
+                return Math.round(normalized * 10) / 10;
+            };
+
+            return {
+                value: normalize(value),
+                target: normalize(target),
+                unit
+            };
+        }
+
         function renderCustomAchievements() {
             customAchievementsList.innerHTML = '';
             const achievements = Object.values(data.achievements ?? {}).sort((a, b) => a.id - b.id);
@@ -3716,7 +3923,12 @@ Day goals:
                 const barPercent = isAtMaxLevel
                     ? 100
                     : Math.max(0, Math.min(100, (displayedProgress / levelSize) * 100));
-                const metricSuffix = achievement.metricType === 'time' ? ` sec` : '';
+                const timeMetricDisplay = achievement.metricType === 'time'
+                    ? getAchievementTimeMetricDisplay(displayedProgress, displayedTarget)
+                    : null;
+                const progressValueDisplay = timeMetricDisplay ? timeMetricDisplay.value : displayedProgress;
+                const targetValueDisplay = timeMetricDisplay ? timeMetricDisplay.target : displayedTarget;
+                const metricSuffix = timeMetricDisplay ? ` ${timeMetricDisplay.unit}` : '';
                 const linkedTasksCount = Object.keys(achievement.linkedTasks ?? {}).length;
 
                 const item = document.createElement('li');
@@ -3734,7 +3946,7 @@ Day goals:
                     <div class="custom-achievement-meta"></div>
                     <div class="custom-achievement-progress-wrap"><div class="custom-achievement-progress"></div></div>
                     <div class="custom-achievement-controls">
-                        <small>${displayedProgress}${metricSuffix} / ${displayedTarget}${metricSuffix} · Linked tasks: ${linkedTasksCount}</small>
+                        <small>${progressValueDisplay}${metricSuffix} / ${targetValueDisplay}${metricSuffix} · Linked tasks: ${linkedTasksCount}</small>
                         <div class="btn-group">
                             <button class="btn btn-outline-secondary btn-sm" type="button">-${step}</button>
                             <button class="btn btn-outline-primary btn-sm" type="button">+${step}</button>
@@ -3787,7 +3999,9 @@ Day goals:
         function areAllSelectedDateTasksCompleted() {
             const dayTasks = getDailyTasksForDate(selectedDate);
             if (dayTasks.length === 0) return false;
-            return dayTasks.every(task => IsTaskCompleted(task, selectedDate));
+            const activeTasks = dayTasks.filter((task) => !IsTaskCancelled(task, selectedDate));
+            if (activeTasks.length === 0) return false;
+            return activeTasks.every(task => IsTaskCompleted(task, selectedDate));
         }
 
         function getCurrentActiveTabId() {
@@ -3833,6 +4047,68 @@ Day goals:
                 }
             });
             return toggleBtn;
+        }
+
+        function createRoutinePrecompleteButton() {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-outline-primary routine-action-btn';
+            btn.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Pre-complete regular task';
+            btn.title = 'Add pre-completed regular task for selected day';
+            btn.addEventListener('click', () => {
+                openPrefillDoneTaskModal();
+            });
+            return btn;
+        }
+
+        function createRoutineCancelModeButton() {
+            const btn = document.createElement('button');
+            const isCancelMode = routineCompletionMode === 'cancel';
+            btn.className = `btn routine-action-btn ${isCancelMode ? 'btn-danger' : 'btn-outline-danger'}`;
+            btn.innerHTML = isCancelMode
+                ? '<i class="bi bi-x-octagon-fill me-1"></i> Completion mode: cancel'
+                : '<i class="bi bi-check2-square me-1"></i> Completion mode: done';
+            btn.title = isCancelMode ? 'Switch to completion mode' : 'Switch to cancellation mode';
+            btn.addEventListener('click', () => {
+                routineCompletionMode = isCancelMode ? 'complete' : 'cancel';
+                refreshRoutine();
+            });
+            return btn;
+        }
+
+        function getPrefillEligibleRegularTasks(date) {
+            const list = [];
+            for (const taskId in data.tasks) {
+                const task = data.tasks[taskId];
+                if (!task?.regularity) continue;
+                if (!task.dateStart) continue;
+                const dateStart = new Date(new Date(task.dateStart).toDateString());
+                if (date < dateStart) continue;
+                if (IsTaskCancelled(task, date)) continue;
+                if (IsTaskCompleted(task, date)) continue;
+                list.push(task);
+            }
+            return list;
+        }
+
+        function openPrefillDoneTaskModal() {
+            const tasks = getPrefillEligibleRegularTasks(selectedDate);
+            prefillDoneTaskSelect.innerHTML = '';
+
+            if (tasks.length === 0) {
+                prefillDoneTaskSelect.innerHTML = '<option value="">No regular tasks available for pre-completion</option>';
+                prefillDoneTaskConfirmBtn.disabled = true;
+            } else {
+                tasks.forEach((task) => {
+                    const note = data.notes?.[task.note];
+                    const option = document.createElement('option');
+                    option.value = String(task.id);
+                    option.textContent = note?.title || `#${task.id}`;
+                    prefillDoneTaskSelect.appendChild(option);
+                });
+                prefillDoneTaskConfirmBtn.disabled = false;
+            }
+
+            prefillDoneTaskModal.show();
         }
 
         function updateFinishDayButtonVisibility() {
@@ -4045,6 +4321,8 @@ Day goals:
                     }
                 });
             container.appendChild(createCompletedTasksToggleButton('routineContainer'));
+            container.appendChild(createRoutinePrecompleteButton());
+            container.appendChild(createRoutineCancelModeButton());
         }
 
         function addTaskToDailyGoals(taskId, date = selectedDate) {
@@ -4713,13 +4991,19 @@ Day goals:
                 ? (task.timeStart + (task.timeEnd ? ' - ' + task.timeEnd : ''))
                 : 'Execution time is not set';
             const regularityText = task.regularity ? 'Regular task' : 'One-time task';
-            const doneText = IsTaskCompleted(task, selectedDate) ? 'Completed' : 'Not completed';
+            const doneText = IsTaskCancelled(task, selectedDate)
+                ? 'Cancelled'
+                : (IsTaskCompleted(task, selectedDate) ? 'Completed' : 'Not completed');
+            const cancellationReason = GetTaskCancellationReason(task, selectedDate);
 
             const lines = [
                 regularityText,
                 'Status' + ': ' + doneText,
                 'Time' + ': ' + timeText
             ];
+            if (IsTaskCancelled(task, selectedDate) && cancellationReason) {
+                lines.push('Cancellation reason' + ': ' + cancellationReason);
+            }
 
             if (note?.description) {
                 lines.push('');
@@ -4736,6 +5020,7 @@ Day goals:
             const note = data.notes[task.note];
             const taskTitle = note ? note.title : 'Untitled';
             const done = IsTaskCompleted(task, selectedDate);
+            const cancelled = IsTaskCancelled(task, selectedDate);
             const isDailyGoalTask = options.isDailyGoalTask === true;
             const isChildTask = options.isChildTask === true;
 
@@ -4746,6 +5031,9 @@ Day goals:
             taskDiv.dataset.dailyGoalTask = isDailyGoalTask ? '1' : '0';
             addDragStartEvent(taskDiv);
             let taskDivClassName = done ? 'task done' : 'task';
+            if (cancelled) {
+                taskDivClassName += ' cancelled';
+            }
             taskDivClassName += IsTaskExpired(task, selectedDate) ? ' expired' : '';
             taskDiv.className = taskDivClassName;
             if (isChildTask) {
@@ -4827,14 +5115,23 @@ Day goals:
                 timeDiv.appendChild(progressBadge);
             }
 
+            const titleRowDiv = document.createElement('div');
+            titleRowDiv.className = 'task-title-row';
             const titleDiv = document.createElement('div');
             titleDiv.className = 'task-title';
-            titleDiv.textContent = taskTitle;
-            if ((options.childCount ?? 0) > 0) {
-                titleDiv.textContent = `${taskTitle} · Child tasks: ${options.childCount}`;
+            const baseTitle = (options.childCount ?? 0) > 0
+                ? `${taskTitle} · Child tasks: ${options.childCount}`
+                : taskTitle;
+            titleDiv.textContent = baseTitle;
+            titleRowDiv.appendChild(titleDiv);
+            if (cancelled) {
+                const cancelledLabel = document.createElement('span');
+                cancelledLabel.className = 'cancelled-label';
+                cancelledLabel.textContent = '(Cancelled)';
+                titleRowDiv.appendChild(cancelledLabel);
             }
 
-            centerDiv.appendChild(titleDiv);
+            centerDiv.appendChild(titleRowDiv);
             centerDiv.appendChild(timeDiv);
 
             // Правая кнопка
@@ -4842,8 +5139,14 @@ Day goals:
             rightDiv.className = 'task-right';
 
             const rightIcon = document.createElement('i');
-            rightIcon.className = done ? 'bi-check-circle' : 'bi bi-circle';
-            rightIcon.setAttribute('title', 'Finish');
+            const isRoutineCancelMode = task.regularity && routineCompletionMode === 'cancel';
+            if (isRoutineCancelMode) {
+                rightIcon.className = cancelled ? 'bi bi-x-circle-fill text-danger' : 'bi bi-x-circle';
+                rightIcon.setAttribute('title', cancelled ? 'Mark as active' : 'Mark as cancelled');
+            } else {
+                rightIcon.className = done ? 'bi-check-circle' : 'bi bi-circle';
+                rightIcon.setAttribute('title', 'Finish');
+            }
 
             // Обработчик клика по иконке
             rightIcon.addEventListener('click', (event) => {
@@ -4874,6 +5177,30 @@ Day goals:
         }
 
         function clickOnTaskCompleteButton(task) {
+            if (task.regularity && routineCompletionMode === 'cancel') {
+                if (IsTaskCancelled(task, selectedDate)) {
+                    SetTaskCancelled(task, false, selectedDate);
+                } else {
+                    const reasonInput = prompt('Enter cancellation reason', '');
+                    if (reasonInput === null) {
+                        return;
+                    }
+                    SetTaskCancelled(task, true, selectedDate, reasonInput);
+                }
+                save();
+                refreshRoutine();
+                updateFinishDayButtonVisibility();
+                return;
+            }
+            const isCancelled = IsTaskCancelled(task, selectedDate);
+            const cancellationReason = GetTaskCancellationReason(task, selectedDate);
+            if (isCancelled) {
+                const reasonText = cancellationReason
+                    ? `\nCancellation reason: ${cancellationReason}`
+                    : `\nCancellation reason is not specified`;
+                showNotification(`Task is cancelled and cannot be completed${reasonText}`);
+                return;
+            }
             if (task.goal) {
                 if (task.goal.type === 'count') {
                     // Установка значения поля task
@@ -4998,6 +5325,27 @@ Day goals:
                 + `Partially completed tasks: ${score.partialDoneCount}\n`
                 + `Not completed tasks: ${score.notDoneCount}`
             );
+        });
+
+        prefillDoneTaskConfirmBtn.addEventListener('click', () => {
+            const taskId = Number(prefillDoneTaskSelect.value);
+            const task = data.tasks?.[taskId];
+            if (!task || !task.regularity) {
+                return;
+            }
+
+            let completionValue = true;
+            if (task.goal?.type === 'count' || task.goal?.type === 'time') {
+                completionValue = Number(task.goal.count ?? 0);
+            } else if (task.goal?.type === 'children') {
+                completionValue = true;
+            }
+
+            SetTaskComplete(task, completionValue, selectedDate);
+            save();
+            refreshRoutine();
+            updateFinishDayButtonVisibility();
+            prefillDoneTaskModal.hide();
         });
 
         function closeSecondaryNav() {
