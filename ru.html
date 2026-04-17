@@ -723,6 +723,43 @@
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
         }
 
+        .day-cancelled-badge {
+            position: absolute;
+            top: -16px;
+            right: -16px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #ff0000;
+        }
+
+        .day-streak-badge {
+            position: absolute;
+            top: -7px;
+            left: -4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", sans-serif;
+            text-shadow: 0 1px 3px rgba(47, 128, 255, 0.35);
+            transform: rotate(338deg);
+        }
+        .day-rated-platinum .day-streak-badge {
+            color: #2b55ff;
+        }
+        .day-rated-ultra .day-streak-badge {
+            color: #ff2b2b;
+        }
+
         .notes-footer-actions {
             display: flex;
             justify-content: center;
@@ -1187,7 +1224,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.12">
+        <meta name="version" content="1.3.13">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -1204,8 +1241,8 @@
                 <div class="text-center day" data-day="2026-04-13"><div>Пн</div><div>13</div></div>
                 <div class="text-center day" data-day="2026-04-14"><div>Вт</div><div>14</div></div>
                 <div class="text-center day" data-day="2026-04-15"><div>Ср</div><div>15</div></div>
-                <div class="text-center day active" data-day="2026-04-16"><div>Чт</div><div>16</div></div>
-                <div class="text-center day" data-day="2026-04-17"><div>Пт</div><div>17</div></div>
+                <div class="text-center day" data-day="2026-04-16"><div>Чт</div><div>16</div></div>
+                <div class="text-center day active" data-day="2026-04-17"><div>Пт</div><div>17</div></div>
                 <div class="text-center day" data-day="2026-04-18"><div>Сб</div><div>18</div></div>
                 <div class="text-center day" data-day="2026-04-19"><div>Вс</div><div>19</div></div>
             </div>
@@ -1281,6 +1318,16 @@
                 </div>
                 <span class="news-feed-head-icon"><i class="bi bi-megaphone"></i></span>
             </div>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Опубликовано: 2026-04-17
+                    </div>
+                    <h3 class="news-feed-item-title">Обновление до версии 1.3.13</h3>
+                    <p class="news-feed-item-description">Задачи и календарь:
+- Исправлен баг выполнения задач в прошлых датах: теперь можно выполнить задачу в прошлом дне, если она ещё не отмечена как выполненная в будущем.
+- Добавлено обозначение дней с отменой задач: в правом верхнем углу дня появляется красный восклицательный знак.
+- Добавлен значок молнии в левом верхнем углу выбранного дня. Он показывается только когда текущий день завершён на платину или рубин, все 7 предыдущих дней (без текущего) тоже имеют платину или рубин, среди них рубиновых дней от 5 до 7, а дней с отменой задач за этот период не больше одного.</p>
+                </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Опубликовано: 2026-04-16
@@ -1421,7 +1468,7 @@
             <option value="en">English</option>
             <option value="ru" selected="">Русский</option>
         </select>
-        <span>Версия: 1.3.12</span>
+        <span>Версия: 1.3.13</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -2445,8 +2492,29 @@
             }
         }
 
+        function normalizeCalendarDate(dateLike) {
+            if (dateLike instanceof Date) {
+                return new Date(dateLike.getFullYear(), dateLike.getMonth(), dateLike.getDate());
+            }
+
+            if (typeof dateLike === 'string') {
+                const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateLike);
+                if (match) {
+                    const [, year, month, day] = match;
+                    return new Date(Number(year), Number(month) - 1, Number(day));
+                }
+            }
+
+            const parsed = new Date(dateLike);
+            if (Number.isNaN(parsed.getTime())) {
+                const fallback = new Date();
+                return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
+            }
+            return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+        }
+
         function getDateKey(date) {
-            return new Date(new Date(date).toDateString()).toStringWithoutTime();
+            return normalizeCalendarDate(date).toStringWithoutTime();
         }
 
         function ensureYearWeekDayBucket(storage, date) {
@@ -3722,10 +3790,13 @@
             document.querySelectorAll('.day').forEach(dayElem => {
                 dayElem.classList.remove('day-rated-ultra', 'day-rated-platinum', 'day-rated-gold', 'day-rated-silver', 'day-rated-bronze', 'day-rated-participant', 'day-rated-empty');
                 dayElem.querySelector('.day-rating-badge')?.remove();
+                dayElem.querySelector('.day-cancelled-badge')?.remove();
+                dayElem.querySelector('.day-streak-badge')?.remove();
 
                 const dateValue = dayElem.getAttribute('data-day');
                 if (!dateValue) return;
-                const rating = getDayRating(new Date((new Date(dateValue)).toDateString()));
+                const dayDate = new Date((new Date(dateValue)).toDateString());
+                const rating = getDayRating(dayDate);
                 if (rating) {
                     dayElem.classList.add(`day-rated-${rating}`);
 
@@ -3740,7 +3811,118 @@
                             : (rating === 'silver' ? '🥈' : (rating === 'bronze' ? '🥉' : (rating === 'participant' ? '🎖️' : ' ')))));
                     dayElem.appendChild(badge);
                 }
+
+                if (hasCancelledTasksForDate(dayDate)) {
+                    const cancelledBadge = document.createElement('span');
+                    cancelledBadge.className = 'day-cancelled-badge';
+                    cancelledBadge.textContent = '!';
+                    cancelledBadge.title = 'There are cancelled tasks on this day';
+                    dayElem.appendChild(cancelledBadge);
+                }
+
+                if (shouldShowLightningBadge(dayDate)) {
+                    const streakBadge = document.createElement('span');
+                    streakBadge.className = 'day-streak-badge';
+                    streakBadge.textContent = '⚡︎';
+                    streakBadge.title = 'Серия молнии за платиновое или рубиновое завершение';
+                    dayElem.appendChild(streakBadge);
+                }
             });
+        }
+
+        function getLightningEvaluationForDate(baseDate, { debug = false, context = 'default' } = {}) {
+            const checkedDate = normalizeCalendarDate(baseDate);
+            const currentDayRating = getDayRating(checkedDate);
+            const hasCurrentDayValidRating = currentDayRating === 'platinum' || currentDayRating === 'ultra';
+
+            const history = [];
+            let rubyDays = 0;
+            let cancelledDays = 0;
+            let allPreviousDaysValid = true;
+
+            for (let i = 1; i <= 7; i++) {
+                const date = new Date(checkedDate);
+                date.setDate(checkedDate.getDate() - i);
+                const rating = getDayRating(date);
+                const hasCancelled = hasCancelledTasksForDate(date);
+                const isValidRating = rating === 'platinum' || rating === 'ultra';
+                if (!isValidRating) {
+                    allPreviousDaysValid = false;
+                }
+                if (rating === 'ultra') {
+                    rubyDays++;
+                }
+                if (hasCancelled) {
+                    cancelledDays++;
+                }
+                history.push({
+                    date: date.toStringWithoutTime(),
+                    rating: rating ?? 'none',
+                    isValidRating,
+                    hasCancelled
+                });
+            }
+
+            const hasValidRubyRange = rubyDays >= 5 && rubyDays <= 7;
+            const hasValidCancelledRange = cancelledDays <= 1;
+            const isEligible = hasCurrentDayValidRating && allPreviousDaysValid && hasValidRubyRange && hasValidCancelledRange;
+
+            if (debug) {
+                console.info('[LightningBadgeEvaluation]', {
+                    context,
+                    inputBaseDate: (baseDate instanceof Date) ? baseDate.toStringWithoutTime() : String(baseDate),
+                    checkedDate: checkedDate.toStringWithoutTime(),
+                    selectedDate: normalizeCalendarDate(selectedDate).toStringWithoutTime(),
+                    currentDayRating: currentDayRating ?? 'none',
+                    hasCurrentDayValidRating,
+                    allPreviousDaysValid,
+                    rubyDays,
+                    cancelledDays,
+                    hasValidRubyRange,
+                    hasValidCancelledRange,
+                    isEligible,
+                    history
+                });
+            }
+
+            return {
+                isEligible,
+                rubyDays,
+                cancelledDays
+            };
+        }
+
+        function shouldShowLightningBadge(dayDate) {
+            const checkedDate = normalizeCalendarDate(dayDate);
+
+            return getLightningEvaluationForDate(checkedDate, {
+                debug: false,
+                context: 'calendar-badge'
+            }).isEligible;
+        }
+
+        function getLightningStreakDays(referenceDate = new Date()) {
+            const baseDate = normalizeCalendarDate(referenceDate);
+            let streakDays = 0;
+            let cursor = new Date(baseDate);
+
+            while (true) {
+                const evaluation = getLightningEvaluationForDate(cursor);
+                if (!evaluation.isEligible) break;
+                streakDays++;
+                cursor.setDate(cursor.getDate() - 1);
+            }
+
+            return streakDays;
+        }
+
+        function hasCancelledTasksForDate(date) {
+            for (const taskId in data.tasks) {
+                const task = data.tasks[taskId];
+                if (!task?.regularity) continue;
+                if (IsTaskCancelled(task, date)) return true;
+            }
+            return false;
         }
 
         function getTaskTitle(taskId) {
@@ -5278,7 +5460,10 @@
                 if (!task.regularity) {
                     const today = new Date(new Date().toDateString());
                     const viewedDate = new Date(new Date(selectedDate).toDateString());
-                    if (!task.goal && viewedDate < today) {
+                    const hasFutureCompletion = !task.goal
+                        && task.completedAt
+                        && viewedDate < (new Date(new Date(task.completedAt).toDateString()));
+                    if (!task.goal && viewedDate < today && hasFutureCompletion) {
                         showNotification('Нельзя менять статус выполнения обычной задачи без цели в прошлых днях');
                         return;
                     }
@@ -5315,11 +5500,29 @@
             else if (score.rating === 'bronze') ratingText = 'Бронза';
             else if (score.rating === 'participant') ratingText = 'Участник';
             else if (score.rating === 'empty') ratingText = 'Медаль за завершение';
+            const dayGoals = getDailyGoalsForDate(selectedDate);
+            const dayGoalsCount = Object.keys(dayGoals).length;
+            const dayGoalsCompletedCount = Object.entries(dayGoals).reduce((sum, [taskId, dayGoalEntry]) => {
+                const task = data.tasks?.[taskId];
+                if (!task || !dayGoalEntry || typeof dayGoalEntry !== 'object') {
+                    return sum;
+                }
+                const progress = getDailyGoalTargetCompletion(task, dayGoalEntry, selectedDate);
+                return sum + (progress.done ? 1 : 0);
+            }, 0);
+            const todayLightning = getLightningEvaluationForDate(selectedDate, {
+                debug: true,
+                context: 'finish-day-report'
+            }).isEligible;
+            const lightningStreakDays = getLightningStreakDays(selectedDate);
             showNotification(
                 `День завершён: ${roundedPercent}% — ${ratingText}\n`
                 + `Полностью выполнено задач: ${score.fullDoneCount}\n`
                 + `Частично выполнено задач: ${score.partialDoneCount}\n`
-                + `Не выполнено задач: ${score.notDoneCount}`
+                + `Не выполнено задач: ${score.notDoneCount}\n`
+                + `Цели дня (выполнено/всего): ${dayGoalsCompletedCount}/${dayGoalsCount}\n`
+                + `Молния сегодня: ${todayLightning ? '⚡ Да' : 'Нет'}\n`
+                + `Серия молний (дней подряд): ${lightningStreakDays}`
             );
         });
 
