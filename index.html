@@ -83,6 +83,12 @@
             font-weight: bold;
             color: #007bff;
         }
+        .day.active-lightning-blue {
+            color: #007bff;
+        }
+        .day.active-lightning-red {
+            color: #ff2b2b;
+        }
 
         /* Блок задач */
         .tasks {
@@ -852,6 +858,14 @@
         .profile-click-settings .profile-select-block.week-start-block {
             flex: 1 0 100%;
         }
+        .data-transfer-block {
+            margin-top: 12px;
+            width: 100%;
+            border: 1px solid #e7e4ff;
+            border-radius: 12px;
+            padding: 12px;
+            background: #faf9ff;
+        }
 
         #deleteAllBtn, #resetToFactoryBtn {
             color: #fff;
@@ -1224,7 +1238,7 @@
         }
     </style>
 
-        <meta name="version" content="1.3.13">
+        <meta name="version" content="1.3.14">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -1238,13 +1252,13 @@
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day" data-day="2026-04-13"><div>Mon</div><div>13</div></div>
-                <div class="text-center day" data-day="2026-04-14"><div>Tue</div><div>14</div></div>
-                <div class="text-center day" data-day="2026-04-15"><div>Wed</div><div>15</div></div>
-                <div class="text-center day" data-day="2026-04-16"><div>Thu</div><div>16</div></div>
-                <div class="text-center day active" data-day="2026-04-17"><div>Fri</div><div>17</div></div>
-                <div class="text-center day" data-day="2026-04-18"><div>Sat</div><div>18</div></div>
-                <div class="text-center day" data-day="2026-04-19"><div>Sun</div><div>19</div></div>
+                <div class="text-center day" data-day="2026-04-20"><div>Mon</div><div>20</div></div>
+                <div class="text-center day active active-lightning-blue" data-day="2026-04-21"><div>Tue</div><div>21</div></div>
+                <div class="text-center day" data-day="2026-04-22"><div>Wed</div><div>22</div></div>
+                <div class="text-center day" data-day="2026-04-23"><div>Thu</div><div>23</div></div>
+                <div class="text-center day" data-day="2026-04-24"><div>Fri</div><div>24</div></div>
+                <div class="text-center day" data-day="2026-04-25"><div>Sat</div><div>25</div></div>
+                <div class="text-center day" data-day="2026-04-26"><div>Sun</div><div>26</div></div>
             </div>
         </div>
     </div>
@@ -1318,6 +1332,17 @@
                 </div>
                 <span class="news-feed-head-icon"><i class="bi bi-megaphone"></i></span>
             </div>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Published on: 2026-04-21
+                    </div>
+                    <h3 class="news-feed-item-title">Update to version 1.3.14</h3>
+                    <p class="news-feed-item-description">Calendar, tasks, and data transfer:
+- Updated selected-day highlighting in the weekly calendar: it stays blue by default, and turns red when a red lightning (ruby day) is active.
+- Fixed child-task goal counting: it now shows only child tasks relevant to the selected day.
+- Added a settings block for full app data/settings JSON import and export. Both file-based and text-field flows are supported.
+- Added mandatory confirmation before import, because current data is fully replaced.</p>
+                </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Published on: 2026-04-17
@@ -1464,6 +1489,20 @@ Day goals:
                 </div>
             </div>
         </div>
+        <div class="data-transfer-block">
+            <h6 class="mb-2">Data import/export</h6>
+            <p class="small text-muted mb-2">Export and import all app data and settings as a JSON file or text.</p>
+            <div class="d-flex gap-2 mb-2">
+                <button id="exportDataFileBtn" class="btn btn-outline-primary tab-action-btn">Export to JSON file</button>
+                <button id="importDataFileBtn" class="btn btn-outline-secondary tab-action-btn">Import from JSON file</button>
+                <input id="importDataFileInput" type="file" accept=".json,application/json" class="d-none">
+            </div>
+            <textarea id="dataTransferTextarea" class="form-control mb-2" rows="6" placeholder="Paste JSON for import or use this field for export"></textarea>
+            <div class="d-flex gap-2">
+                <button id="exportDataTextBtn" class="btn btn-outline-primary tab-action-btn">Export to text field</button>
+                <button id="importDataTextBtn" class="btn btn-outline-danger tab-action-btn">Import from text field</button>
+            </div>
+        </div>
         <button id="deleteAllBtn" class="bi bi-trash icon tab-action-btn btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" title="Delete all data">
             Delete all data        </button>
         <button id="resetToFactoryBtn" class="bi bi-trash icon tab-action-btn btn btn-danger" data-bs-toggle="modal" data-bs-target="#resetToFactoryBtnConfirmModal" title="Reset to factory settings">
@@ -1472,7 +1511,7 @@ Day goals:
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.3.13</span>
+        <span>Version: 1.3.14</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -2394,6 +2433,47 @@ Day goals:
             localStorage.setItem('appData', JSON.stringify(data));
         }
 
+        function getPortableAppSnapshot() {
+            return {
+                appData: data,
+                gptPrompt: localStorage.getItem('gptPrompt') ?? null,
+                appLocale: localStorage.getItem('appLocale') ?? `en`
+            };
+        }
+
+        function exportPortableAppDataAsText() {
+            return JSON.stringify(getPortableAppSnapshot(), null, 2);
+        }
+
+        function applyImportedSnapshot(snapshot) {
+            if (!snapshot || typeof snapshot !== 'object') {
+                throw new Error('Invalid JSON object');
+            }
+            if (!snapshot.appData || typeof snapshot.appData !== 'object') {
+                throw new Error('Missing appData object');
+            }
+
+            data = snapshot.appData;
+            afterLoadData();
+            save();
+
+            if (typeof snapshot.gptPrompt === 'string') {
+                localStorage.setItem('gptPrompt', snapshot.gptPrompt);
+            } else {
+                localStorage.removeItem('gptPrompt');
+            }
+            if (typeof snapshot.appLocale === 'string' && snapshot.appLocale.length > 0) {
+                localStorage.setItem('appLocale', snapshot.appLocale);
+            }
+
+            showNotification('Data imported successfully');
+            updateWeek(selectedDate, 'import:data');
+            refreshNotes();
+            updateFolderListInForm();
+            updateCreateFolderOptions();
+            refreshAchievements();
+        }
+
         // Очистка данных
         function clearData() {
             // Ваша логика
@@ -2990,14 +3070,26 @@ Day goals:
 
         function getChildTaskGoalStats(task, date = selectedDate) {
             const childTasks = getChildTasksForParentTask(task);
-            const total = childTasks.length;
+            const childTasksForDate = childTasks.filter((childTask) => {
+                if (childTask.regularity) {
+                    return isTaskDue(childTask, date) || hasTaskProgressForDate(childTask, date);
+                }
+
+                const startDate = new Date(new Date(childTask.dateStart).toDateString());
+                if (date < startDate) return false;
+                if (IsTaskCompleted(childTask, date) && date > new Date(new Date(childTask.completedAt).toDateString())) {
+                    return false;
+                }
+                return true;
+            });
+            const total = childTasksForDate.length;
             let completed = 0;
-            for (const childTask of childTasks) {
+            for (const childTask of childTasksForDate) {
                 if (IsTaskCompleted(childTask, date)) {
                     completed++;
                 }
             }
-            return { total, completed, childTasks };
+            return { total, completed, childTasks: childTasksForDate };
         }
 
         function getParentTaskId(task) {
@@ -3793,6 +3885,7 @@ Day goals:
         function refreshWeekDayRatings() {
             document.querySelectorAll('.day').forEach(dayElem => {
                 dayElem.classList.remove('day-rated-ultra', 'day-rated-platinum', 'day-rated-gold', 'day-rated-silver', 'day-rated-bronze', 'day-rated-participant', 'day-rated-empty');
+                dayElem.classList.remove('active-lightning-blue', 'active-lightning-red');
                 dayElem.querySelector('.day-rating-badge')?.remove();
                 dayElem.querySelector('.day-cancelled-badge')?.remove();
                 dayElem.querySelector('.day-streak-badge')?.remove();
@@ -3831,6 +3924,18 @@ Day goals:
                     streakBadge.title = 'Lightning streak for platinum or ruby completion';
                     dayElem.appendChild(streakBadge);
                 }
+            });
+        }
+
+        function updateActiveDayColorClass() {
+            document.querySelectorAll('.day.active').forEach((dayElem) => {
+                dayElem.classList.remove('active-lightning-blue', 'active-lightning-red');
+                const dateValue = dayElem.getAttribute('data-day');
+                if (!dateValue) return;
+                const dayDate = new Date((new Date(dateValue)).toDateString());
+                const hasLightning = shouldShowLightningBadge(dayDate);
+                const isRedLightning = hasLightning && getDayRating(dayDate) === 'ultra';
+                dayElem.classList.add(isRedLightning ? 'active-lightning-red' : 'active-lightning-blue');
             });
         }
 
@@ -5680,6 +5785,7 @@ Day goals:
             refreshRoutine();
             refreshTasks();
             refreshWeekDayRatings();
+            updateActiveDayColorClass();
             refreshAchievements();
             updateFinishDayButtonVisibility();
         }
@@ -5699,11 +5805,7 @@ Day goals:
                 updateFullDateDisplay();
 
                 taskContainerAnimatedUpdate();
-
-                refreshRoutine();
-                refreshTasks();
-                refreshAchievements();
-                updateFinishDayButtonVisibility();
+                updateWeek(selectedDate, lastDateSelectionDebug);
             });
         });
 
@@ -6418,6 +6520,12 @@ Day goals:
         const copyBtn = document.getElementById('copyTodayJsonBtn');
         const saveBtn = document.getElementById('savePromptBtn');
         const resetBtn = document.getElementById('resetPromptBtn');
+        const exportDataFileBtn = document.getElementById('exportDataFileBtn');
+        const importDataFileBtn = document.getElementById('importDataFileBtn');
+        const importDataFileInput = document.getElementById('importDataFileInput');
+        const exportDataTextBtn = document.getElementById('exportDataTextBtn');
+        const importDataTextBtn = document.getElementById('importDataTextBtn');
+        const dataTransferTextarea = document.getElementById('dataTransferTextarea');
 
         const DEFAULT_PROMPT = "Today’s date: TODAY_DATE_FROM_APP.\n\nHere is the list of my tasks:\nTODAY_TASKS_JSON\n\nYou are my friendly personal assistant.\n\nYour role:\n- Analyze the task list and determine today’s priorities.\n- Focus on urgency (overdue and soonest deadlines), then on impact and feasibility.\n- Ignore tasks where completed = true.\n\nResponse rules:\n1. First, briefly list the 1–3 most relevant tasks for today in priority order.\n2. Recommend which task to start with right now (or offer 2 options if priorities are close).\n3. Explain the choice briefly (1–2 sentences).\n4. Do NOT provide step-by-step instructions unless I explicitly ask for a plan.\n5. If I ask for a plan, then provide concise step-by-step actions.\n\nStyle:\n- Supportive, calm, and practical.\n- Concise and structured.";
 
@@ -6472,6 +6580,68 @@ Day goals:
             textarea.value = DEFAULT_PROMPT;
             this.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Сброшено';
             setTimeout(() => this.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Reset prompt', 1500);
+        });
+
+        exportDataTextBtn.addEventListener('click', function () {
+            dataTransferTextarea.value = exportPortableAppDataAsText();
+            showNotification('Data exported to text field');
+        });
+
+        importDataTextBtn.addEventListener('click', function () {
+            const text = dataTransferTextarea.value.trim();
+            if (!text) {
+                showNotification('JSON text is empty');
+                return;
+            }
+            if (!confirm('Are you sure you want to import data? Current data will be replaced.')) {
+                return;
+            }
+            try {
+                const parsed = JSON.parse(text);
+                applyImportedSnapshot(parsed);
+            } catch (error) {
+                showNotification(`Import failed: invalid JSON or data format (${error.message})`);
+            }
+        });
+
+        exportDataFileBtn.addEventListener('click', function () {
+            const blob = new Blob([exportPortableAppDataAsText()], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const datePart = new Date().toISOString().slice(0, 10);
+            link.href = url;
+            link.download = `task-aura-export-${datePart}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        });
+
+        importDataFileBtn.addEventListener('click', function () {
+            importDataFileInput.click();
+        });
+
+        importDataFileInput.addEventListener('change', function (event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            if (!confirm('Are you sure you want to import data? Current data will be replaced.')) {
+                event.target.value = '';
+                return;
+            }
+
+            file.text()
+                .then((text) => {
+                    const parsed = JSON.parse(text);
+                    applyImportedSnapshot(parsed);
+                    dataTransferTextarea.value = text;
+                })
+                .catch((error) => {
+                    showNotification(`Import failed: invalid JSON or data format (${error.message})`);
+                })
+                .finally(() => {
+                    event.target.value = '';
+                });
         });
 
         // ============================= //
