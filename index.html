@@ -1302,7 +1302,7 @@
     <!-- Блок с заметками -->
     <div class="container" style="display: grid;" id="notesContainer">
         <div class="container flex-fill" id="notesContainerContent"><div class="root-folders" data-parent-folder-id=""></div></div>
-        <div class="notes-footer-actions" id="notesFooterActions"><div class="archive-toggle-wrap"><button class="btn btn-outline-secondary archive-toggle-btn"><i class="bi bi-archive"></i> Archive</button></div>
+        <div class="notes-footer-actions" id="notesFooterActions"><div class="archive-toggle-wrap"><button class="btn btn-outline-secondary tab-action-btn archive-toggle-btn"><i class="bi bi-archive"></i> Archive</button></div>
             <button id="notesCreateFolderBtn" class="btn btn-outline-secondary tab-action-btn create-folder-btn" data-bs-toggle="modal" data-bs-target="#formCreateFolder" title="Create folder">
                 <i class="bi bi-folder-plus"></i> Create folder            </button>
             <button id="notesDeleteModeBtn" class="btn btn-outline-secondary tab-action-btn create-folder-btn" title="Enable delete mode"><i class="bi bi-trash"></i> Enable delete mode</button>
@@ -5066,7 +5066,7 @@ Day goals:
                 const archiveWrap = document.createElement('div');
                 archiveWrap.className = 'archive-toggle-wrap';
                 const archiveCompletedBtn = document.createElement('button');
-                archiveCompletedBtn.className = 'btn btn-outline-secondary archive-toggle-btn';
+                archiveCompletedBtn.className = 'btn btn-outline-secondary tab-action-btn archive-toggle-btn';
                 archiveCompletedBtn.innerHTML = '<i class="bi bi-archive-fill"></i> Archive completed and expired task notes';
                 archiveCompletedBtn.addEventListener('click', () => {
                     ArchiveCompletedAndExpiredTaskNotes();
@@ -5247,7 +5247,7 @@ Day goals:
             archiveWrap.className = 'archive-toggle-wrap';
 
             const archiveBtn = document.createElement('button');
-            archiveBtn.className = 'btn btn-outline-secondary archive-toggle-btn';
+            archiveBtn.className = 'btn btn-outline-secondary tab-action-btn archive-toggle-btn';
             archiveBtn.innerHTML = '<i class="bi bi-archive"></i> Archive';
             archiveBtn.addEventListener('click', () => {
                 notesViewMode = 'archive';
@@ -5325,6 +5325,11 @@ Day goals:
             showNoteInfo(note);
         }
 
+        function formatDateNoWrap(dateValue) {
+            if (!dateValue) return '';
+            return String(dateValue).replace(/-/g, '‑');
+        }
+
         function getTaskSummaryForNote(note) {
             if (!note || note.task == null || !data.tasks?.[note.task]) return null;
             const task = data.tasks[note.task];
@@ -5344,7 +5349,9 @@ Day goals:
                 parts.push(task.timeEnd ? `${task.timeStart}-${task.timeEnd}` : task.timeStart);
             }
             if (task.dateStart) {
-                parts.push(`${task.dateStart}${task.dateEnd ? ' → ' + task.dateEnd : ''}`);
+                const start = formatDateNoWrap(task.dateStart);
+                const end = task.dateEnd ? formatDateNoWrap(task.dateEnd) : '';
+                parts.push(`${start}${end ? ' → ' + end : ''}`);
             }
             return {
                 isDone: IsTaskCompleted(task, selectedDate),
@@ -5409,6 +5416,9 @@ Day goals:
             formFields.description.value = note.description ?? '';
             formFields.folder.value = note.folder ?? '';
             formFields.parent.value = note.parent ?? '';
+            formFields.bgColor.value = note.bgColor ?? '';
+            formFields.tags.value = note.tags ?? '';
+            formFields.hideFromCompact.checked = note.hideFromCompact === true;
             if (note.task != null) {
                 const task = data.tasks[note.task];
                 formIsTaskSwitch.checked = true;
