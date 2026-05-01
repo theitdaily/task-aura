@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="https://theitdaily.github.io/task-aura/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="https://theitdaily.github.io/task-aura/favicon-16x16.png" />
 
-    <link rel="manifest" href="manifest.json" />
+    <link rel="manifest" href="manifest.json?v=2" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script>
         if ('serviceWorker' in navigator) {
@@ -505,7 +505,7 @@
         /* Кнопка + снизу справа */
         .add-note-btn {
             position: fixed;
-            bottom: 95px; /* чуть выше навигации */
+            bottom: 85px; /* чуть выше навигации */
             right: 15px;
             width: 60px;
             height: 60px;
@@ -527,7 +527,7 @@
 
         .finish-day-btn {
             position: fixed;
-            bottom: 95px;
+            bottom: 85px;
             left: 50%;
             transform: translateX(-50%);
             min-width: 190px;
@@ -807,6 +807,7 @@
             max-height: 0;
             overflow: hidden;
             transition: opacity 0.5s ease, max-height 0.5s ease;
+            padding-bottom: 12px;
         }
 
         /* Активный контейнер */
@@ -1236,9 +1237,35 @@
             font-size: 0.85rem;
             color: #5e3f90;
         }
+
+        .statistics-panel { position: relative; }
+        .achievements-info-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            border-radius: 999px;
+            border: 1px solid #d8c3fb;
+            background: linear-gradient(135deg, #f8f1ff, #efe2ff);
+            color: #5a2f95;
+            font-weight: 700;
+        }
+        .note-tags-filter {
+            display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 10px;
+        }
+        .note-tags-filter .badge { cursor: pointer; user-select: none; font-size: .78rem; }
+        .note-tags-filter .badge.active { background: #6f42c1 !important; color: #fff; }
+        .notes-notebook-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(210px,1fr)); gap: 10px; }
+        .note-paper {
+            border-radius: 14px; border: 1px solid #eadbff; padding: 12px; cursor: pointer;
+            box-shadow: 0 8px 22px rgba(84, 46, 140, 0.12);
+            background-image: linear-gradient(to bottom, rgba(255,255,255,.55), rgba(255,255,255,.55)), repeating-linear-gradient(180deg, transparent 0, transparent 23px, rgba(110,66,193,.12) 24px);
+        }
+        .note-paper-title { font-weight: 800; margin-bottom: 4px; color: #3d226a; }
+        .note-paper-body { font-size: .88rem; color: #34323a; }
+        .note-paper-tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
     </style>
 
-        <meta name="version" content="1.3.14">
+        <meta name="version" content="1.3.15">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -1252,13 +1279,13 @@
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day" data-day="2026-04-20"><div>Mon</div><div>20</div></div>
-                <div class="text-center day active active-lightning-blue" data-day="2026-04-21"><div>Tue</div><div>21</div></div>
-                <div class="text-center day" data-day="2026-04-22"><div>Wed</div><div>22</div></div>
-                <div class="text-center day" data-day="2026-04-23"><div>Thu</div><div>23</div></div>
-                <div class="text-center day" data-day="2026-04-24"><div>Fri</div><div>24</div></div>
-                <div class="text-center day" data-day="2026-04-25"><div>Sat</div><div>25</div></div>
-                <div class="text-center day" data-day="2026-04-26"><div>Sun</div><div>26</div></div>
+                <div class="text-center day" data-day="2026-04-27"><div>Mon</div><div>27</div></div>
+                <div class="text-center day" data-day="2026-04-28"><div>Tue</div><div>28</div></div>
+                <div class="text-center day" data-day="2026-04-29"><div>Wed</div><div>29</div></div>
+                <div class="text-center day" data-day="2026-04-30"><div>Thu</div><div>30</div></div>
+                <div class="text-center day active active-lightning-blue" data-day="2026-05-01"><div>Fri</div><div>1</div></div>
+                <div class="text-center day" data-day="2026-05-02"><div>Sat</div><div>2</div></div>
+                <div class="text-center day" data-day="2026-05-03"><div>Sun</div><div>3</div></div>
             </div>
         </div>
     </div>
@@ -1280,6 +1307,7 @@
                 <i class="bi bi-folder-plus"></i> Create folder            </button>
             <button id="notesDeleteModeBtn" class="btn btn-outline-secondary tab-action-btn create-folder-btn" title="Enable delete mode"><i class="bi bi-trash"></i> Enable delete mode</button>
             <button id="notesSortModeBtn" class="btn btn-outline-secondary tab-action-btn create-folder-btn" title="Sorting mode"><i class="bi bi-sort-down"></i> Sorting mode: off</button>
+            <button id="notesDisplayModeBtn" class="btn btn-outline-secondary tab-action-btn create-folder-btn" title="Notes display mode"><i class="bi bi-grid"></i> Notes display: folders</button>
         </div>
     </div>
 
@@ -1287,6 +1315,9 @@
         <section class="statistics-panel" aria-label="Statistics">
             <h2 class="news-feed-title mb-2">Statistics</h2>
             <p class="news-feed-subtitle mb-3">Medal statistics</p>
+            <div class="d-flex gap-2 mb-2">
+                <button id="achievementsInfoBtn" class="btn achievements-info-btn btn-sm"><i class="bi bi-question-circle"></i> INFO</button>
+            </div>
             <div class="achievements-top">
                 <div class="achievements-top-card ultra">
                     <div class="achievements-top-value" id="achievementUltraDaysTop">0</div>
@@ -1309,6 +1340,7 @@
                 <li class="achievements-list-item"><span>Bronze</span><span class="achievements-list-value" id="achievementBronzeDays">0</span></li>
                 <li class="achievements-list-item"><span>Participant</span><span class="achievements-list-value" id="achievementParticipantDays">0</span></li>
                 <li class="achievements-list-item"><span>Completion medal</span><span class="achievements-list-value" id="achievementEmptyDays">0</span></li>
+                <li class="achievements-list-item"><span>Longest streak</span><span class="achievements-list-value" id="achievementLongestStreak">0</span></li>
             </ul>
         </section>
 
@@ -1332,6 +1364,17 @@
                 </div>
                 <span class="news-feed-head-icon"><i class="bi bi-megaphone"></i></span>
             </div>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Published on: 2026-04-30
+                    </div>
+                    <h3 class="news-feed-item-title">Update to version 1.3.15</h3>
+                    <p class="news-feed-item-description">Achievements and notes:
+- Added longest medal streak to achievement statistics.
+- Added INFO button in achievements with guidance on how to earn medals, cups, and lightning.
+- Reworked notes with a second compact card mode showing note title and content preview.
+- Added note settings: background color, tags, tag filtering in compact mode, and a flag to hide note in compact mode.</p>
+                </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Published on: 2026-04-21
@@ -1511,7 +1554,7 @@ Day goals:
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.3.14</span>
+        <span>Version: 1.3.15</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -1694,6 +1737,18 @@ Day goals:
                             <div class="mb-0">
                                 <label for="formNoteParentNote" class="form-label">Parent note</label>
                                 <select class="form-select" id="formNoteParentNote" aria-label="Select a note"><option value="">Without a note</option></select>
+                            </div>
+                            <div class="mt-3">
+                                <label for="formNoteBgColor" class="form-label">Note background color</label>
+                                <input type="color" class="form-control form-control-color" id="formNoteBgColor" value="#fafafa">
+                            </div>
+                            <div class="mt-3">
+                                <label for="formNoteTags" class="form-label">Tags (comma separated)</label>
+                                <input type="text" class="form-control" id="formNoteTags">
+                            </div>
+                            <div class="form-check form-switch mt-3">
+                                <input class="form-check-input" type="checkbox" id="formNoteHideFromCompact">
+                                <label class="form-check-label" for="formNoteHideFromCompact">Hide note in compact mode</label>
                             </div>
                         </div>
                         <div class="form-section">
@@ -1969,6 +2024,7 @@ Day goals:
         const ARCHIVE_FOLDER_KEY = '__archive__';
         let notesViewMode = 'default';
         let notesSortMode = 'off'; // off | folders | notes
+        let notesDisplayMode = 'folders'; // folders | compact
 
         Date.prototype.toStringWithoutTime = function() {
             const year = this.getFullYear();
@@ -2535,6 +2591,9 @@ Day goals:
             }
             if (data.settings.weekStart !== 'monday' && data.settings.weekStart !== 'sunday') {
                 data.settings.weekStart = 'monday';
+            }
+            if (data.settings.noteDisplayMode !== 'compact' && data.settings.noteDisplayMode !== 'folders') {
+                data.settings.noteDisplayMode = 'folders';
             }
             if (!data.dayRatings || typeof data.dayRatings !== 'object') {
                 data.dayRatings = {};
@@ -3449,6 +3508,9 @@ Day goals:
             description: document.getElementById('formNoteDescription'),
             folder: document.getElementById('formNoteFolder'),
             parent: document.getElementById('formNoteParentNote'),
+            bgColor: document.getElementById('formNoteBgColor'),
+            tags: document.getElementById('formNoteTags'),
+            hideFromCompact: document.getElementById('formNoteHideFromCompact'),
             dateStart: document.getElementById('taskDateStart'),
             dateStartContainer: document.getElementById('taskDateStartContainer'),
             dateEnd: document.getElementById('taskDateEnd'),
@@ -3487,6 +3549,8 @@ Day goals:
         const resetToFactory = document.getElementById('resetToFactoryBtn');
         const notesDeleteModeBtn = document.getElementById('notesDeleteModeBtn');
         const notesSortModeBtn = document.getElementById('notesSortModeBtn');
+        const notesDisplayModeBtn = document.getElementById('notesDisplayModeBtn');
+        const achievementsInfoBtn = document.getElementById('achievementsInfoBtn');
         const taskClickActionSelect = document.getElementById('taskClickActionSelect');
         const noteClickActionSelect = document.getElementById('noteClickActionSelect');
         const weekStartSelect = document.getElementById('weekStartSelect');
@@ -4153,6 +4217,33 @@ Day goals:
                     }
                 }
             }
+            const ratedDates = [];
+            for (const year in (data.dayRatings ?? {})) {
+                for (const week in data.dayRatings[year]) {
+                    for (const dayOfWeek in data.dayRatings[year][week]) {
+                        const rating = data.dayRatings[year][week][dayOfWeek];
+                        if (!rating) continue;
+                        ratedDates.push({
+                            date: getDateFromYearWeekDay(Number(year), Number(week), Number(dayOfWeek)),
+                            rating
+                        });
+                    }
+                }
+            }
+            ratedDates.sort((a, b) => a.date.localeCompare(b.date));
+            let longestStreak = 0;
+            let currentStreak = 0;
+            let prevDate = null;
+            for (const entry of ratedDates) {
+                const d = new Date(entry.date);
+                if (prevDate && getCalendarDayDiff(prevDate, d) === 1) {
+                    currentStreak += 1;
+                } else {
+                    currentStreak = 1;
+                }
+                longestStreak = Math.max(longestStreak, currentStreak);
+                prevDate = d;
+            }
 
             document.getElementById('achievementUltraDaysTop').textContent = String(medals.ultra);
             document.getElementById('achievementPlatinumDaysTop').textContent = String(medals.platinum);
@@ -4165,6 +4256,7 @@ Day goals:
             document.getElementById('achievementBronzeDays').textContent = String(medals.bronze);
             document.getElementById('achievementParticipantDays').textContent = String(medals.participant);
             document.getElementById('achievementEmptyDays').textContent = String(medals.empty);
+            document.getElementById('achievementLongestStreak').textContent = String(longestStreak);
             renderCustomAchievements();
         }
 
@@ -4563,6 +4655,15 @@ Day goals:
             }
             refreshNotes();
         });
+        notesDisplayModeBtn.addEventListener('click', () => {
+            notesDisplayMode = notesDisplayMode === 'folders' ? 'compact' : 'folders';
+            data.settings.noteDisplayMode = notesDisplayMode;
+            save();
+            refreshNotes();
+        });
+        achievementsInfoBtn?.addEventListener('click', () => {
+            alert("Medals: increase your overall day completion percentage.\nPlatinum cup: requires 100% completion of daily tasks.\nRuby cup: requires 100% completion of daily tasks and 100% completion of day goals.\nLightning: the current day must be platinum or ruby, the previous 7 days must also be platinum\/ruby, with 5-7 ruby days and no more than one cancelled-task day.");
+        });
 
         function refreshRoutine() {
             const container = document.getElementById('routineContainer');
@@ -4799,10 +4900,86 @@ Day goals:
             const createFolderBtn = document.getElementById('notesCreateFolderBtn');
             const deleteModeBtn = document.getElementById('notesDeleteModeBtn');
             const sortModeBtn = document.getElementById('notesSortModeBtn');
+            const displayModeBtn = document.getElementById('notesDisplayModeBtn');
             contentContainer.innerHTML = ''; // очищаем
             footerActions.querySelectorAll('.archive-toggle-wrap').forEach(node => node.remove());
             if (createFolderBtn) {
                 createFolderBtn.style.display = notesViewMode === 'archive' ? 'none' : '';
+            }
+            if (displayModeBtn) {
+                displayModeBtn.style.display = notesViewMode === 'archive' ? 'none' : '';
+                displayModeBtn.innerHTML = notesDisplayMode === 'folders'
+                    ? '<i class="bi bi-grid"></i> Notes display: folders'
+                    : '<i class="bi bi-card-list"></i> Notes display: compact';
+            }
+
+            if (notesDisplayMode === 'compact' && notesViewMode !== 'archive') {
+                const allNotes = Object.values(data.notes ?? {}).filter(note => note.folder !== ARCHIVE_FOLDER_KEY && note.hideFromCompact !== true);
+                const tags = [...new Set(allNotes.flatMap(note => (note.tags ?? '').split(',').map(t => t.trim()).filter(Boolean)))];
+                const untaggedTagId = '__untagged';
+                let selectedTags = new Set([untaggedTagId, ...tags]);
+                const tagsPanel = document.createElement('div');
+                tagsPanel.className = 'note-tags-filter';
+                const list = document.createElement('div');
+                list.className = 'notes-notebook-grid';
+                const displayTags = [untaggedTagId, ...tags];
+
+                const toggleTag = (tag) => {
+                    if (selectedTags.has(tag)) selectedTags.delete(tag);
+                    else selectedTags.add(tag);
+                };
+
+                const renderCompact = () => {
+                    tagsPanel.innerHTML = '';
+                    displayTags.forEach(tag => {
+                        const b = document.createElement('span');
+                        const active = selectedTags.has(tag);
+                        b.className = `badge rounded-pill ${active ? 'text-bg-primary active' : 'text-bg-light'}`;
+                        b.textContent = tag === untaggedTagId ? 'Without tags' : `#${tag}`;
+                        b.addEventListener('click', () => { toggleTag(tag); renderCompact(); });
+                        tagsPanel.appendChild(b);
+                    });
+                    list.innerHTML = '';
+                    const activeTags = new Set([...selectedTags].filter(t => t !== untaggedTagId));
+                    const showUntagged = selectedTags.has(untaggedTagId);
+                    allNotes.filter(note => {
+                        const isUntagged = ((note.tags ?? '').trim() === '');
+                        if (isUntagged) return showUntagged;
+                        if (activeTags.size === 0) return false;
+                        const noteTags = new Set((note.tags ?? '').split(',').map(t => t.trim()).filter(Boolean));
+                        return [...activeTags].some(tag => noteTags.has(tag));
+                    }).forEach(note => {
+                        const noteTags = (note.tags ?? '').split(',').map(t => t.trim()).filter(Boolean);
+                        const taskSummary = getTaskSummaryForNote(note);
+                        const card = document.createElement('article');
+                        card.className = 'note-paper';
+                        card.style.backgroundColor = note.bgColor || '#fffaf2';
+                        card.innerHTML = `<div class="note-paper-title">${note.title || 'Without a title'}</div><div class="note-paper-body">${(note.description || '').slice(0, 180)}</div>`;
+                        if (taskSummary) {
+                            const taskWrap = document.createElement('div');
+                            taskWrap.className = 'mt-2';
+                            taskWrap.innerHTML = `<div class="small align-items-center gap-2"><span class="badge ${taskSummary.isDone ? 'text-bg-success' : 'text-bg-warning'}">Task</span> ${taskSummary.text}</div>`;
+                            card.appendChild(taskWrap);
+                        }
+                        if (noteTags.length) {
+                            const tagsWrap = document.createElement('div');
+                            tagsWrap.className = 'note-paper-tags';
+                            noteTags.forEach(tag => {
+                                const badge = document.createElement('span');
+                                badge.className = 'badge rounded-pill text-bg-secondary';
+                                badge.textContent = `#${tag}`;
+                                tagsWrap.appendChild(badge);
+                            });
+                            card.appendChild(tagsWrap);
+                        }
+                        card.addEventListener('click', () => openNoteByClickSetting(note));
+                        list.appendChild(card);
+                    });
+                };
+                contentContainer.appendChild(tagsPanel);
+                contentContainer.appendChild(list);
+                renderCompact();
+                return;
             }
             if (deleteModeBtn) {
                 deleteModeBtn.style.display = notesViewMode === 'archive' ? 'none' : '';
@@ -5088,6 +5265,13 @@ Day goals:
             const noteTitleDiv = document.createElement('div');
             noteTitleDiv.className = 'note-title';
             noteTitleDiv.textContent = note.title;
+            const taskSummary = getTaskSummaryForNote(note);
+            if (taskSummary) {
+                const taskMeta = document.createElement('div');
+                taskMeta.className = 'small mt-1';
+                taskMeta.innerHTML = `<span class="badge ${taskSummary.isDone ? 'text-bg-success' : 'text-bg-warning'}">Task</span> ${taskSummary.text}`;
+                noteTitleDiv.appendChild(taskMeta);
+            }
 
             // Обработчик клика
             noteTitleDiv.addEventListener('click', () => {
@@ -5130,6 +5314,42 @@ Day goals:
             }
 
             return noteDiv;
+        }
+
+        function openNoteByClickSetting(note) {
+            if (!note) return;
+            if (data.settings.noteClickAction === 'edit') {
+                ShowNoteFormForNote(note.id);
+                return;
+            }
+            showNoteInfo(note);
+        }
+
+        function getTaskSummaryForNote(note) {
+            if (!note || note.task == null || !data.tasks?.[note.task]) return null;
+            const task = data.tasks[note.task];
+            const parts = [];
+            parts.push(task.regularity ? 'Regular' : 'One-time');
+            if (task.goal?.type === 'count') {
+                parts.push(`Count: ${task.goal.count ?? 0}`);
+            } else if (task.goal?.type === 'time') {
+                const sec = Number(task.goal.count ?? 0);
+                parts.push(`Time: ${Math.floor(sec / 60)} min`);
+            } else if (task.goal?.type === 'children') {
+                parts.push(`Child tasks: ${task.goal.count ?? 0}`);
+            } else {
+                parts.push('Without a goal');
+            }
+            if (task.timeStart) {
+                parts.push(task.timeEnd ? `${task.timeStart}-${task.timeEnd}` : task.timeStart);
+            }
+            if (task.dateStart) {
+                parts.push(`${task.dateStart}${task.dateEnd ? ' → ' + task.dateEnd : ''}`);
+            }
+            return {
+                isDone: IsTaskCompleted(task, selectedDate),
+                text: parts.join(' • ')
+            };
         }
 
         function RenderNoteElement(note, subNotes = []) {
@@ -6026,6 +6246,9 @@ Day goals:
             const selectedParentId = formFields.parent.value;
             const parentId = selectedParentId ? parseInt(selectedParentId) : null;
             const isTask = formIsTaskSwitch.checked ?? false;
+            const bgColor = formFields.bgColor?.value || '#fafafa';
+            const tags = (formFields.tags?.value || '').trim();
+            const hideFromCompact = formFields.hideFromCompact?.checked === true;
             let taskDeleted = false;
 
             let note, task;
@@ -6038,6 +6261,9 @@ Day goals:
                 note.description = description;
                 note.folder = folderId;
                 note.parent = parentId;
+                note.bgColor = bgColor;
+                note.tags = tags;
+                note.hideFromCompact = hideFromCompact;
             }
             else {
                 if (!title) {
@@ -6056,6 +6282,9 @@ Day goals:
                     description: description,
                     folder: folderId,
                     parent: parentId,
+                    bgColor: bgColor,
+                    tags: tags,
+                    hideFromCompact: hideFromCompact,
                 };
 
                 data.notes[note_id] = note;
@@ -6997,6 +7226,7 @@ Day goals:
         taskClickActionSelect.value = data.settings.taskClickAction ?? DEFAULT_CLICK_ACTION;
         noteClickActionSelect.value = data.settings.noteClickAction ?? DEFAULT_CLICK_ACTION;
         weekStartSelect.value = data.settings.weekStart ?? 'monday';
+        notesDisplayMode = data.settings.noteDisplayMode ?? 'folders';
         updateWeek(selectedDate);
         refreshNotes();
         updateFolderListInForm();
