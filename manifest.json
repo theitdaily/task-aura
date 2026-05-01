@@ -7,7 +7,7 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "orientation": "portrait-primary"
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "https://theitdaily.github.io/task-aura/android-chrome-192x192.png",
