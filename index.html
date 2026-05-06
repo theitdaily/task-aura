@@ -266,7 +266,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             max-width: 100%;
-            font-size: 14px;
+            font-size: clamp(10px, 2.6vw, 14px);
             line-height: 1.15;
         }
         .achievement-nav-button span {
@@ -475,7 +475,49 @@
         .custom-achievement-title-row .btn-group {
             gap: 6px;
         }
+        .progress-section-tabs {
+            width: min(100%, 520px);
+            margin: 0 auto 12px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .progress-section-tabs .tab-action-btn {
+            width: 100%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 44px;
+        }
+        .progress-calendar-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+        .progress-calendar-actions .btn {
+            flex: 1 1 calc(50% - 6px);
+            min-width: 0;
+            white-space: nowrap;
+            padding: 0.3rem 0.5rem;
+            min-height: 34px;
+            font-size: 0.8rem;
+        }
         @media (max-width: 576px) {
+            .custom-achievement-title-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .progress-calendar-actions {
+                width: 100%;
+                justify-content: stretch;
+                gap: 8px;
+            }
+            .progress-calendar-actions .btn {
+                flex: 1 1 calc(50% - 8px);
+                font-size: 0.82rem;
+                padding: 0.4rem 0.45rem;
+            }
             .custom-achievement-controls {
                 align-items: flex-start;
                 flex-direction: column;
@@ -493,6 +535,16 @@
         @media (min-width: 640px) {
             .achievements-top {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            .progress-calendar-actions {
+                gap: 4px;
+            }
+            .progress-calendar-actions .btn {
+                flex: 0 1 auto;
+                min-width: 68px;
+                padding: 0.24rem 0.45rem;
+                min-height: 30px;
+                font-size: 0.74rem;
             }
         }
 
@@ -802,7 +854,7 @@
         }
 
         /* Общий контейнер для папок и заметок */
-        #notesContainer, #routineContainer, #tasksContainer, #achievementsContainer, #newsContainer, #profileContainer {
+        #notesContainer, #routineContainer, #tasksContainer, #progressContainer, #newsContainer, #profileContainer {
             opacity: 0;
             max-height: 0;
             overflow: hidden;
@@ -810,7 +862,7 @@
         }
 
         /* Активный контейнер */
-        #notesContainer.show, #routineContainer.show, #tasksContainer.show, #achievementsContainer.show, #newsContainer.show, #profileContainer.show {
+        #notesContainer.show, #routineContainer.show, #tasksContainer.show, #progressContainer.show, #newsContainer.show, #profileContainer.show {
             opacity: 1;
             max-height: fit-content; /* или другой подходящий максимум, чтобы плавно раскрыть */
             padding-bottom: 12px;
@@ -1263,9 +1315,24 @@
         .note-paper-title { font-weight: 800; margin-bottom: 4px; color: #3d226a; }
         .note-paper-body { font-size: .88rem; color: #34323a; }
         .note-paper-tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .progress-heatmap { display: grid; grid-auto-columns: 12px; grid-auto-flow: column; gap: 3px; overflow-x: auto; padding-bottom: 6px; }
+        .progress-heatmap-col { display: grid; grid-template-rows: repeat(7, 12px); gap: 3px; }
+        .progress-heatmap-cell { width: 12px; height: 12px; border-radius: 2px; background: #ebedf0; }
+        .progress-heatmap-cell.active-1 { background: #c8f5c8; }
+        .progress-heatmap-cell.active-2 { background: #6edb6e; }
+        .progress-heatmap-cell.active-3 { background: #1faa49; }
+        .progress-heatmap-cell.active-4 { background: #8ed8ff; box-shadow: 0 0 3px rgba(142,216,255,.7); }
+        .progress-heatmap-cell.active-5 { background: #ff2a2a; box-shadow: 0 0 3.5px rgba(255,42,42,.75); }
+        .progress-calendar-stats { font-size: .85rem; color: #4f4f57; margin: 8px 0; }
+        .progress-calendar-active { border: 2px solid #6f42c1 !important; box-shadow: 0 0 0 3px rgba(111,66,193,.15); }
+        .progress-legend { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; font-size: .78rem; color: #56565f; }
+        .progress-legend-item { display: inline-flex; align-items: center; gap: 4px; }
+        .progress-calendar-grid-wrap { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: start; overflow: overlay; }
+        .progress-weekday-labels { display: grid; grid-template-rows: repeat(7, 12px); gap: 3px; font-size: .72rem; color: #6a6d78; }
+        .progress-month-labels { display: grid; grid-auto-columns: 12px; grid-auto-flow: column; gap: 3px; margin-bottom: 4px; font-size: .72rem; color: #6a6d78; }
     </style>
 
-        <meta name="version" content="1.3.15">
+        <meta name="version" content="1.4.0">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -1279,13 +1346,13 @@
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day" data-day="2026-04-27"><div>Mon</div><div>27</div></div>
-                <div class="text-center day" data-day="2026-04-28"><div>Tue</div><div>28</div></div>
-                <div class="text-center day" data-day="2026-04-29"><div>Wed</div><div>29</div></div>
-                <div class="text-center day" data-day="2026-04-30"><div>Thu</div><div>30</div></div>
-                <div class="text-center day active active-lightning-blue" data-day="2026-05-01"><div>Fri</div><div>1</div></div>
-                <div class="text-center day" data-day="2026-05-02"><div>Sat</div><div>2</div></div>
-                <div class="text-center day" data-day="2026-05-03"><div>Sun</div><div>3</div></div>
+                <div class="text-center day" data-day="2026-05-04"><div>Mon</div><div>4</div></div>
+                <div class="text-center day" data-day="2026-05-05"><div>Tue</div><div>5</div></div>
+                <div class="text-center day active active-lightning-blue" data-day="2026-05-06"><div>Wed</div><div>6</div></div>
+                <div class="text-center day" data-day="2026-05-07"><div>Thu</div><div>7</div></div>
+                <div class="text-center day" data-day="2026-05-08"><div>Fri</div><div>8</div></div>
+                <div class="text-center day" data-day="2026-05-09"><div>Sat</div><div>9</div></div>
+                <div class="text-center day" data-day="2026-05-10"><div>Sun</div><div>10</div></div>
             </div>
         </div>
     </div>
@@ -1311,7 +1378,19 @@
         </div>
     </div>
 
-    <div class="container" id="achievementsContainer">
+    <div class="container" id="progressContainer">
+        <div class="progress-section-tabs">
+            <button class="btn btn-primary tab-action-btn" id="progressTabCalendarBtn">Calendar</button>
+            <button class="btn btn-outline-secondary tab-action-btn" id="progressTabAchievementsBtn">Achievements</button>
+        </div>
+
+        <section class="news-feed" id="progressCalendarSection" aria-label="Progress">
+            <div class="news-feed-head"><div><h2 class="news-feed-title">Progress</h2><p class="news-feed-subtitle">Track activity calendars and streaks</p></div><span class="news-feed-head-icon"><i class="bi bi-calendar3"></i></span></div>
+            <div id="progressCalendarView" class="mt-3"><h5>Медали по дням</h5><div class="d-flex gap-2 mb-2"><button class="btn btn-outline-secondary btn-sm" id="progressYearPrev">←</button><div class="fw-bold">2026</div><button class="btn btn-outline-secondary btn-sm" id="progressYearNext">→</button></div><div class="progress-calendar-stats">Activity days: 0 · Total completed tasks: 0</div><div class="progress-calendar-grid-wrap"><div></div><div class="progress-month-labels"><span></span><span>Jan</span><span></span><span></span><span></span><span>Feb</span><span></span><span></span><span></span><span>Mar</span><span></span><span></span><span></span><span></span><span>Apr</span><span></span><span></span><span></span><span>May</span><span></span><span></span><span></span><span>Jun</span><span></span><span></span><span></span><span></span><span>Jul</span><span></span><span></span><span></span><span>Aug</span><span></span><span></span><span></span><span></span><span>Sep</span><span></span><span></span><span></span><span>Oct</span><span></span><span></span><span></span><span>Nov</span><span></span><span></span><span></span><span></span><span>Dec</span><span></span><span></span><span></span></div><div class="progress-weekday-labels"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span></span></div><div class="progress-heatmap"><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="opacity:.25" title="2025-12-29: Empty"></span><span class="progress-heatmap-cell " style="opacity:.25" title="2025-12-30: Empty"></span><span class="progress-heatmap-cell " style="opacity:.25" title="2025-12-31: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-01: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-04: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-01-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-08: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-11: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-01-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-15: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-18: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-01-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-22: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-25: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-01-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-29: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-01-31: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-01: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-02-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-08: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-02-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-15: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-02-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-22: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-02-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-02-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-01: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-03-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-08: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-03-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-15: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-03-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-22: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-03-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-29: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-03-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-03-31: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-01: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-05: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-04-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-08: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-12: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-04-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-15: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-19: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-04-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-22: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-26: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-04-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-29: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-04-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-01: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-03: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-05-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-08: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-10: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-05-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-15: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-17: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-05-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-22: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-24: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-05-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-29: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-05-31: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-06-01: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-07: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-06-08: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-14: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-06-15: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-21: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-06-22: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-28: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-06-29: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-06-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-01: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-05: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-07-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-08: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-12: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-07-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-15: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-19: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-07-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-22: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-26: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-07-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-29: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-07-31: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-01: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-02: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-08-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-08: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-09: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-08-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-15: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-16: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-08-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-22: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-23: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-08-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-29: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-08-30: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-08-31: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-01: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-06: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-09-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-08: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-13: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-09-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-15: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-20: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-09-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-22: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-27: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-09-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-29: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-09-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-01: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-04: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-10-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-08: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-11: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-10-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-15: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-18: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-10-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-22: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-25: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-10-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-29: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-10-31: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-01: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-11-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-06: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-08: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-11-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-13: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-15: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-11-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-20: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-22: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-11-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-27: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-11-29: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-11-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-01: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-02: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-03: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-04: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-05: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-06: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-12-07: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-08: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-09: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-10: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-11: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-12: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-13: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-12-14: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-15: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-16: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-17: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-18: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-19: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-20: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-12-21: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-22: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-23: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-24: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-25: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-26: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-27: Empty"></span></div><div class="progress-heatmap-col"><span class="progress-heatmap-cell " style="" title="2026-12-28: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-29: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-30: Empty"></span><span class="progress-heatmap-cell " style="" title="2026-12-31: Empty"></span><span class="progress-heatmap-cell " style="opacity:.25" title="2027-01-01: Empty"></span><span class="progress-heatmap-cell " style="opacity:.25" title="2027-01-02: Empty"></span><span class="progress-heatmap-cell " style="opacity:.25" title="2027-01-03: Empty"></span></div></div></div><div class="progress-legend"><span>Legend:</span><span class="progress-legend-item"><span class="progress-heatmap-cell" style="background:#ebedf0"></span>Empty</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-1"></span>Participant / Bronze</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-2"></span>Silver</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-3"></span>Gold</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-4"></span>Platinum</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-5"></span>Ruby cup</span></div></div>
+            <ul class="custom-achievements-list mt-3" id="progressCalendarsList"><li class="custom-achievement-item progress-calendar-active"><div class="custom-achievement-title-row"><span class="custom-achievement-title">Медали по дням</span><div class="btn-group progress-calendar-actions"><button class="btn btn-outline-primary btn-sm progress-open-btn">Choose</button><button class="btn btn-outline-secondary btn-sm progress-edit-btn">Edit</button><button class="btn btn-outline-secondary btn-sm progress-link-btn" disabled="">Linked tasks</button><button class="btn btn-outline-danger btn-sm progress-delete-btn" disabled="">Delete</button></div></div><div class="custom-achievement-meta">Системный календарь по умолчанию · medals · Linked tasks: 0</div></li></ul>
+        </section>
+
+        <div id="progressAchievementsSection" style="display:none;">
         <section class="statistics-panel" aria-label="Statistics">
             <h2 class="news-feed-title mb-2">Statistics</h2>
             <p class="news-feed-subtitle mb-3">Medal statistics</p>
@@ -1340,7 +1419,7 @@
                 <li class="achievements-list-item"><span>Bronze</span><span class="achievements-list-value" id="achievementBronzeDays">0</span></li>
                 <li class="achievements-list-item"><span>Participant</span><span class="achievements-list-value" id="achievementParticipantDays">0</span></li>
                 <li class="achievements-list-item"><span>Completion medal</span><span class="achievements-list-value" id="achievementEmptyDays">0</span></li>
-                <li class="achievements-list-item"><span>Longest streak</span><span class="achievements-list-value" id="achievementLongestStreak">0</span></li>
+                <li class="achievements-list-item"><span>Longest streak ⚡</span><span class="achievements-list-value" id="achievementLongestStreak">0</span></li>
             </ul>
         </section>
 
@@ -1353,6 +1432,7 @@
             </div>
             <ul class="custom-achievements-list" id="customAchievementsList"></ul>
         </section>
+        </div>
     </div>
 
     <div class="container" id="newsContainer">
@@ -1364,6 +1444,16 @@
                 </div>
                 <span class="news-feed-head-icon"><i class="bi bi-megaphone"></i></span>
             </div>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Published on: 2026-05-06
+                    </div>
+                    <h3 class="news-feed-item-title">Update to version 1.4.0</h3>
+                    <p class="news-feed-item-description">Progress section:
+- Added a new "Progress" tab to replace "Achievements".
+- Added a progress hub with calendar list and a built-in non-removable "Medals by day" calendar.
+- Added quick creation of custom calendars with tracker type selection: completed tasks or time.</p>
+                </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Published on: 2026-04-30
@@ -1554,11 +1644,11 @@ Day goals:
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.3.15</span>
+        <span>Version: 1.4.0</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
-    <button class="btn btn-primary add-note-btn" title="Add a note/task" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
+    <button class="btn btn-primary add-note-btn" title="Add a regular task" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
     <button class="btn btn-success finish-day-btn" id="finishDayBtn" title="Complete day" style="display: none;">
         <i class="bi bi-award"></i> <span id="finishDayBtnText">Complete day</span>
     </button>
@@ -1938,6 +2028,69 @@ Day goals:
         </div>
     </div>
 
+    <div class="modal fade" id="progressCalendarModal" tabindex="-1" aria-labelledby="progressCalendarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="progressCalendarForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="progressCalendarModalLabel">Add calendar</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="progressCalendarIdInput">
+                        <div class="mb-2">
+                            <label class="form-label" for="progressCalendarTitleInput">Calendar name</label>
+                            <input type="text" class="form-control" id="progressCalendarTitleInput" required="" maxlength="120">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="progressCalendarDescriptionInput">Description</label>
+                            <textarea class="form-control" id="progressCalendarDescriptionInput" rows="2" maxlength="220"></textarea>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="progressCalendarTypeInput">Tracker type</label>
+                            <select class="form-select" id="progressCalendarTypeInput">
+                                <option value="tasks">Completed tasks tracker</option>
+                                <option value="time">Time tracker</option>
+                                <option value="medals">Medals tracker</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="progressCalendarGradientStepInput">Color step</label>
+                            <input type="number" class="form-control" id="progressCalendarGradientStepInput" min="1" value="1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="progressCalendarSaveBtn">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="progressCalendarTasksModal" tabindex="-1" aria-labelledby="progressCalendarTasksModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="progressCalendarTasksModalLabel">Link tasks to calendar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="progressCalendarTasksCalendarId">
+                    <label for="progressCalendarTaskSelect" class="form-label">Choose task</label>
+                    <div class="d-flex gap-2 mb-2">
+                        <select class="form-select" id="progressCalendarTaskSelect"></select>
+                        <button class="btn btn-primary" type="button" id="progressCalendarLinkTaskBtn">Link</button>
+                    </div>
+                    <div id="progressCalendarLinkedTasksList"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно для создания папки -->
     <div class="modal fade" id="formCreateFolder" tabindex="-1" aria-labelledby="formCreateFolderLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1988,9 +2141,9 @@ Day goals:
             <i class="bi bi-list-task"></i>
             <span>Tasks</span>
         </button>
-        <button class="nav-button achievement-nav-button" data-target="achievementsContainer">
-            <i class="bi bi-trophy"></i>
-            <span>Achievements</span>
+        <button class="nav-button" data-target="progressContainer">
+            <i class="bi bi-graph-up"></i>
+            <span>Progress</span>
         </button>
         <button class="nav-button" data-target="notesContainer">
             <i class="bi bi-journal-text"></i>
@@ -2448,6 +2601,10 @@ Day goals:
                 {id: 1, children: []},
                 {id: 2, children: [{id: 3, children: [{id: 4, children: []}]}]}
             ], // иерархия папок в заметках (по ID)
+            progressCalendars: {
+                1: {id: 1, system: true, type: 'medals', title: 'Medals by day', description: 'Default system calendar', gradientStep: 1, taskIds: []}
+            },
+            progress_calendar_max_id: 1,
             achievements: {
                 1: {
                     id: 1,
@@ -2528,6 +2685,7 @@ Day goals:
             updateFolderListInForm();
             updateCreateFolderOptions();
             refreshAchievements();
+            refreshProgressCalendars();
         }
 
         // Очистка данных
@@ -2539,7 +2697,11 @@ Day goals:
                 folders: {},
                 structure: [],
                 dayRatings: {},
-                achievements: {}
+                progressCalendars: {
+                1: {id: 1, system: true, type: 'medals', title: 'Medals by day', description: 'Default system calendar', gradientStep: 1, taskIds: []}
+            },
+            progress_calendar_max_id: 1,
+            achievements: {}
             };
             afterLoadData();
             save();
@@ -2602,6 +2764,34 @@ Day goals:
                 data.dailyGoals = {};
             }
             normalizeDailyGoalsStorage();
+            if (!data.progressCalendars || typeof data.progressCalendars !== 'object') {
+                data.progressCalendars = {};
+            }
+            if (data.progress_calendar_max_id == null) {
+                data.progress_calendar_max_id = 0;
+            }
+            if (!data.progressCalendars[1]) {
+                data.progressCalendars[1] = {id: 1, system: true, type: 'medals', title: 'Medals by day', description: 'Default system calendar', gradientStep: 1, taskIds: []};
+            }
+            const existingProgressCalendarIds = Object.keys(data.progressCalendars).map(id => Number(id)).filter(id => Number.isFinite(id));
+            const maxExistingProgressCalendarId = existingProgressCalendarIds.length > 0 ? Math.max(...existingProgressCalendarIds) : 1;
+            data.progress_calendar_max_id = Math.max(Number(data.progress_calendar_max_id) || 0, maxExistingProgressCalendarId);
+            for (const calendarId in data.progressCalendars) {
+                const calendar = data.progressCalendars[calendarId];
+                if (!calendar || typeof calendar !== 'object') continue;
+                if (!Array.isArray(calendar.taskIds)) {
+                    calendar.taskIds = [];
+                }
+                if (!Number.isFinite(Number(calendar.gradientStep)) || Number(calendar.gradientStep) < 1) {
+                    calendar.gradientStep = 1;
+                } else {
+                    calendar.gradientStep = Math.floor(Number(calendar.gradientStep));
+                }
+                calendar.taskIds = calendar.taskIds.map(id => Number(id)).filter(id => Number.isFinite(id));
+                if (calendar.type !== 'time' && calendar.type !== 'medals') {
+                    calendar.type = 'tasks';
+                }
+            }
             if (!data.achievements || typeof data.achievements !== 'object') {
                 data.achievements = {};
             }
@@ -3448,6 +3638,7 @@ Day goals:
                             delete task.completedAt;
                         }
                         refreshAchievements();
+            refreshProgressCalendars();
                         return true;
                     }
                     normalizeOneTimeTaskGoalProgress(task);
@@ -3470,6 +3661,7 @@ Day goals:
                 }
             }
             refreshAchievements();
+            refreshProgressCalendars();
             return true;
         }
 
@@ -3484,6 +3676,10 @@ Day goals:
         const achievementModal = new bootstrap.Modal(achievementModalEl);
         const achievementTasksModalEl = document.getElementById('achievementTasksModal');
         const achievementTasksModal = new bootstrap.Modal(achievementTasksModalEl);
+        const progressCalendarModalEl = document.getElementById('progressCalendarModal');
+        const progressCalendarModal = new bootstrap.Modal(progressCalendarModalEl);
+        const progressCalendarTasksModalEl = document.getElementById('progressCalendarTasksModal');
+        const progressCalendarTasksModal = new bootstrap.Modal(progressCalendarTasksModalEl);
         const goalTimeModalEl = document.getElementById('goalTimeModal');
         const goalTimeModal = new bootstrap.Modal(goalTimeModalEl);
         const goalTimerDisplay = document.getElementById('goalTimerDisplay');
@@ -3497,7 +3693,7 @@ Day goals:
         let goalTimerIntervalId = null;
 
         // массив ID всех контейнеров
-        const containers = ['notesContainer', 'routineContainer', 'tasksContainer', 'achievementsContainer', 'newsContainer', 'profileContainer'];
+        const containers = ['notesContainer', 'routineContainer', 'tasksContainer', 'progressContainer', 'newsContainer', 'profileContainer'];
         const navTop = document.querySelector('.nav-top');
 
         const formIsTaskSwitch = document.getElementById('isTaskSwitch');
@@ -3580,6 +3776,25 @@ Day goals:
         const achievementTaskSelect = document.getElementById('achievementTaskSelect');
         const achievementLinkTaskBtn = document.getElementById('achievementLinkTaskBtn');
         const achievementLinkedTasksList = document.getElementById('achievementLinkedTasksList');
+        const progressCalendarForm = document.getElementById('progressCalendarForm');
+        const progressCalendarModalLabel = document.getElementById('progressCalendarModalLabel');
+        const progressCalendarIdInput = document.getElementById('progressCalendarIdInput');
+        const progressCalendarTitleInput = document.getElementById('progressCalendarTitleInput');
+        const progressCalendarDescriptionInput = document.getElementById('progressCalendarDescriptionInput');
+        const progressCalendarTypeInput = document.getElementById('progressCalendarTypeInput');
+        const progressCalendarGradientStepInput = document.getElementById('progressCalendarGradientStepInput');
+        const progressCalendarSaveBtn = document.getElementById('progressCalendarSaveBtn');
+        const progressCalendarTasksCalendarId = document.getElementById('progressCalendarTasksCalendarId');
+        const progressCalendarTaskSelect = document.getElementById('progressCalendarTaskSelect');
+        const progressCalendarLinkTaskBtn = document.getElementById('progressCalendarLinkTaskBtn');
+        const progressCalendarLinkedTasksList = document.getElementById('progressCalendarLinkedTasksList');
+        const progressTabCalendarBtn = document.getElementById('progressTabCalendarBtn');
+        const progressTabAchievementsBtn = document.getElementById('progressTabAchievementsBtn');
+        const progressCalendarSection = document.getElementById('progressCalendarSection');
+        const progressAchievementsSection = document.getElementById('progressAchievementsSection');
+        let activeProgressCalendarId = 1;
+        let activeProgressSection = 'calendar';
+        let progressCalendarYear = (new Date()).getFullYear();
         const customAchievementsList = document.getElementById('customAchievementsList');
         let currentActiveTab = 'routineContainer';
         let activeQuickPreset = 'note';
@@ -3588,6 +3803,18 @@ Day goals:
         function setNoteFormMode(isEditMode) {
             formNoteModalLabel.textContent = isEditMode ? 'Edit' : 'Add a note';
             formNoteSaveBtn.textContent = isEditMode ? 'Save' : 'Create';
+        }
+
+        function setProgressSection(section) {
+            activeProgressSection = section === 'achievements' ? 'achievements' : 'calendar';
+            const isCalendar = activeProgressSection === 'calendar';
+            progressCalendarSection.style.display = isCalendar ? '' : 'none';
+            progressAchievementsSection.style.display = isCalendar ? 'none' : '';
+            progressTabCalendarBtn.classList.toggle('btn-primary', isCalendar);
+            progressTabCalendarBtn.classList.toggle('btn-outline-secondary', !isCalendar);
+            progressTabAchievementsBtn.classList.toggle('btn-primary', !isCalendar);
+            progressTabAchievementsBtn.classList.toggle('btn-outline-secondary', isCalendar);
+            updateAddButtonContext(currentActiveTab);
         }
 
         function getDefaultPresetByTab(targetId) {
@@ -3682,7 +3909,13 @@ Day goals:
                 addNoteBtn.setAttribute('data-bs-target', '#formNoteModal');
                 return;
             }
-            if (targetId === 'achievementsContainer') {
+            if (targetId === 'progressContainer' && activeProgressSection === 'calendar') {
+                addNoteBtn.title = 'Add calendar';
+                addNoteBtn.removeAttribute('data-bs-toggle');
+                addNoteBtn.removeAttribute('data-bs-target');
+                return;
+            }
+            if (targetId === 'progressContainer' && activeProgressSection === 'achievements') {
                 addNoteBtn.title = 'Add achievement';
                 addNoteBtn.removeAttribute('data-bs-toggle');
                 addNoteBtn.removeAttribute('data-bs-target');
@@ -3754,6 +3987,7 @@ Day goals:
                     renderAchievementTaskSelection(achievementId);
                     renderLinkedAchievementTasks(achievementId);
                     refreshAchievements();
+            refreshProgressCalendars();
                 });
                 ul.appendChild(li);
             });
@@ -3763,12 +3997,20 @@ Day goals:
         }
 
         addNoteBtn.addEventListener('click', (event) => {
-            if (currentActiveTab !== 'achievementsContainer') return;
+            if (currentActiveTab !== 'progressContainer') return;
             event.preventDefault();
             event.stopPropagation();
-            resetAchievementFormToCreateMode();
-            achievementModal.show();
+            if (activeProgressSection === 'achievements') {
+                resetAchievementFormToCreateMode();
+                achievementModal.show();
+                return;
+            }
+            openProgressCalendarModal();
         });
+
+        progressTabCalendarBtn?.addEventListener('click', () => setProgressSection('calendar'));
+        progressTabAchievementsBtn?.addEventListener('click', () => setProgressSection('achievements'));
+        setProgressSection('calendar');
 
         achievementForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -3802,6 +4044,7 @@ Day goals:
             }
             save();
             refreshAchievements();
+            refreshProgressCalendars();
             achievementModal.hide();
             resetAchievementFormToCreateMode();
         });
@@ -3835,6 +4078,7 @@ Day goals:
             renderAchievementTaskSelection(achievementId);
             renderLinkedAchievementTasks(achievementId);
             refreshAchievements();
+            refreshProgressCalendars();
         });
 
         function getDayRating(date) {
@@ -4191,6 +4435,279 @@ Day goals:
             return hasChanges;
         }
 
+        function refreshProgressCalendars() {
+            const list = document.getElementById('progressCalendarsList');
+            if (!list) return;
+            list.innerHTML = '';
+            const calendars = Object.values(data.progressCalendars || {}).sort((a,b)=>a.id-b.id);
+            if (calendars.length > 0 && !data.progressCalendars?.[activeProgressCalendarId]) {
+                activeProgressCalendarId = calendars[0].id;
+            }
+            calendars.forEach((cal)=>{
+                const li=document.createElement('li'); li.className='custom-achievement-item';
+                li.innerHTML=`<div class="custom-achievement-title-row"><span class="custom-achievement-title"></span><div class="btn-group progress-calendar-actions"><button class="btn btn-outline-primary btn-sm progress-open-btn">Choose</button><button class="btn btn-outline-secondary btn-sm progress-edit-btn">Edit</button><button class="btn btn-outline-secondary btn-sm progress-link-btn">Linked tasks</button><button class="btn btn-outline-danger btn-sm progress-delete-btn">Delete</button></div></div><div class="custom-achievement-meta"></div>`;
+                li.querySelector('.custom-achievement-title').textContent=cal.title;
+                li.querySelector('.custom-achievement-meta').textContent=`${cal.description || ''} · ${cal.type} · Linked tasks: ${(cal.taskIds || []).length}`;
+                li.querySelector('.progress-open-btn').addEventListener('click', ()=>{
+                    activeProgressCalendarId = cal.id;
+                    renderProgressCalendar(cal.id);
+                    refreshProgressCalendars();
+                });
+                li.querySelector('.progress-edit-btn').addEventListener('click', ()=>openProgressCalendarModal(cal.id));
+                li.querySelector('.progress-link-btn').addEventListener('click', ()=>openProgressCalendarTaskLinkModal(cal.id));
+                li.querySelector('.progress-delete-btn').addEventListener('click', ()=>{
+                    if (cal.system) return showNotification('This calendar cannot be deleted');
+                    if (!confirm('Delete calendar?')) return;
+                    delete data.progressCalendars[cal.id];
+                    save();
+                    refreshProgressCalendars();
+                    document.getElementById('progressCalendarView').innerHTML = '';
+                });
+                if (cal.system) {
+                    li.querySelector('.progress-delete-btn').disabled = true;
+                }
+                if (cal.type === 'medals') {
+                    li.querySelector('.progress-link-btn').disabled = true;
+                }
+                if (Number(activeProgressCalendarId) === Number(cal.id)) {
+                    li.classList.add('progress-calendar-active');
+                }
+                list.appendChild(li);
+            });
+            if (activeProgressCalendarId) {
+                renderProgressCalendar(activeProgressCalendarId);
+            }
+        }
+
+        function getTaskDisplayTitle(task) {
+            if (!task) return '';
+            if (typeof task.title === 'string' && task.title.trim().length > 0) {
+                return task.title.trim();
+            }
+            const parentNote = data.notes?.[task.note];
+            if (parentNote?.title) return parentNote.title;
+            return `#${task.id}`;
+        }
+
+        function openProgressCalendarModal(calendarId = null) {
+            if (!calendarId) {
+                progressCalendarIdInput.value = '';
+                progressCalendarForm.reset();
+                progressCalendarTypeInput.value = 'tasks';
+                progressCalendarGradientStepInput.value = '1';
+                progressCalendarTypeInput.disabled = false;
+                progressCalendarGradientStepInput.disabled = false;
+                progressCalendarModalLabel.textContent = 'Add calendar';
+                progressCalendarSaveBtn.textContent = 'Create';
+            } else {
+                const calendar = data.progressCalendars?.[calendarId];
+                if (!calendar) return;
+                progressCalendarIdInput.value = String(calendar.id);
+                progressCalendarTitleInput.value = calendar.title ?? '';
+                progressCalendarDescriptionInput.value = calendar.description ?? '';
+                progressCalendarTypeInput.value = calendar.type === 'time' ? 'time' : (calendar.type === 'medals' ? 'medals' : (calendar.type ?? 'tasks'));
+                progressCalendarGradientStepInput.value = String(calendar.gradientStep ?? 1);
+                if (calendar.system && calendar.type === 'medals') {
+                    progressCalendarTypeInput.value = 'medals';
+                    progressCalendarTypeInput.disabled = true;
+                    progressCalendarGradientStepInput.disabled = true;
+                } else {
+                    progressCalendarTypeInput.disabled = false;
+                    progressCalendarGradientStepInput.disabled = false;
+                }
+                progressCalendarModalLabel.textContent = 'Edit calendar';
+                progressCalendarSaveBtn.textContent = 'Save';
+            }
+            progressCalendarModal.show();
+        }
+
+        function openProgressCalendarTaskLinkModal(calendarId) {
+            const calendar = data.progressCalendars?.[calendarId];
+            if (!calendar || calendar.type === 'medals') return;
+            progressCalendarTasksCalendarId.value = String(calendarId);
+            renderProgressCalendarTaskSelection(calendarId);
+            renderProgressCalendarLinkedTasks(calendarId);
+            progressCalendarTasksModal.show();
+        }
+
+        function renderProgressCalendarTaskSelection(calendarId) {
+            const calendar = data.progressCalendars?.[calendarId];
+            if (!calendar) return;
+            const linkedTaskIds = new Set((calendar.taskIds ?? []).map(id => String(id)));
+            progressCalendarTaskSelect.innerHTML = '<option value="">Choose task</option>';
+            Object.values(data.tasks ?? {}).forEach((task) => {
+                if (task?.is_task === false) return;
+                if (!task?.regularity) return;
+                if (calendar.type === 'time' && task?.goal?.type !== 'time') return;
+                const taskId = String(task.id);
+                if (linkedTaskIds.has(taskId)) return;
+                const option = document.createElement('option');
+                option.value = taskId;
+                option.textContent = getTaskDisplayTitle(task);
+                progressCalendarTaskSelect.appendChild(option);
+            });
+        }
+
+        function renderProgressCalendarLinkedTasks(calendarId) {
+            const calendar = data.progressCalendars?.[calendarId];
+            if (!calendar) return;
+            const linkedTaskIds = calendar.taskIds ?? [];
+            if (linkedTaskIds.length === 0) {
+                progressCalendarLinkedTasksList.innerHTML = '<div class="text-muted small">No linked tasks yet</div>';
+                return;
+            }
+            const ul = document.createElement('ul');
+            ul.className = 'list-group';
+            linkedTaskIds.forEach((taskId) => {
+                const task = data.tasks?.[taskId];
+                if (!task) return;
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.innerHTML = `<span>${getTaskDisplayTitle(task)}</span>`;
+                const unlinkBtn = document.createElement('button');
+                unlinkBtn.className = 'btn btn-outline-danger btn-sm';
+                unlinkBtn.textContent = 'Unlink';
+                unlinkBtn.addEventListener('click', () => {
+                    calendar.taskIds = (calendar.taskIds ?? []).filter(id => String(id) !== String(taskId));
+                    save();
+                    renderProgressCalendarTaskSelection(calendarId);
+                    renderProgressCalendarLinkedTasks(calendarId);
+                    refreshProgressCalendars();
+                });
+                li.appendChild(unlinkBtn);
+                ul.appendChild(li);
+            });
+            progressCalendarLinkedTasksList.innerHTML = '';
+            progressCalendarLinkedTasksList.appendChild(ul);
+        }
+
+        function getCalendarActivityMap(calendar) {
+            const map = {};
+            if (calendar.type === 'medals') {
+                for (const y in (data.dayRatings ?? {})) for (const w in (data.dayRatings[y] ?? {})) for (const d in (data.dayRatings[y][w] ?? {})) {
+                    const dt = getDateFromYearWeekDay(Number(y), Number(w), Number(d));
+                    map[dt] = data.dayRatings[y][w][d];
+                }
+                return map;
+            }
+            for (const taskId of (calendar.taskIds ?? [])) {
+                const task = data.tasks?.[taskId];
+                if (!task?.completion) continue;
+                for (const y in task.completion) for (const w in task.completion[y]) {
+                    const days = task.completion[y][w];
+                    for (let d = 0; d < 7; d++) {
+                        const raw = Array.isArray(days) ? days[d] : days?.[d];
+                        if (raw == null) continue;
+                        const dt = getDateFromYearWeekDay(Number(y), Number(w), d);
+                        const val = Number(raw) || 0;
+                        map[dt] = (map[dt] ?? 0) + (calendar.type === 'time' ? Math.max(0, val) : (val > 0 ? 1 : 0));
+                    }
+                }
+            }
+            return map;
+        }
+
+        function renderProgressCalendar(calendarId) {
+            const calendar = data.progressCalendars?.[calendarId];
+            if (!calendar) return;
+            const activityMap = getCalendarActivityMap(calendar);
+            const weekStart = data?.settings?.weekStart === 'monday' ? 1 : 0;
+            const values = Object.values(activityMap).map(v => typeof v === 'number' ? v : 1);
+            const maxValue = values.length ? Math.max(...values) : 0;
+            let cells = '';
+            let monthLabels = '';
+            const startOfYear = new Date(progressCalendarYear, 0, 1);
+            const startOffset = (startOfYear.getDay() - weekStart + 7) % 7;
+            const firstGridDate = new Date(progressCalendarYear, 0, 1 - startOffset);
+            const endOfYear = new Date(progressCalendarYear, 11, 31);
+            const endOffset = (weekStart + 6 - endOfYear.getDay() + 7) % 7;
+            const lastGridDate = new Date(progressCalendarYear, 11, 31 + endOffset);
+            const weekCount = Math.floor((lastGridDate - firstGridDate) / (7 * 24 * 60 * 60 * 1000)) + 1;
+            const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            let prevMonth = null;
+            const formatMinutesOrHoursMinutes = (minutesRaw) => {
+                const minutes = Math.max(0, Math.floor(minutesRaw));
+                if (minutes < 60) return `${minutes}m`;
+                const hours = Math.floor(minutes / 60);
+                const rest = minutes % 60;
+                return `${hours}h ${rest}m`;
+            };
+            for (let w = 0; w < weekCount; w++) {
+                const weekDate = new Date(firstGridDate);
+                weekDate.setDate(firstGridDate.getDate() + (w * 7));
+                const month = weekDate.getMonth();
+                const inYearMonth = weekDate.getFullYear() === progressCalendarYear;
+                monthLabels += `<span>${inYearMonth && month !== prevMonth ? monthNames[month] : ''}</span>`;
+                if (inYearMonth) prevMonth = month;
+                cells += '<div class="progress-heatmap-col">';
+                for (let d = 0; d < 7; d++) {
+                    const cur = new Date(weekDate);
+                    cur.setDate(weekDate.getDate() + d);
+                    const key = cur.toStringWithoutTime();
+                    const rawValue = activityMap[key];
+                    const value = Number(rawValue ?? 0);
+                    const outOfYear = cur.getFullYear() !== progressCalendarYear;
+                    let style = '';
+                    let className = '';
+                    let tooltipValue = rawValue ?? 0;
+                    if (!outOfYear) {
+                        if (calendar.type === 'medals' && typeof rawValue === 'string') {
+                            const medalLevel = { participant: 1, bronze: 1, silver: 2, gold: 3 };
+                            const medalLabel = {
+                                participant: 'Participant',
+                                bronze: 'Bronze',
+                                silver: 'Silver',
+                                gold: 'Gold',
+                                platinum: 'Platinum',
+                                ultra: 'Ruby cup',
+                                empty: 'Empty'
+                            };
+                            tooltipValue = medalLabel[rawValue] ?? 'Empty';
+                            if (rawValue === 'platinum') {
+                                className = 'active-4';
+                            } else if (rawValue === 'ultra') {
+                                className = 'active-5';
+                            } else if (rawValue in medalLevel) {
+                                className = `active-${medalLevel[rawValue]}`;
+                            } else {
+                                style = 'background:#ebedf0';
+                                tooltipValue = 'Empty';
+                            }
+                        } else {
+                            const step = calendar.type === 'time'
+                                ? Math.max(60, Number(calendar.gradientStep ?? 1) * 60)
+                                : Math.max(1, Number(calendar.gradientStep ?? 1));
+                            const level = value <= 0 ? 0 : Math.min(3, Math.ceil(value / step));
+                            className = level ? `active-${level}` : '';
+                            if (calendar.type === 'time') {
+                                tooltipValue = `${(value / 3600).toFixed(2)}h`;
+                            }
+                        }
+                    } else {
+                        style = 'opacity:.25';
+                    }
+                    cells += `<span class="progress-heatmap-cell ${className}" style="${style}" title="${key}: ${tooltipValue || 'Empty'}"></span>`;
+                }
+                cells += '</div>';
+            }
+            const activeDays = Object.keys(activityMap).filter(k => (new Date(k)).getFullYear() === progressCalendarYear).length;
+            const total = values.reduce((sum, v) => sum + Number(v), 0);
+            const totalDisplay = calendar.type === 'time'
+                ? (total / 3600).toFixed(2)
+                : total;
+            const legend = calendar.type === 'medals'
+                ? `<div class="progress-legend"><span>Legend:</span><span class="progress-legend-item"><span class="progress-heatmap-cell" style="background:#ebedf0"></span>Empty</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-1"></span>Participant / Bronze</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-2"></span>Silver</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-3"></span>Gold</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-4"></span>Platinum</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-5"></span>Ruby cup</span></div>`
+                : (calendar.type === 'time'
+                    ? `<div class="progress-legend"><span>Legend:</span><span class="progress-legend-item"><span class="progress-heatmap-cell" style="background:#ebedf0"></span>0</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-1"></span>≤ ${formatMinutesOrHoursMinutes(calendar.gradientStep)}</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-2"></span>${formatMinutesOrHoursMinutes(Number(calendar.gradientStep))} - ${formatMinutesOrHoursMinutes(Number(calendar.gradientStep)*2)}</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-3"></span>> ${formatMinutesOrHoursMinutes(Number(calendar.gradientStep)*2)}</span></div>`
+                    : `<div class="progress-legend"><span>Legend:</span><span class="progress-legend-item"><span class="progress-heatmap-cell" style="background:#ebedf0"></span>0</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-1"></span>1-${calendar.gradientStep}</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-2"></span>${Number(calendar.gradientStep)+1}-${Number(calendar.gradientStep)*2}</span><span class="progress-legend-item"><span class="progress-heatmap-cell active-3"></span>${Number(calendar.gradientStep)*2+1}+</span></div>`);
+            const weekdays = weekStart === 1
+                ? ['Mon','','Wed','','Fri','','']
+                : ['Sun','','Tue','','Thu','','Sat'];
+            document.getElementById('progressCalendarView').innerHTML = `<h5>${calendar.title}</h5><div class="d-flex gap-2 mb-2"><button class="btn btn-outline-secondary btn-sm" id="progressYearPrev">←</button><div class="fw-bold">${progressCalendarYear}</div><button class="btn btn-outline-secondary btn-sm" id="progressYearNext">→</button></div><div class="progress-calendar-stats">Activity days: ${activeDays} · ${calendar.type === 'time' ? 'Total time (hours)' : 'Total completed tasks'}: ${totalDisplay}</div><div class="progress-calendar-grid-wrap"><div></div><div class="progress-month-labels">${monthLabels}</div><div class="progress-weekday-labels">${weekdays.map(d=>`<span>${d}</span>`).join('')}</div><div class="progress-heatmap">${cells}</div></div>${legend}`;
+            document.getElementById('progressYearPrev')?.addEventListener('click', ()=>{ progressCalendarYear -= 1; renderProgressCalendar(calendarId); });
+            document.getElementById('progressYearNext')?.addEventListener('click', ()=>{ progressCalendarYear += 1; renderProgressCalendar(calendarId); });
+        }
+
         function refreshAchievements() {
             const linkedProgressChanged = syncAchievementLinkedTasksProgress();
             if (linkedProgressChanged) {
@@ -4217,25 +4734,25 @@ Day goals:
                     }
                 }
             }
-            const ratedDates = [];
+            const lightningDates = [];
             for (const year in (data.dayRatings ?? {})) {
                 for (const week in data.dayRatings[year]) {
                     for (const dayOfWeek in data.dayRatings[year][week]) {
                         const rating = data.dayRatings[year][week][dayOfWeek];
                         if (!rating) continue;
-                        ratedDates.push({
-                            date: getDateFromYearWeekDay(Number(year), Number(week), Number(dayOfWeek)),
-                            rating
-                        });
+                        const date = getDateFromYearWeekDay(Number(year), Number(week), Number(dayOfWeek));
+                        if (shouldShowLightningBadge(date)) {
+                            lightningDates.push(date);
+                        }
                     }
                 }
             }
-            ratedDates.sort((a, b) => a.date.localeCompare(b.date));
+            lightningDates.sort((a, b) => a.localeCompare(b));
             let longestStreak = 0;
             let currentStreak = 0;
             let prevDate = null;
-            for (const entry of ratedDates) {
-                const d = new Date(entry.date);
+            for (const lightningDate of lightningDates) {
+                const d = new Date(lightningDate);
                 if (prevDate && getCalendarDayDiff(prevDate, d) === 1) {
                     currentStreak += 1;
                 } else {
@@ -4359,16 +4876,19 @@ Day goals:
                     delete data.achievements[achievement.id];
                     save();
                     refreshAchievements();
+            refreshProgressCalendars();
                 });
                 minusBtn.addEventListener('click', () => {
                     achievement.progress = Math.max(0, totalProgress - step);
                     save();
                     refreshAchievements();
+            refreshProgressCalendars();
                 });
                 plusBtn.addEventListener('click', () => {
                     achievement.progress = totalProgress + step;
                     save();
                     refreshAchievements();
+            refreshProgressCalendars();
                 });
 
                 customAchievementsList.appendChild(item);
@@ -5828,6 +6348,7 @@ Day goals:
             save();
             refreshWeekDayRatings();
             refreshAchievements();
+            refreshProgressCalendars();
             updateFinishDayButtonVisibility();
 
             const roundedPercent = Math.round(score.percent);
@@ -6017,6 +6538,7 @@ Day goals:
             refreshWeekDayRatings();
             updateActiveDayColorClass();
             refreshAchievements();
+            refreshProgressCalendars();
             updateFinishDayButtonVisibility();
         }
 
@@ -6753,6 +7275,9 @@ Day goals:
             data.settings.weekStart = this.value === 'monday' ? 'monday' : 'sunday';
             save();
             updateWeek(selectedDate, 'settings:weekStart');
+            if (activeProgressCalendarId) {
+                renderProgressCalendar(activeProgressCalendarId);
+            }
         });
 
         const textarea = document.getElementById('gptPromptInput');
@@ -7233,6 +7758,46 @@ Day goals:
         // ===================== //
 
         load();
+        progressCalendarForm?.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const title = progressCalendarTitleInput.value.trim();
+            if (!title) return;
+            const description = progressCalendarDescriptionInput.value.trim();
+            const type = progressCalendarTypeInput.value === 'time'
+                ? 'time'
+                : (progressCalendarTypeInput.value === 'medals' ? 'medals' : 'tasks');
+            const gradientStep = Math.max(1, parseInt(progressCalendarGradientStepInput.value, 10) || 1);
+            const calendarId = parseInt(progressCalendarIdInput.value, 10);
+            if (calendarId > 0 && data.progressCalendars?.[calendarId]) {
+                const existing = data.progressCalendars[calendarId];
+                existing.title = title;
+                existing.description = description;
+                if (!(existing.system && existing.type === 'medals')) {
+                    existing.type = type;
+                    existing.gradientStep = gradientStep;
+                }
+            } else {
+                data.progress_calendar_max_id = (data.progress_calendar_max_id ?? 1) + 1;
+                data.progressCalendars[data.progress_calendar_max_id] = {id: data.progress_calendar_max_id, system:false, type, title, description, gradientStep, taskIds:[]};
+            }
+            save();
+            refreshProgressCalendars();
+            progressCalendarModal.hide();
+        });
+        progressCalendarLinkTaskBtn?.addEventListener('click', () => {
+            const calendarId = parseInt(progressCalendarTasksCalendarId.value, 10);
+            const calendar = data.progressCalendars?.[calendarId];
+            const taskId = progressCalendarTaskSelect.value;
+            if (!calendar || !taskId || !data.tasks?.[taskId]) return;
+            calendar.taskIds = calendar.taskIds ?? [];
+            if (!calendar.taskIds.includes(Number(taskId)) && !calendar.taskIds.includes(String(taskId))) {
+                calendar.taskIds.push(Number(taskId));
+            }
+            save();
+            renderProgressCalendarTaskSelection(calendarId);
+            renderProgressCalendarLinkedTasks(calendarId);
+            refreshProgressCalendars();
+        });
         taskClickActionSelect.value = data.settings.taskClickAction ?? DEFAULT_CLICK_ACTION;
         noteClickActionSelect.value = data.settings.noteClickAction ?? DEFAULT_CLICK_ACTION;
         weekStartSelect.value = data.settings.weekStart ?? 'monday';
