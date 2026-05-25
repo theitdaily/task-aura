@@ -187,6 +187,10 @@
             white-space: nowrap;
         }
 
+        .task.task-infinite-goal {
+            background-color: #e6f7ff;
+        }
+
         .task-right {
             flex: 0 0 auto;
             margin: 0 6px;
@@ -1352,7 +1356,7 @@
         .progress-month-labels { display: grid; grid-auto-columns: 12px; grid-auto-flow: column; gap: 3px; margin-bottom: 4px; font-size: .72rem; color: #6a6d78; }
     </style>
 
-        <meta name="version" content="1.4.0">
+        <meta name="version" content="1.4.1">
 </head>
 <body>
         <!-- Вкладка Routine (активная) -->
@@ -1366,13 +1370,13 @@
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day" data-day="2026-05-11"><div>Пн</div><div>11</div></div>
-                <div class="text-center day" data-day="2026-05-12"><div>Вт</div><div>12</div></div>
-                <div class="text-center day" data-day="2026-05-13"><div>Ср</div><div>13</div></div>
-                <div class="text-center day" data-day="2026-05-14"><div>Чт</div><div>14</div></div>
-                <div class="text-center day" data-day="2026-05-15"><div>Пт</div><div>15</div></div>
-                <div class="text-center day" data-day="2026-05-16"><div>Сб</div><div>16</div></div>
-                <div class="text-center day active active-lightning-blue" data-day="2026-05-17"><div>Вс</div><div>17</div></div>
+                <div class="text-center day active active-lightning-blue" data-day="2026-05-25"><div>Пн</div><div>25</div></div>
+                <div class="text-center day" data-day="2026-05-26"><div>Вт</div><div>26</div></div>
+                <div class="text-center day" data-day="2026-05-27"><div>Ср</div><div>27</div></div>
+                <div class="text-center day" data-day="2026-05-28"><div>Чт</div><div>28</div></div>
+                <div class="text-center day" data-day="2026-05-29"><div>Пт</div><div>29</div></div>
+                <div class="text-center day" data-day="2026-05-30"><div>Сб</div><div>30</div></div>
+                <div class="text-center day" data-day="2026-05-31"><div>Вс</div><div>31</div></div>
             </div>
         </div>
     </div>
@@ -1659,7 +1663,7 @@
             <option value="en">English</option>
             <option value="ru" selected="">Русский</option>
         </select>
-        <span>Версия: 1.4.0</span>
+        <span>Версия: 1.4.1</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -3364,6 +3368,12 @@
             return Number(parentNote.task);
         }
 
+        function hasZeroGoalTarget(task) {
+            if (!task?.goal) return false;
+            if (task.goal.type !== 'count' && task.goal.type !== 'time') return false;
+            return Number(task.goal.count ?? 0) <= 0;
+        }
+
         function GetTaskGoalPercent(task) {
             if (task.goal != null) {
                 if (task.goal.type === 'children') {
@@ -3372,8 +3382,10 @@
                     return (stats.completed * 100) / stats.total;
                 }
                 if (task.goal.type === 'count') {
+                    if (hasZeroGoalTarget(task)) return 0;
                     return GetTaskCompletionResult(task)*100/task.goal.count;
                 } else {
+                    if (hasZeroGoalTarget(task)) return 0;
                     return GetTaskCompletionResult(task)*100/task.goal.count;
                 }
             }
@@ -3387,6 +3399,9 @@
                     return `${stats.completed}/${stats.total}`;
                 }
                 if (task.goal.type === 'count') {
+                    if (hasZeroGoalTarget(task)) {
+                        return String(GetTaskCompletionResult(task) ?? 0);
+                    }
                     return (GetTaskCompletionResult(task) ?? 0) + '/' + task.goal.count;
                 } else {
                     const resultSeconds = Number(GetTaskCompletionResult(task) ?? 0);
@@ -3400,6 +3415,9 @@
                         return Math.max(0, Math.round(normalized * 10) / 10);
                     };
 
+                    if (hasZeroGoalTarget(task)) {
+                        return `${normalizeValue(resultSeconds)} ${unit}`;
+                    }
                     return `${normalizeValue(resultSeconds)}/${normalizeValue(targetSeconds)} ${unit}`;
                 }
             }
@@ -3542,6 +3560,7 @@
                     if (task.goal.type === 'children') {
                         return result === true;
                     }
+                    if (hasZeroGoalTarget(task)) return false;
                     return result >= task.goal.count;
                 }
                 return result === true;
@@ -4162,7 +4181,11 @@
 
         function calculateDayScore(date) {
             const dayTasks = getDailyTasksForDate(date);
-            const activeTasks = dayTasks.filter((task) => !IsTaskCancelled(task, date));
+            const activeTasks = dayTasks.filter((task) => {
+                if (IsTaskCancelled(task, date)) return false;
+                if (task.regularity && hasZeroGoalTarget(task)) return false;
+                return true;
+            });
             const totalTasks = activeTasks.length;
             let fullDoneCount = 0;
             let partialDoneCount = 0;
@@ -4922,7 +4945,11 @@
         function areAllSelectedDateTasksCompleted() {
             const dayTasks = getDailyTasksForDate(selectedDate);
             if (dayTasks.length === 0) return false;
-            const activeTasks = dayTasks.filter((task) => !IsTaskCancelled(task, selectedDate));
+            const activeTasks = dayTasks.filter((task) => {
+                if (IsTaskCancelled(task, selectedDate)) return false;
+                if (task.regularity && hasZeroGoalTarget(task)) return false;
+                return true;
+            });
             if (activeTasks.length === 0) return false;
             return activeTasks.every(task => IsTaskCompleted(task, selectedDate));
         }
@@ -5291,7 +5318,11 @@
             };
 
             if (task.goal && (task.goal.type === 'count' || task.goal.type === 'time')) {
-                const userInput = prompt('Введите значение цели на день', String(task.goal.count ?? ''));
+                const stepValue = Number(task.goal.step);
+                const suggestedValue = task.goal.type === 'count'
+                    ? ((Number.isFinite(stepValue) && stepValue !== 0) ? stepValue : 1)
+                    : Number(task.goal.count ?? 0);
+                const userInput = prompt('Введите значение цели на день', String(suggestedValue));
                 if (userInput == null) return;
                 const target = Number(userInput);
                 if (!Number.isFinite(target) || target <= 0) {
@@ -6216,6 +6247,10 @@
 
             centerDiv.appendChild(titleRowDiv);
             centerDiv.appendChild(timeDiv);
+
+            if (hasZeroGoalTarget(task)) {
+                taskDiv.classList.add('task-infinite-goal');
+            }
 
             // Правая кнопка
             const rightDiv = document.createElement('div');
