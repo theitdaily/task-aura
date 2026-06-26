@@ -1715,8 +1715,11 @@
                 <button id="connectGoogleCalendarBtn" class="btn btn-outline-success tab-action-btn" type="button">Подключить Google Calendar</button>
                 <button id="disconnectGoogleCalendarBtn" class="btn btn-outline-danger tab-action-btn d-none" type="button">Отключить Google Calendar</button>
                 <button id="saveGoogleCalendarSettingsBtn" class="btn btn-outline-secondary tab-action-btn" type="button">Сохранить настройки Google Calendar</button>
+                <button id="testGoogleTasksConnectionBtn" class="btn btn-outline-info tab-action-btn" type="button"><i class="bi bi-wifi"></i> Проверить соединение Google Tasks</button>
+                <button id="clearPwaCacheBtn" class="btn btn-outline-warning tab-action-btn" type="button">Очистить PWA-кэш</button>
                 <button id="syncGoogleCalendarBtn" class="btn btn-outline-primary tab-action-btn" type="button">Синхронизировать нерегулярные задачи с Google Tasks</button>
             </div>
+            <div id="googleTasksConnectionTestResult" class="small text-muted mt-2"></div>
         </div>
         <div class="data-transfer-block">
             <h6 class="mb-2">Импорт/экспорт данных</h6>
@@ -2284,6 +2287,7 @@
         // =============================== //
         const ARCHIVE_FOLDER_KEY = '__archive__';
         const GOOGLE_CALENDAR_CLIENT_ID = "1077829509937-1u5ll6i07f7j822s6k64192sj1is3brg.apps.googleusercontent.com";
+        const GOOGLE_TASKS_API_BASE_URL = 'https://tasks.googleapis.com/tasks/v1';
         let notesViewMode = 'default';
         let notesSortMode = 'off'; // off | folders | notes
         let notesDisplayMode = 'folders'; // folders | compact
@@ -3899,7 +3903,10 @@
         const connectGoogleCalendarBtn = document.getElementById('connectGoogleCalendarBtn');
         const disconnectGoogleCalendarBtn = document.getElementById('disconnectGoogleCalendarBtn');
         const saveGoogleCalendarSettingsBtn = document.getElementById('saveGoogleCalendarSettingsBtn');
+        const testGoogleTasksConnectionBtn = document.getElementById('testGoogleTasksConnectionBtn');
+        const clearPwaCacheBtn = document.getElementById('clearPwaCacheBtn');
         const syncGoogleCalendarBtn = document.getElementById('syncGoogleCalendarBtn');
+        const googleTasksConnectionTestResult = document.getElementById('googleTasksConnectionTestResult');
         const googleSyncToast = document.getElementById('googleSyncToast');
         const googleSyncToastIcon = document.getElementById('googleSyncToastIcon');
         const googleSyncToastTitle = document.getElementById('googleSyncToastTitle');
@@ -7207,34 +7214,203 @@
             showNotification('Google Calendar отключён');
         }
 
-        function getGoogleTasksNetworkErrorMessage(error) {
-            const isNetworkError = error instanceof TypeError
-                || String(error?.message ?? error).toLowerCase().includes('failed to fetch');
-            if (!isNetworkError) {
-                return error;
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function getGoogleTasksRuntimeDiagnostics(extra = {}) {
+            return {
+                ...extra,
+                navigatorOnLine: navigator.onLine,
+                locationOrigin: location.origin,
+                locationHref: location.href,
+                userAgent: navigator.userAgent,
+                hasServiceWorkerController: Boolean(navigator.serviceWorker?.controller),
+                isStandalonePwa: window.matchMedia?.('(display-mode: standalone)').matches === true,
+            };
+        }
+
+        function getGoogleTasksNetworkErrorMessage(error, diagnostics = {}) {
+            const technicalMessage = `${error?.name ?? 'Error'}: ${error?.message ?? String(error)}`;
+            const networkError = new Error(`Не удалось выполнить fetch-запрос к Google Tasks API. Домен может быть доступен, но браузер заблокировал или прервал запрос из приложения. Проверьте PWA/Service Worker, CORS/preflight, VPN, AdBlock, Private DNS и браузер. Технически: ${technicalMessage}`);
+            networkError.name = 'GoogleTasksNetworkError';
+            networkError.cause = error;
+            networkError.originalName = error?.name;
+            networkError.originalMessage = error?.message ?? String(error);
+            networkError.originalStack = error?.stack;
+            networkError.diagnostics = diagnostics;
+            return networkError;
+        }
+
+        function buildGoogleTasksApiUrl(path) {
+            return `${GOOGLE_TASKS_API_BASE_URL}/${String(path).replace(/^\/+/, '')}`;
+        }
+
+        function normalizeGoogleTasksHeaders(headers = {}) {
+            if (headers instanceof Headers) {
+                return Object.fromEntries(headers.entries());
             }
-            return new Error('Could not reach Google Tasks API. Check mobile internet, VPN/ad blocker/private DNS/browser content blockers, and whether tasks.googleapis.com is available from this device.');
+            if (Array.isArray(headers)) {
+                return Object.fromEntries(headers);
+            }
+            return { ...headers };
+        }
+
+        async function readGoogleTasksResponsePayload(response) {
+            const responseText = await response.text().catch((error) => {
+                const parseError = new Error(`Не удалось прочитать ответ Google Tasks API: ${error?.message ?? error}`);
+                parseError.cause = error;
+                parseError.status = response.status;
+                parseError.statusText = response.statusText;
+                throw parseError;
+            });
+
+            if (!responseText) {
+                return {};
+            }
+
+            try {
+                return JSON.parse(responseText);
+            } catch (error) {
+                if (response.ok) {
+                    const parseError = new Error(`Не удалось разобрать JSON-ответ Google Tasks API: ${error?.message ?? error}`);
+                    parseError.cause = error;
+                    parseError.status = response.status;
+                    parseError.statusText = response.statusText;
+                    parseError.payload = responseText;
+                    throw parseError;
+                }
+                return responseText;
+            }
         }
 
         async function googleCalendarFetch(path, accessToken, options = {}) {
+            const url = buildGoogleTasksApiUrl(path);
+            const method = options.method ?? (options.body ? 'POST' : 'GET');
+            const headers = {
+                Authorization: `Bearer ${accessToken}`,
+                Accept: 'application/json',
+                ...normalizeGoogleTasksHeaders(options.headers),
+            };
+            if (options.body && !headers['Content-Type'] && !headers['content-type']) {
+                headers['Content-Type'] = 'application/json';
+            }
+
             let response;
             try {
-                response = await fetch(`https://tasks.googleapis.com/tasks/v1/${path}`, {
+                response = await fetch(url, {
                     ...options,
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                        ...(options.headers ?? {}),
-                    },
+                    method,
+                    mode: 'cors',
+                    cache: 'no-store',
+                    credentials: 'omit',
+                    headers,
                 });
             } catch (error) {
-                throw getGoogleTasksNetworkErrorMessage(error);
+                const diagnostics = getGoogleTasksRuntimeDiagnostics({
+                    url,
+                    path,
+                    method,
+                    'error.name': error?.name,
+                    'error.message': error?.message ?? String(error),
+                });
+                console.error('Google Tasks API fetch failed', diagnostics, error);
+                throw getGoogleTasksNetworkErrorMessage(error, diagnostics);
             }
-            const payload = await response.json().catch(() => ({}));
+
+            const payload = await readGoogleTasksResponsePayload(response);
             if (!response.ok) {
-                throw new Error(payload.error?.message ?? response.statusText);
+                console.error('Google Tasks API returned an error', {
+                    url,
+                    path,
+                    method,
+                    status: response.status,
+                    statusText: response.statusText,
+                    payload,
+                });
+                const message = typeof payload === 'object'
+                    ? (payload.error?.message ?? JSON.stringify(payload))
+                    : String(payload || response.statusText);
+                const apiError = new Error(`Google Tasks API error ${response.status}: ${message}`);
+                apiError.status = response.status;
+                apiError.statusText = response.statusText;
+                apiError.payload = payload;
+                throw apiError;
             }
             return payload;
+        }
+
+        function renderGoogleTasksConnectionDiagnostics(status, details = {}) {
+            if (!googleTasksConnectionTestResult) return;
+            const checkedAt = new Date().toLocaleString();
+            const diagnostics = getGoogleTasksRuntimeDiagnostics(details);
+            googleTasksConnectionTestResult.innerHTML = `
+                <div><strong>${checkedAt}</strong> — ${status}</div>
+                <div>HTTP status: ${diagnostics.status ?? 'нет данных'}</div>
+                <div>Техническое сообщение: ${escapeHtml(String(diagnostics.message ?? 'нет данных'))}</div>
+                <div>navigator.onLine: ${diagnostics.navigatorOnLine}</div>
+                <div>Service Worker controller: ${diagnostics.hasServiceWorkerController}</div>
+                <div>PWA standalone: ${diagnostics.isStandalonePwa}</div>
+                <div>origin: ${escapeHtml(diagnostics.locationOrigin)}</div>
+            `;
+        }
+
+        async function testGoogleTasksConnection() {
+            const defaultButtonHtml = '<i class="bi bi-wifi"></i> Проверить соединение Google Tasks';
+            try {
+                testGoogleTasksConnectionBtn.disabled = true;
+                testGoogleTasksConnectionBtn.textContent = 'Проверка...';
+                renderGoogleTasksConnectionDiagnostics('Проверка...', { hasToken: Boolean(getCachedGoogleTasksAccessToken()) });
+                const token = getCachedGoogleTasksAccessToken() ?? await getGoogleCalendarAccessToken('');
+                const response = await googleCalendarFetch('users/@me/lists?maxResults=1', token);
+                const listCount = response.items?.length ?? 0;
+                const message = `Соединение с Google Tasks API работает. Найдено списков: ${listCount}`;
+                renderGoogleTasksConnectionDiagnostics('успех', {
+                    status: 200,
+                    message,
+                    hasToken: Boolean(token),
+                    listCount,
+                });
+                showNotification(message);
+            } catch (error) {
+                const message = error.message ?? String(error);
+                console.error('Google Tasks connection test failed', {
+                    hasToken: Boolean(getCachedGoogleTasksAccessToken()),
+                    status: error.status,
+                    statusText: error.statusText,
+                    payload: error.payload,
+                    diagnostics: error.diagnostics,
+                    originalName: error.originalName,
+                    originalMessage: error.originalMessage,
+                }, error);
+                renderGoogleTasksConnectionDiagnostics('ошибка', {
+                    status: error.status,
+                    message,
+                    hasToken: Boolean(getCachedGoogleTasksAccessToken()),
+                });
+                showNotification(`Проверка соединения Google Tasks не удалась: ${message}`);
+                alert(`Проверка соединения Google Tasks не удалась\n\n${message}`);
+            } finally {
+                testGoogleTasksConnectionBtn.disabled = false;
+                testGoogleTasksConnectionBtn.innerHTML = defaultButtonHtml;
+                updateGoogleCalendarConnectionControls();
+            }
+        }
+
+        async function clearTaskAuraServiceWorkerAndCaches() {
+            if (!confirm('Очистить PWA-кэш и перезагрузить страницу?')) return;
+            const registrations = (await navigator.serviceWorker?.getRegistrations?.()) ?? [];
+            await Promise.all(registrations.map(registration => registration.unregister()));
+            if (window.caches?.keys) {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+            }
+            window.location.reload();
         }
 
         async function getGoogleTaskLists(accessToken) {
@@ -8555,6 +8731,8 @@
         connectGoogleCalendarBtn?.addEventListener('click', connectGoogleCalendar);
         disconnectGoogleCalendarBtn?.addEventListener('click', disconnectGoogleCalendar);
         saveGoogleCalendarSettingsBtn?.addEventListener('click', saveGoogleCalendarSettingsFromForm);
+        testGoogleTasksConnectionBtn?.addEventListener('click', testGoogleTasksConnection);
+        clearPwaCacheBtn?.addEventListener('click', clearTaskAuraServiceWorkerAndCaches);
         googleTasksPeriodicSyncSwitch?.addEventListener('change', () => saveGoogleCalendarSettingsFromForm(false));
         syncGoogleCalendarBtn?.addEventListener('click', syncOneTimeTasksToGoogleCalendar);
 
