@@ -6996,9 +6996,13 @@ Day goals:
 
         function getOneTimeTasksForGoogleCalendar() {
             return Object.values(data.tasks)
-                .filter(task => task && !task.regularity && task.dateStart)
+                .filter(task => task && !task.regularity && task.dateStart && isTaskEligibleForGoogleTasksSync(task))
                 .map(task => ({ task, note: data.notes[task.note] }))
                 .filter(({ note }) => note);
+        }
+
+        function isTaskEligibleForGoogleTasksSync(task) {
+            return !['count', 'time', 'children'].includes(task?.goal?.type);
         }
 
         function getTaskAuraGoogleTaskMarker(taskId) {
@@ -7019,6 +7023,10 @@ Day goals:
         function getTaskAuraNoteTitleForGoogleSync(note) {
             const titleParts = [note.icon, note.title].filter(Boolean);
             return titleParts.join(' ').trim() || 'Task';
+        }
+
+        function getGoogleSyncDuplicateKey(title, description) {
+            return `${String(title ?? '').trim()}\u0000${String(description ?? '').trim()}`;
         }
 
         function getGoogleTaskDueDateForTaskAura(googleTask) {
@@ -7199,6 +7207,7 @@ Day goals:
         async function connectGoogleCalendar() {
             if (getCachedGoogleTasksAccessToken()) {
                 updateGoogleCalendarConnectionControls();
+                syncOneTimeTasksToGoogleCalendar({ automatic: true });
                 return;
             }
 
@@ -7206,6 +7215,7 @@ Day goals:
                 connectGoogleCalendarBtn.disabled = true;
                 await getGoogleCalendarAccessToken('consent');
                 showNotification('Google Calendar connected successfully');
+                syncOneTimeTasksToGoogleCalendar({ automatic: true });
             } catch (error) {
                 showNotification(`Google Calendar connection failed: ${error.message ?? error}`);
             } finally {
@@ -7450,6 +7460,7 @@ Day goals:
         }
 
         async function getGoogleTasksForSync(taskListId, accessToken) {
+            const googleTasks = [];
             const tasksByTaskAuraId = new Map();
             const unlinkedGoogleTasks = [];
             let pageToken = null;
@@ -7465,6 +7476,7 @@ Day goals:
                 // processed below, so accounts with more than 100 tasks are fully synced.
                 const response = await googleCalendarFetch(`lists/${taskListId}/tasks?${params.toString()}`, accessToken);
                 for (const googleTask of response.items ?? []) {
+                    googleTasks.push(googleTask);
                     const taskAuraTaskId = getTaskAuraTaskIdFromGoogleTask(googleTask);
                     if (taskAuraTaskId) {
                         tasksByTaskAuraId.set(taskAuraTaskId, googleTask);
@@ -7474,7 +7486,94 @@ Day goals:
                 }
                 pageToken = response.nextPageToken ?? null;
             } while (pageToken);
+            return { googleTasks, tasksByTaskAuraId, unlinkedGoogleTasks };
+        }
+
+        async function deleteGoogleTaskForSync(taskListId, googleTask, accessToken) {
+            await googleCalendarFetch(`lists/${taskListId}/tasks/${encodeURIComponent(googleTask.id)}`, accessToken, {
+                method: 'DELETE',
+            });
+        }
+
+        function deleteTaskAuraTaskAndNote(taskId) {
+            const task = data.tasks?.[taskId];
+            if (!task) return false;
+            const noteId = task.note;
+            if (noteId != null && data.notes?.[noteId]) {
+                deleteNoteById(noteId);
+            } else {
+                delete data.tasks[taskId];
+            }
+            return true;
+        }
+
+        async function deleteDuplicateGoogleTasksForSync(taskListId, googleTasks, accessToken) {
+            const uniqueGoogleTasks = [];
+            const seenTasksByContent = new Map();
+            let deletedInGoogleCount = 0;
+            let deletedInTaskAuraCount = 0;
+
+            for (const googleTask of googleTasks) {
+                const duplicateKey = getGoogleSyncDuplicateKey(
+                    googleTask.title,
+                    getGoogleTaskNotesWithoutTaskAuraMarker(googleTask),
+                );
+                if (!seenTasksByContent.has(duplicateKey)) {
+                    seenTasksByContent.set(duplicateKey, googleTask);
+                    uniqueGoogleTasks.push(googleTask);
+                    continue;
+                }
+
+                await deleteGoogleTaskForSync(taskListId, googleTask, accessToken);
+                deletedInGoogleCount += 1;
+
+                const duplicateTaskAuraTaskId = getTaskAuraTaskIdFromGoogleTask(googleTask);
+                if (duplicateTaskAuraTaskId && deleteTaskAuraTaskAndNote(duplicateTaskAuraTaskId)) {
+                    deletedInTaskAuraCount += 1;
+                }
+            }
+
+            return { uniqueGoogleTasks, deletedInGoogleCount, deletedInTaskAuraCount };
+        }
+
+        function mapGoogleTasksForSync(googleTasks) {
+            const tasksByTaskAuraId = new Map();
+            const unlinkedGoogleTasks = [];
+            for (const googleTask of googleTasks) {
+                const taskAuraTaskId = getTaskAuraTaskIdFromGoogleTask(googleTask);
+                if (taskAuraTaskId) {
+                    tasksByTaskAuraId.set(taskAuraTaskId, googleTask);
+                } else {
+                    unlinkedGoogleTasks.push(googleTask);
+                }
+            }
             return { tasksByTaskAuraId, unlinkedGoogleTasks };
+        }
+
+        async function deleteDuplicateTaskAuraTasksForGoogleSync(taskListId, googleTasksByTaskAuraId, accessToken) {
+            const seenTasksByContent = new Map();
+            let deletedInGoogleCount = 0;
+            let deletedInTaskAuraCount = 0;
+
+            for (const { task, note } of getOneTimeTasksForGoogleCalendar()) {
+                const duplicateKey = getGoogleSyncDuplicateKey(getTaskAuraNoteTitleForGoogleSync(note), note.description);
+                if (!seenTasksByContent.has(duplicateKey)) {
+                    seenTasksByContent.set(duplicateKey, task);
+                    continue;
+                }
+
+                const googleTask = googleTasksByTaskAuraId.get(String(task.id));
+                if (googleTask) {
+                    await deleteGoogleTaskForSync(taskListId, googleTask, accessToken);
+                    googleTasksByTaskAuraId.delete(String(task.id));
+                    deletedInGoogleCount += 1;
+                }
+                if (deleteTaskAuraTaskAndNote(task.id)) {
+                    deletedInTaskAuraCount += 1;
+                }
+            }
+
+            return { deletedInGoogleCount, deletedInTaskAuraCount };
         }
 
         async function markGoogleTaskCompleted(taskListId, googleTask, accessToken) {
@@ -7578,9 +7677,14 @@ Day goals:
                     throw new Error('Google Calendar connection failed');
                 }
                 const taskListId = await resolveGoogleTaskListId(settings.taskListId, token);
-                const { tasksByTaskAuraId: googleTasksByTaskAuraId, unlinkedGoogleTasks } = await getGoogleTasksForSync(taskListId, token);
+                const googleTasksSyncData = await getGoogleTasksForSync(taskListId, token);
+                const googleDuplicateDeleteResult = await deleteDuplicateGoogleTasksForSync(taskListId, googleTasksSyncData.googleTasks, token);
+                const { tasksByTaskAuraId: googleTasksByTaskAuraId, unlinkedGoogleTasks } = mapGoogleTasksForSync(googleDuplicateDeleteResult.uniqueGoogleTasks);
+                const taskAuraDuplicateDeleteResult = await deleteDuplicateTaskAuraTasksForGoogleSync(taskListId, googleTasksByTaskAuraId, token);
                 let createdCount = 0;
                 let importedFromGoogleCount = 0;
+                let deletedDuplicatesInGoogleCount = googleDuplicateDeleteResult.deletedInGoogleCount + taskAuraDuplicateDeleteResult.deletedInGoogleCount;
+                let deletedDuplicatesInTaskAuraCount = googleDuplicateDeleteResult.deletedInTaskAuraCount + taskAuraDuplicateDeleteResult.deletedInTaskAuraCount;
                 let completedInGoogleCount = 0;
                 let completedInTaskAuraCount = 0;
                 let reopenedInGoogleCount = 0;
@@ -7650,7 +7754,7 @@ Day goals:
                     createdCount += 1;
                 }
 
-                if (importedFromGoogleCount > 0 || completedInTaskAuraCount > 0 || reopenedInTaskAuraCount > 0 || updatedInTaskAuraCount > 0) {
+                if (importedFromGoogleCount > 0 || deletedDuplicatesInTaskAuraCount > 0 || completedInTaskAuraCount > 0 || reopenedInTaskAuraCount > 0 || updatedInTaskAuraCount > 0) {
                     save();
                     refreshTasks();
                     refreshNotes();
@@ -7660,7 +7764,7 @@ Day goals:
                     updateFinishDayButtonVisibility();
                 }
 
-                const syncSummary = `created tasks — ${createdCount}; imported from Google — ${importedFromGoogleCount}; completed in Google — ${completedInGoogleCount}; completed in Task Aura — ${completedInTaskAuraCount}; reopened in Google — ${reopenedInGoogleCount}; reopened in Task Aura — ${reopenedInTaskAuraCount}; updated in Google — ${updatedInGoogleCount}; updated in Task Aura — ${updatedInTaskAuraCount}`;
+                const syncSummary = `created tasks — ${createdCount}; imported from Google — ${importedFromGoogleCount}; deleted duplicates in Google — ${deletedDuplicatesInGoogleCount}; deleted duplicates in Task Aura — ${deletedDuplicatesInTaskAuraCount}; completed in Google — ${completedInGoogleCount}; completed in Task Aura — ${completedInTaskAuraCount}; reopened in Google — ${reopenedInGoogleCount}; reopened in Task Aura — ${reopenedInTaskAuraCount}; updated in Google — ${updatedInGoogleCount}; updated in Task Aura — ${updatedInTaskAuraCount}`;
                 if (isAutomatic) {
                     setGoogleSyncToastState('success', syncSummary);
                 } else {
@@ -7677,8 +7781,7 @@ Day goals:
                 googleTasksSyncInProgress = false;
                 updateGoogleCalendarConnectionControls();
                 if (isAutomatic) {
-                    googleTasksLastAutoSyncAt = Date.now();
-                    googleTasksNextAutoSyncDelayMs = getRandomGoogleTasksSyncDelayMs();
+                    resetGoogleTasksAutoSyncTimer();
                 }
             }
         }
@@ -8703,6 +8806,11 @@ Day goals:
 
         function getRandomGoogleTasksSyncDelayMs() {
             return (300 + Math.floor(Math.random() * 61)) * 1000;
+        }
+
+        function resetGoogleTasksAutoSyncTimer() {
+            googleTasksLastAutoSyncAt = Date.now();
+            googleTasksNextAutoSyncDelayMs = getRandomGoogleTasksSyncDelayMs();
         }
 
         function isGoogleTasksPeriodicSyncEnabled() {
