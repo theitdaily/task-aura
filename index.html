@@ -57,6 +57,55 @@
             overflow-x: hidden;
         }
 
+        .google-sync-toast {
+            position: fixed;
+            top: max(12px, env(safe-area-inset-top));
+            left: 50%;
+            transform: translate(-50%, -140%);
+            width: min(92vw, 460px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid #d9c8f6;
+            box-shadow: 0 14px 36px rgba(31, 18, 61, 0.22);
+            z-index: 3000;
+            transition: transform 0.28s ease, opacity 0.28s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .google-sync-toast.show {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+        .google-sync-toast-icon {
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: var(--accent-color-dark);
+        }
+        .google-sync-toast-title {
+            font-weight: 700;
+            color: #25124d;
+            line-height: 1.2;
+        }
+        .google-sync-toast-message {
+            font-size: 0.86rem;
+            color: #5f5572;
+            line-height: 1.25;
+        }
+        .google-sync-toast.success .google-sync-toast-icon {
+            color: #198754;
+        }
+        .google-sync-toast.error .google-sync-toast-icon {
+            color: #dc3545;
+        }
+
         /* Верхняя часть с днями недели */
         .week-days {
             display: flex;
@@ -1356,8 +1405,8 @@
         .progress-month-labels { display: grid; grid-auto-columns: 12px; grid-auto-flow: column; gap: 3px; margin-bottom: 4px; font-size: .72rem; color: #6a6d78; }
     </style>
 
-        <meta name="version" content="1.4.1">
-</head>
+        <meta name="version" content="1.5.0">
+<style id="googleidentityservice_button_styles">.qJTHM{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;color:#202124;direction:ltr;-webkit-touch-callout:none;font-family:Roboto-Regular,arial,sans-serif;-webkit-font-smoothing:antialiased;font-weight:400;margin:0;overflow:hidden;-webkit-text-size-adjust:100%}.ynRLnc{left:-9999px;position:absolute;top:-9999px}.L6cTce{display:none}.bltWBb{overflow-wrap:break-word;word-break:break-word}.hSRGPd{color:#1a73e8;cursor:pointer;font-weight:500;text-decoration:none}.Bz112c-W3lGp{height:16px;width:16px}.Bz112c-E3DyYd{height:20px;width:20px}.Bz112c-r9oPif{height:24px;width:24px}.Bz112c-u2z5K{height:36px;width:36px}.Bz112c-uaxL4e{border-radius:10px}.LgbsSe-Bz112c{display:block}.S9gUrf-YoZ4jf{border:none;margin:0;padding:0}.S9gUrf-YoZ4jf *{border:none;margin:0;padding:0}.fFW7wc-ibnC6b>.aZ2wEe>div{border-color:#4285f4}.P1ekSe-ZMv3u{-webkit-transition:height .2s linear;transition:height .2s linear}.P1ekSe-ZMv3u>div:first-child{background-color:#1a73e8!important;-webkit-transition:width .3s linear;transition:width .3s linear}.P1ekSe-ZMv3u>div:nth-child(2){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.P1ekSe-ZMv3u>div:nth-child(3){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.haAclf{display:inline-block}.nsm7Bb-HzV7m-LgbsSe{border-radius:4px;box-sizing:border-box;-webkit-transition:background-color .218s,border-color .218s;transition:background-color .218s,border-color .218s;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-webkit-appearance:none;background-color:#fff;background-image:none;border:1px solid #dadce0;color:#3c4043;cursor:pointer;font-family:Google Sans,arial,sans-serif;font-size:.875rem;height:40px;letter-spacing:.25px;outline:none;overflow:hidden;padding:0 12px;position:relative;text-align:center;vertical-align:middle;white-space:nowrap;width:auto}@media screen and (-ms-high-contrast:active){.nsm7Bb-HzV7m-LgbsSe{border:2px solid windowText;color:windowText}}@media screen and (preferes-contrast:more){.nsm7Bb-HzV7m-LgbsSe{color:#000}}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe{font-size:.875rem;height:32px;letter-spacing:.25px;padding:0 10px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe{font-size:.6875rem;height:20px;letter-spacing:.3px;padding:0 8px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe{padding:0;width:40px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe{width:32px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe{width:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK{border-radius:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.pSzOP-SxQuSe{border-radius:16px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.purZT-SxQuSe{border-radius:10px}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc{border:1px solid #8e918f;background-color:#131314;color:#e3e3e3}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc{border:none;color:#fff}.nsm7Bb-HzV7m-LgbsSe.MFS4be-v3pZbf-Ia7Qfc{background-color:#1a73e8}.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{background-color:#202124;color:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{color:#fff}}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:18px;margin-right:8px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:14px;min-width:14px;width:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:10px;min-width:10px;width:10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin-left:8px;margin-right:-4px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:10px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:8px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:4px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:3px;border-bottom-left-radius:3px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background-color:#fff;height:36px;margin-left:-10px;margin-right:12px;min-width:36px;width:36px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c,.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:28px;margin-left:-8px;margin-right:10px;min-width:28px;width:28px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:16px;margin-left:-6px;margin-right:8px;min-width:16px;width:16px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:3px;margin-left:2px;margin-right:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:8px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-bN97Pc-sM5MNb{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;-webkit-flex-direction:row;-webkit-box-orient:horizontal;-webkit-box-direction:normal;flex-direction:row;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;-webkit-flex-wrap:nowrap;flex-wrap:nowrap;height:100%;position:relative;width:100%}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX{-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:1;-webkit-box-flex:1;flex-grow:1;font-family:Google Sans,arial,sans-serif;font-weight:500;overflow:hidden;text-overflow:ellipsis;vertical-align:top}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-weight:300}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:0;-webkit-box-flex:0;flex-grow:0}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-MJoBVe{-webkit-transition:background-color .218s;transition:background-color .218s;bottom:0;left:0;position:absolute;right:0;top:0}.nsm7Bb-HzV7m-LgbsSe:focus,.nsm7Bb-HzV7m-LgbsSe:hover{box-shadow:none;border-color:rgb(210,227,252);outline:none}.nsm7Bb-HzV7m-LgbsSe:focus-within{outline:2px solid #00639b;border-color:transparent}.nsm7Bb-HzV7m-LgbsSe:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.08)}.nsm7Bb-HzV7m-LgbsSe:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.1)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.08)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.12)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.24)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.32)}.nsm7Bb-HzV7m-LgbsSe .n1UuX-DkfjY{border-radius:50%;display:-webkit-box;display:-webkit-flex;display:flex;height:20px;margin-left:-4px;margin-right:8px;min-width:20px;width:20px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-family:Roboto;font-size:12px;text-align:left}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .fmcmS,.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .ssJRIf{overflow:hidden;text-overflow:ellipsis}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;color:#5f6368;fill:#5f6368;font-size:11px;font-weight:400}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#e8eaed;fill:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff,.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#000;fill:#000}}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .Bz112c{height:18px;margin:-3px -3px -3px 2px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:0;border-bottom-left-radius:0;border-top-right-radius:3px;border-bottom-right-radius:3px;margin-left:12px;margin-right:-10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.L5Fo6c-sM5MNb{border:0;display:block;left:0;position:relative;top:0}.L5Fo6c-bF1uUb{border-radius:4px;bottom:0;cursor:pointer;left:0;position:absolute;right:0;top:0}.L5Fo6c-bF1uUb:focus{border:none;outline:none}sentinel{}</style></head>
 <body>
         <!-- Вкладка Routine (активная) -->
     <div class="nav-top">
@@ -1370,13 +1419,13 @@
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day active active-lightning-blue" data-day="2026-05-25"><div>Mon</div><div>25</div></div>
-                <div class="text-center day" data-day="2026-05-26"><div>Tue</div><div>26</div></div>
-                <div class="text-center day" data-day="2026-05-27"><div>Wed</div><div>27</div></div>
-                <div class="text-center day" data-day="2026-05-28"><div>Thu</div><div>28</div></div>
-                <div class="text-center day" data-day="2026-05-29"><div>Fri</div><div>29</div></div>
-                <div class="text-center day" data-day="2026-05-30"><div>Sat</div><div>30</div></div>
-                <div class="text-center day" data-day="2026-05-31"><div>Sun</div><div>31</div></div>
+                <div class="text-center day" data-day="2026-06-22"><div>Mon</div><div>22</div></div>
+                <div class="text-center day" data-day="2026-06-23"><div>Tue</div><div>23</div></div>
+                <div class="text-center day" data-day="2026-06-24"><div>Wed</div><div>24</div></div>
+                <div class="text-center day" data-day="2026-06-25"><div>Thu</div><div>25</div></div>
+                <div class="text-center day active active-lightning-blue" data-day="2026-06-26"><div>Fri</div><div>26</div></div>
+                <div class="text-center day" data-day="2026-06-27"><div>Sat</div><div>27</div></div>
+                <div class="text-center day" data-day="2026-06-28"><div>Sun</div><div>28</div></div>
             </div>
         </div>
     </div>
@@ -1468,6 +1517,13 @@
                 </div>
                 <span class="news-feed-head-icon"><i class="bi bi-megaphone"></i></span>
             </div>
+                            <article class="news-feed-item">
+                    <div class="news-feed-date">
+                        <i class="bi bi-calendar3"></i> Published on: 2026-06-26
+                    </div>
+                    <h3 class="news-feed-item-title">Update to version 1.5.0</h3>
+                    <p class="news-feed-item-description">Google Calendar and Google Tasks integration is now available: connect your Google account and synchronize one-time tasks. Task Aura remains server-less, so authorization data is stored locally on your device.</p>
+                </article>
                             <article class="news-feed-item">
                     <div class="news-feed-date">
                         <i class="bi bi-calendar3"></i> Published on: 2026-05-06
@@ -1647,6 +1703,27 @@ Day goals:
             </div>
         </div>
         <div class="data-transfer-block">
+            <h6 class="mb-2">Google Calendar synchronization</h6>
+            <p class="small text-muted mb-2">Only one-time tasks are synchronized. Missing active tasks are created in Google Tasks.</p>
+            <p class="small text-muted mb-2">Google connection is automated: connect your account and choose a Google Tasks list. No personal API keys are needed.</p>
+            <div class="row g-2 mb-2">
+                <div class="col-12">
+                    <label for="googleCalendarIdInput" class="form-label small mb-1">Google Tasks list ID</label>
+                    <input id="googleCalendarIdInput" type="text" class="form-control" placeholder="@default">
+                </div>
+            </div>
+            <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="googleTasksPeriodicSyncSwitch">
+                <label class="form-check-label" for="googleTasksPeriodicSyncSwitch">Regular Google Tasks synchronization every 5-6 minutes</label>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <button id="connectGoogleCalendarBtn" class="btn btn-outline-success tab-action-btn" type="button">Connect Google Calendar</button>
+                <button id="disconnectGoogleCalendarBtn" class="btn btn-outline-danger tab-action-btn d-none" type="button">Disconnect Google Calendar</button>
+                <button id="saveGoogleCalendarSettingsBtn" class="btn btn-outline-secondary tab-action-btn" type="button">Save Google Calendar settings</button>
+                <button id="syncGoogleCalendarBtn" class="btn btn-outline-primary tab-action-btn" type="button">Sync one-time tasks to Google Tasks</button>
+            </div>
+        </div>
+        <div class="data-transfer-block">
             <h6 class="mb-2">Data import/export</h6>
             <p class="small text-muted mb-2">Export and import all app data and settings as a JSON file or text.</p>
             <div class="d-flex gap-2 mb-2">
@@ -1668,7 +1745,7 @@ Day goals:
             <option value="en" selected="">English</option>
             <option value="ru">Русский</option>
         </select>
-        <span>Version: 1.4.1</span>
+        <span>Version: 1.5.0</span>
     </div>
 
     <!-- Кнопка + снизу справа -->
@@ -1676,6 +1753,17 @@ Day goals:
     <button class="btn btn-success finish-day-btn" id="finishDayBtn" title="Complete day" style="display: none;">
         <i class="bi bi-award"></i> <span id="finishDayBtnText">Complete day</span>
     </button>
+
+
+    <div class="google-sync-toast" id="googleSyncToast" role="status" aria-live="polite">
+        <div class="google-sync-toast-icon" id="googleSyncToastIcon">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        </div>
+        <div>
+            <div class="google-sync-toast-title" id="googleSyncToastTitle">Google Tasks synchronization</div>
+            <div class="google-sync-toast-message" id="googleSyncToastMessage">Synchronization is in progress</div>
+        </div>
+    </div>
 
     <!-- Модальное окно для уведомления -->
     <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
@@ -2193,12 +2281,14 @@ Day goals:
         
     <!-- Подключение Bootstrap JS и Popper -->
     <script src="./resources/bootstrap.bundle.min.js"></script>
+    <script src="./resources/client" async="" defer=""></script>
 
     <script>
         // =============================== //
         // === Вспомогательные функции === //
         // =============================== //
         const ARCHIVE_FOLDER_KEY = '__archive__';
+        const GOOGLE_CALENDAR_CLIENT_ID = "1077829509937-1u5ll6i07f7j822s6k64192sj1is3brg.apps.googleusercontent.com";
         let notesViewMode = 'default';
         let notesSortMode = 'off'; // off | folders | notes
         let notesDisplayMode = 'folders'; // folders | compact
@@ -2738,6 +2828,7 @@ Day goals:
 
         function resetData() {
             localStorage.clear();
+            clearGoogleTasksAuthCookies();
         }
 
         // Обработка данных после загрузки или обнуления данных
@@ -2780,6 +2871,17 @@ Day goals:
             }
             if (data.settings.noteDisplayMode !== 'compact' && data.settings.noteDisplayMode !== 'folders') {
                 data.settings.noteDisplayMode = 'folders';
+            }
+            if (!data.settings.googleCalendar || typeof data.settings.googleCalendar !== 'object') {
+                data.settings.googleCalendar = {};
+            }
+            const googleTasksLegacyListId = data.settings.googleCalendar.taskListId || data.settings.googleCalendar.calendarId || '@default';
+            data.settings.googleCalendar.taskListId = googleTasksLegacyListId === 'primary' ? '@default' : googleTasksLegacyListId;
+            if (typeof data.settings.googleCalendar.periodicSyncEnabled !== 'boolean') {
+                data.settings.googleCalendar.periodicSyncEnabled = true;
+            }
+            if ('calendarId' in data.settings.googleCalendar) {
+                delete data.settings.googleCalendar.calendarId;
             }
             if (!data.dayRatings || typeof data.dayRatings !== 'object') {
                 data.dayRatings = {};
@@ -3644,6 +3746,13 @@ Day goals:
         }
 
         function SetTaskComplete(task, result, date) {
+            task.updatedAt = (new Date()).toISOString();
+            if (!task.regularity && task.dateStart) {
+                const taskStartDate = new Date(new Date(task.dateStart).toDateString());
+                if (date < taskStartDate) {
+                    date = taskStartDate;
+                }
+            }
             const year = date.getFullYear();
             const weekNumber = date.getWeekNumber();
             const dayOfWeek = date.getDay();
@@ -3790,6 +3899,21 @@ Day goals:
         const taskClickActionSelect = document.getElementById('taskClickActionSelect');
         const noteClickActionSelect = document.getElementById('noteClickActionSelect');
         const weekStartSelect = document.getElementById('weekStartSelect');
+        const googleCalendarIdInput = document.getElementById('googleCalendarIdInput');
+        const googleTasksPeriodicSyncSwitch = document.getElementById('googleTasksPeriodicSyncSwitch');
+        const connectGoogleCalendarBtn = document.getElementById('connectGoogleCalendarBtn');
+        const disconnectGoogleCalendarBtn = document.getElementById('disconnectGoogleCalendarBtn');
+        const saveGoogleCalendarSettingsBtn = document.getElementById('saveGoogleCalendarSettingsBtn');
+        const syncGoogleCalendarBtn = document.getElementById('syncGoogleCalendarBtn');
+        const googleSyncToast = document.getElementById('googleSyncToast');
+        const googleSyncToastIcon = document.getElementById('googleSyncToastIcon');
+        const googleSyncToastTitle = document.getElementById('googleSyncToastTitle');
+        const googleSyncToastMessage = document.getElementById('googleSyncToastMessage');
+        let googleSyncToastHideTimerId = null;
+        let googleTasksSyncInProgress = false;
+        let googleTasksLastAutoSyncAt = Date.now();
+        let googleTasksNextAutoSyncDelayMs = getRandomGoogleTasksSyncDelayMs();
+        let googleTasksPeriodicSyncIntervalId = null;
         const finishDayBtn = document.getElementById('finishDayBtn');
         const prefillDoneTaskSelect = document.getElementById('prefillDoneTaskSelect');
         const prefillDoneTaskConfirmBtn = document.getElementById('prefillDoneTaskConfirmBtn');
@@ -6825,6 +6949,550 @@ Day goals:
         bindDaySwipe('tasksContainer');
         bindDaySwipe('routineContainer');
 
+        function getGoogleCalendarSettings() {
+            const settings = data?.settings?.googleCalendar;
+            if (!settings || typeof settings !== 'object') {
+                return { taskListId: '@default', periodicSyncEnabled: true };
+            }
+            return {
+                taskListId: settings.taskListId || settings.calendarId || '@default',
+                periodicSyncEnabled: settings.periodicSyncEnabled !== false,
+            };
+        }
+
+        function fillGoogleCalendarSettingsForm() {
+            const settings = getGoogleCalendarSettings();
+            googleCalendarIdInput.value = settings.taskListId ?? '@default';
+            googleTasksPeriodicSyncSwitch.checked = settings.periodicSyncEnabled !== false;
+            updateGoogleCalendarConnectionControls();
+        }
+
+        function updateGoogleCalendarConnectionControls() {
+            const isConnected = Boolean(getCachedGoogleTasksAccessToken());
+            connectGoogleCalendarBtn?.classList.toggle('d-none', isConnected);
+            disconnectGoogleCalendarBtn?.classList.toggle('d-none', !isConnected);
+        }
+
+        function saveGoogleCalendarSettingsFromForm(showSavedNotification = true) {
+            if (!data.settings || typeof data.settings !== 'object') {
+                data.settings = {};
+            }
+            data.settings.googleCalendar = {
+                taskListId: googleCalendarIdInput.value.trim() || '@default',
+                periodicSyncEnabled: googleTasksPeriodicSyncSwitch.checked,
+            };
+            save();
+            if (showSavedNotification) {
+                showNotification('Google Calendar settings saved');
+            }
+        }
+
+        function getOneTimeTasksForGoogleCalendar() {
+            return Object.values(data.tasks)
+                .filter(task => task && !task.regularity && task.dateStart)
+                .map(task => ({ task, note: data.notes[task.note] }))
+                .filter(({ note }) => note);
+        }
+
+        function getTaskAuraGoogleTaskMarker(taskId) {
+            return `Task Aura task ID: ${taskId}`;
+        }
+
+        function getTaskAuraTaskIdFromGoogleTask(googleTask) {
+            const match = String(googleTask?.notes ?? '').match(/Task Aura task ID:\s*(\d+)/);
+            return match ? match[1] : null;
+        }
+
+        function getGoogleTaskNotesWithoutTaskAuraMarker(googleTask) {
+            return String(googleTask?.notes ?? '')
+                .replace(/\n?\n?Task Aura task ID:\s*\d+\s*$/m, '')
+                .trim();
+        }
+
+        function getTaskAuraNoteTitleForGoogleSync(note) {
+            const titleParts = [note.icon, note.title].filter(Boolean);
+            return titleParts.join(' ').trim() || 'Task';
+        }
+
+        function getGoogleTaskDueDateForTaskAura(googleTask) {
+            return googleTask?.due ? String(googleTask.due).slice(0, 10) : null;
+        }
+
+        function isTaskAuraGoogleContentDifferent(task, note, googleTask) {
+            const taskAuraTask = buildGoogleTaskFromTaskAura(task, note);
+            return String(googleTask?.title ?? '') !== taskAuraTask.title
+                || getGoogleTaskNotesWithoutTaskAuraMarker(googleTask) !== String(note.description ?? '')
+                || getGoogleTaskDueDateForTaskAura(googleTask) !== (task.dateEnd || null);
+        }
+
+        function applyGoogleTaskContentToTaskAuraTask(task, note, googleTask) {
+            note.title = googleTask.title || 'Task';
+            note.description = getGoogleTaskNotesWithoutTaskAuraMarker(googleTask);
+            const googleDueDate = getGoogleTaskDueDateForTaskAura(googleTask);
+            if (googleDueDate) {
+                task.dateEnd = googleDueDate;
+            } else if ('dateEnd' in task) {
+                delete task.dateEnd;
+            }
+        }
+
+        async function updateGoogleTaskContentFromTaskAura(taskListId, task, note, googleTask, accessToken) {
+            await googleCalendarFetch(`lists/${taskListId}/tasks/${encodeURIComponent(googleTask.id)}`, accessToken, {
+                method: 'PATCH',
+                body: JSON.stringify(buildGoogleTaskFromTaskAura(task, note, true)),
+            });
+        }
+
+        function isOneTimeTaskCompletedForGoogleSync(task) {
+            return IsTaskCompletedFromResult(task, task.completion ?? null, selectedDate);
+        }
+
+        function getTaskAuraCompletionValueForGoogleSync(task) {
+            if (task.goal?.type === 'count' || task.goal?.type === 'time') {
+                return Number(task.goal.count ?? 0);
+            }
+            return true;
+        }
+
+        function buildGoogleTaskFromTaskAura(task, note, includeEmptyDue = false) {
+            const title = getTaskAuraNoteTitleForGoogleSync(note);
+            const notes = [note.description, getTaskAuraGoogleTaskMarker(task.id)].filter(Boolean).join('\n\n');
+            const googleTask = { title, notes };
+            if (task.dateEnd) {
+                googleTask.due = `${task.dateEnd}T00:00:00.000Z`;
+            } else if (includeEmptyDue) {
+                googleTask.due = null;
+            }
+            return googleTask;
+        }
+
+        function waitForGoogleIdentityLibrary() {
+            return new Promise((resolve, reject) => {
+                const startedAt = Date.now();
+                const timerId = setInterval(() => {
+                    if (window.google?.accounts?.oauth2) {
+                        clearInterval(timerId);
+                        resolve();
+                    } else if (Date.now() - startedAt > 10000) {
+                        clearInterval(timerId);
+                        reject(new Error('Google libraries are not loaded'));
+                    }
+                }, 100);
+            });
+        }
+
+        function setGoogleSyncToastState(state, message = '') {
+            if (!googleSyncToast) return;
+            if (googleSyncToastHideTimerId) {
+                clearTimeout(googleSyncToastHideTimerId);
+                googleSyncToastHideTimerId = null;
+            }
+            googleSyncToast.classList.remove('success', 'error');
+            if (state === 'loading') {
+                googleSyncToastIcon.innerHTML = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>';
+                googleSyncToastTitle.textContent = 'Google Tasks synchronization';
+                googleSyncToastMessage.textContent = message || 'Synchronization is in progress';
+            } else if (state === 'success') {
+                googleSyncToast.classList.add('success');
+                googleSyncToastIcon.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
+                googleSyncToastTitle.textContent = 'Synchronization completed';
+                googleSyncToastMessage.textContent = message || 'Tasks are up to date';
+                googleSyncToastHideTimerId = setTimeout(() => {
+                    googleSyncToast.classList.remove('show');
+                }, 2400);
+            } else if (state === 'error') {
+                googleSyncToast.classList.add('error');
+                googleSyncToastIcon.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>';
+                googleSyncToastTitle.textContent = 'Synchronization failed';
+                googleSyncToastMessage.textContent = message || 'Google Tasks synchronization failed';
+                googleSyncToastHideTimerId = setTimeout(() => {
+                    googleSyncToast.classList.remove('show');
+                }, 3600);
+            }
+            googleSyncToast.classList.add('show');
+        }
+
+        function setCookieValue(name, value, maxAgeSeconds) {
+            const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+            document.cookie = `${name}=${encodeURIComponent(value)}; Max-Age=${maxAgeSeconds}; Path=/; SameSite=Lax${secureFlag}`;
+        }
+
+        function getCookieValue(name) {
+            const prefix = `${name}=`;
+            const cookie = document.cookie
+                .split(';')
+                .map(item => item.trim())
+                .find(item => item.startsWith(prefix));
+            return cookie ? decodeURIComponent(cookie.substring(prefix.length)) : null;
+        }
+
+        function deleteCookieValue(name) {
+            document.cookie = `${name}=; Max-Age=0; Path=/; SameSite=Lax`;
+        }
+
+        function clearGoogleTasksAuthCookies(updateControls = true) {
+            deleteCookieValue('taskAuraGoogleTasksToken');
+            deleteCookieValue('taskAuraGoogleTasksTokenExpiresAt');
+            if (updateControls) {
+                updateGoogleCalendarConnectionControls();
+            }
+        }
+
+        function cacheGoogleTasksAuth(response) {
+            if (!response?.access_token) return;
+            const expiresIn = Math.max(60, Number(response.expires_in ?? 3600));
+            const expiresAt = Date.now() + ((expiresIn - 30) * 1000);
+            setCookieValue('taskAuraGoogleTasksToken', response.access_token, expiresIn - 30);
+            setCookieValue('taskAuraGoogleTasksTokenExpiresAt', String(expiresAt), expiresIn - 30);
+            updateGoogleCalendarConnectionControls();
+        }
+
+        function getCachedGoogleTasksAccessToken() {
+            const token = getCookieValue('taskAuraGoogleTasksToken');
+            const expiresAt = Number(getCookieValue('taskAuraGoogleTasksTokenExpiresAt') ?? 0);
+            if (!token || !Number.isFinite(expiresAt) || Date.now() >= expiresAt) {
+                clearGoogleTasksAuthCookies(false);
+                return null;
+            }
+            return token;
+        }
+
+        function requestGoogleCalendarAccessToken(prompt = '') {
+            if (!GOOGLE_CALENDAR_CLIENT_ID) {
+                return Promise.reject(new Error('Google Calendar is not configured by the app administrator'));
+            }
+
+            return new Promise((resolve, reject) => {
+                const tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: GOOGLE_CALENDAR_CLIENT_ID,
+                    scope: 'https://www.googleapis.com/auth/tasks',
+                    callback: (response) => {
+                        if (response?.error) {
+                            clearGoogleTasksAuthCookies();
+                            reject(new Error(response.error));
+                            return;
+                        }
+                        cacheGoogleTasksAuth(response);
+                        resolve(response.access_token);
+                    },
+                });
+                tokenClient.requestAccessToken({ prompt });
+            });
+        }
+
+        async function getGoogleCalendarAccessToken(prompt = '') {
+            if (!prompt) {
+                const cachedToken = getCachedGoogleTasksAccessToken();
+                if (cachedToken) return cachedToken;
+            }
+            await waitForGoogleIdentityLibrary();
+            return requestGoogleCalendarAccessToken(prompt);
+        }
+
+        async function connectGoogleCalendar() {
+            if (getCachedGoogleTasksAccessToken()) {
+                updateGoogleCalendarConnectionControls();
+                return;
+            }
+
+            try {
+                connectGoogleCalendarBtn.disabled = true;
+                await getGoogleCalendarAccessToken('consent');
+                showNotification('Google Calendar connected successfully');
+            } catch (error) {
+                showNotification(`Google Calendar connection failed: ${error.message ?? error}`);
+            } finally {
+                connectGoogleCalendarBtn.disabled = false;
+                updateGoogleCalendarConnectionControls();
+            }
+        }
+
+        function disconnectGoogleCalendar() {
+            clearGoogleTasksAuthCookies();
+            showNotification('Google Calendar disconnected');
+        }
+
+        async function googleCalendarFetch(path, accessToken, options = {}) {
+            const response = await fetch(`https://tasks.googleapis.com/tasks/v1/${path}`, {
+                ...options,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    ...(options.headers ?? {}),
+                },
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(payload.error?.message ?? response.statusText);
+            }
+            return payload;
+        }
+
+        async function getGoogleTaskLists(accessToken) {
+            const taskLists = [];
+            let pageToken = null;
+            do {
+                const params = new URLSearchParams({ maxResults: '100' });
+                if (pageToken) params.set('pageToken', pageToken);
+                // Google returns up to maxResults items per page, so we follow nextPageToken
+                // until every task list is loaded. This covers accounts with more than 100 lists.
+                const response = await googleCalendarFetch(`users/@me/lists?${params.toString()}`, accessToken);
+                taskLists.push(...(response.items ?? []));
+                pageToken = response.nextPageToken ?? null;
+            } while (pageToken);
+            return taskLists;
+        }
+
+        async function resolveGoogleTaskListId(rawTaskListId, accessToken) {
+            const requestedTaskListId = String(rawTaskListId || '').trim();
+            const shouldResolveDefaultList = !requestedTaskListId
+                || requestedTaskListId === '@default'
+                || requestedTaskListId === 'primary';
+            if (!shouldResolveDefaultList) {
+                return encodeURIComponent(requestedTaskListId);
+            }
+
+            const defaultList = (await getGoogleTaskLists(accessToken))[0];
+            if (!defaultList?.id) {
+                throw new Error('Google Tasks list was not found');
+            }
+            return encodeURIComponent(defaultList.id);
+        }
+
+        async function getGoogleTasksForSync(taskListId, accessToken) {
+            const tasksByTaskAuraId = new Map();
+            const unlinkedGoogleTasks = [];
+            let pageToken = null;
+            do {
+                const params = new URLSearchParams({
+                    showCompleted: 'true',
+                    showDeleted: 'false',
+                    showHidden: 'true',
+                    maxResults: '100',
+                });
+                if (pageToken) params.set('pageToken', pageToken);
+                // Google Tasks API returns up to 100 tasks per page; nextPageToken is
+                // processed below, so accounts with more than 100 tasks are fully synced.
+                const response = await googleCalendarFetch(`lists/${taskListId}/tasks?${params.toString()}`, accessToken);
+                for (const googleTask of response.items ?? []) {
+                    const taskAuraTaskId = getTaskAuraTaskIdFromGoogleTask(googleTask);
+                    if (taskAuraTaskId) {
+                        tasksByTaskAuraId.set(taskAuraTaskId, googleTask);
+                    } else {
+                        unlinkedGoogleTasks.push(googleTask);
+                    }
+                }
+                pageToken = response.nextPageToken ?? null;
+            } while (pageToken);
+            return { tasksByTaskAuraId, unlinkedGoogleTasks };
+        }
+
+        async function markGoogleTaskCompleted(taskListId, googleTask, accessToken) {
+            await googleCalendarFetch(`lists/${taskListId}/tasks/${encodeURIComponent(googleTask.id)}`, accessToken, {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    status: 'completed',
+                    completed: (new Date()).toISOString(),
+                }),
+            });
+        }
+
+        async function markGoogleTaskIncomplete(taskListId, googleTask, accessToken) {
+            await googleCalendarFetch(`lists/${taskListId}/tasks/${encodeURIComponent(googleTask.id)}`, accessToken, {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    status: 'needsAction',
+                }),
+            });
+        }
+
+        function getSyncTimestampMs(value) {
+            const timestamp = Date.parse(value ?? '');
+            return Number.isFinite(timestamp) ? timestamp : 0;
+        }
+
+        function getTaskAuraTaskUpdatedMs(task) {
+            return getSyncTimestampMs(task.updatedAt || task.completedAt || task.dateStart);
+        }
+
+        function getGoogleTaskUpdatedMs(googleTask) {
+            return getSyncTimestampMs(googleTask.updated || googleTask.completed || googleTask.due);
+        }
+
+        function applyGoogleTaskTimestampToTaskAuraTask(task, googleTask) {
+            task.updatedAt = googleTask.updated || googleTask.completed || (new Date()).toISOString();
+        }
+
+        function markTaskAuraTaskCompletedFromGoogle(task, googleTask) {
+            const completedDate = googleTask.completed
+                ? new Date(new Date(googleTask.completed).toDateString())
+                : selectedDate;
+            SetTaskComplete(task, getTaskAuraCompletionValueForGoogleSync(task), completedDate);
+            applyGoogleTaskTimestampToTaskAuraTask(task, googleTask);
+        }
+
+        function markTaskAuraTaskIncompleteFromGoogle(task, googleTask) {
+            SetTaskComplete(task, null, selectedDate);
+            applyGoogleTaskTimestampToTaskAuraTask(task, googleTask);
+        }
+
+        function createTaskAuraTaskFromGoogleTask(googleTask) {
+            data.note_max_id = (data.note_max_id ?? 0) + 1;
+            data.task_max_id = (data.task_max_id ?? 0) + 1;
+            const noteId = data.note_max_id;
+            const taskId = data.task_max_id;
+            const googleDueDate = getGoogleTaskDueDateForTaskAura(googleTask);
+            const dateEnd = googleTask.due ? String(googleTask.due).slice(0, 10) : null;
+            const dateStart = dateEnd ? (new Date()).toStringWithoutTime() : selectedDate.toStringWithoutTime();
+            const note = {
+                id: noteId,
+                title: googleTask.title || 'Task',
+                description: getGoogleTaskNotesWithoutTaskAuraMarker(googleTask),
+                folder: null,
+                task: taskId,
+            };
+            const task = {
+                id: taskId,
+                note: noteId,
+                regularity: null,
+                dateStart,
+                ...(googleDueDate ? { dateEnd: googleDueDate } : {}),
+                updatedAt: googleTask.updated || googleTask.completed || (new Date()).toISOString(),
+            };
+            data.notes[noteId] = note;
+            data.tasks[taskId] = task;
+            if (googleTask.status === 'completed') {
+                markTaskAuraTaskCompletedFromGoogle(task, googleTask);
+            }
+            return { task, note };
+        }
+
+        async function syncOneTimeTasksToGoogleCalendar(options = {}) {
+            const isAutomatic = options?.automatic === true;
+            if (googleTasksSyncInProgress) return;
+            googleTasksSyncInProgress = true;
+            saveGoogleCalendarSettingsFromForm(false);
+            const settings = getGoogleCalendarSettings();
+
+            try {
+                syncGoogleCalendarBtn.disabled = true;
+                if (isAutomatic) {
+                    setGoogleSyncToastState('loading');
+                }
+                const token = isAutomatic ? getCachedGoogleTasksAccessToken() : await getGoogleCalendarAccessToken('');
+                if (!token) {
+                    if (isAutomatic) {
+                        googleSyncToast?.classList.remove('show');
+                        return;
+                    }
+                    throw new Error('Google Calendar connection failed');
+                }
+                const taskListId = await resolveGoogleTaskListId(settings.taskListId, token);
+                const { tasksByTaskAuraId: googleTasksByTaskAuraId, unlinkedGoogleTasks } = await getGoogleTasksForSync(taskListId, token);
+                let createdCount = 0;
+                let importedFromGoogleCount = 0;
+                let completedInGoogleCount = 0;
+                let completedInTaskAuraCount = 0;
+                let reopenedInGoogleCount = 0;
+                let reopenedInTaskAuraCount = 0;
+                let updatedInGoogleCount = 0;
+                let updatedInTaskAuraCount = 0;
+
+                for (const googleTask of unlinkedGoogleTasks) {
+                    const { task } = createTaskAuraTaskFromGoogleTask(googleTask);
+                    await googleCalendarFetch(`lists/${taskListId}/tasks/${encodeURIComponent(googleTask.id)}`, token, {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            notes: [googleTask.notes, getTaskAuraGoogleTaskMarker(task.id)].filter(Boolean).join('\n\n'),
+                        }),
+                    });
+                    googleTasksByTaskAuraId.set(String(task.id), googleTask);
+                    importedFromGoogleCount += 1;
+                }
+
+                for (const { task, note } of getOneTimeTasksForGoogleCalendar()) {
+                    const googleTask = googleTasksByTaskAuraId.get(String(task.id));
+                    const taskAuraCompleted = isOneTimeTaskCompletedForGoogleSync(task);
+                    const googleCompleted = googleTask?.status === 'completed';
+
+                    if (googleTask) {
+                        if (isTaskAuraGoogleContentDifferent(task, note, googleTask)) {
+                            const googleChangedLater = getGoogleTaskUpdatedMs(googleTask) > getTaskAuraTaskUpdatedMs(task);
+                            if (googleChangedLater) {
+                                applyGoogleTaskContentToTaskAuraTask(task, note, googleTask);
+                                applyGoogleTaskTimestampToTaskAuraTask(task, googleTask);
+                                updatedInTaskAuraCount += 1;
+                            } else {
+                                await updateGoogleTaskContentFromTaskAura(taskListId, task, note, googleTask, token);
+                                updatedInGoogleCount += 1;
+                            }
+                        }
+
+                        if (googleCompleted !== taskAuraCompleted) {
+                            const googleChangedLater = getGoogleTaskUpdatedMs(googleTask) > getTaskAuraTaskUpdatedMs(task);
+                            if (googleChangedLater) {
+                                if (googleCompleted) {
+                                    markTaskAuraTaskCompletedFromGoogle(task, googleTask);
+                                    completedInTaskAuraCount += 1;
+                                } else {
+                                    markTaskAuraTaskIncompleteFromGoogle(task, googleTask);
+                                    reopenedInTaskAuraCount += 1;
+                                }
+                            } else if (taskAuraCompleted) {
+                                await markGoogleTaskCompleted(taskListId, googleTask, token);
+                                completedInGoogleCount += 1;
+                            } else {
+                                await markGoogleTaskIncomplete(taskListId, googleTask, token);
+                                reopenedInGoogleCount += 1;
+                            }
+                        }
+                        continue;
+                    }
+
+                    if (taskAuraCompleted) {
+                        continue;
+                    }
+
+                    await googleCalendarFetch(`lists/${taskListId}/tasks`, token, {
+                        method: 'POST',
+                        body: JSON.stringify(buildGoogleTaskFromTaskAura(task, note)),
+                    });
+                    createdCount += 1;
+                }
+
+                if (importedFromGoogleCount > 0 || completedInTaskAuraCount > 0 || reopenedInTaskAuraCount > 0 || updatedInTaskAuraCount > 0) {
+                    save();
+                    refreshTasks();
+                    refreshNotes();
+                    updateParentNoteOptions();
+                    refreshAchievements();
+                    refreshProgressCalendars();
+                    updateFinishDayButtonVisibility();
+                }
+
+                const syncSummary = `created tasks — ${createdCount}; imported from Google — ${importedFromGoogleCount}; completed in Google — ${completedInGoogleCount}; completed in Task Aura — ${completedInTaskAuraCount}; reopened in Google — ${reopenedInGoogleCount}; reopened in Task Aura — ${reopenedInTaskAuraCount}; updated in Google — ${updatedInGoogleCount}; updated in Task Aura — ${updatedInTaskAuraCount}`;
+                if (isAutomatic) {
+                    setGoogleSyncToastState('success', syncSummary);
+                } else {
+                    showNotification(`Google Tasks synchronization completed: ${syncSummary}`);
+                }
+            } catch (error) {
+                if (isAutomatic) {
+                    setGoogleSyncToastState('error', error.message ?? String(error));
+                } else {
+                    showNotification(`Google Tasks synchronization failed: ${error.message ?? error}`);
+                }
+            } finally {
+                syncGoogleCalendarBtn.disabled = false;
+                googleTasksSyncInProgress = false;
+                updateGoogleCalendarConnectionControls();
+                if (isAutomatic) {
+                    googleTasksLastAutoSyncAt = Date.now();
+                    googleTasksNextAutoSyncDelayMs = getRandomGoogleTasksSyncDelayMs();
+                }
+            }
+        }
+
         // Обработчики для переключения недели
         fullDateDisplay.addEventListener('click', () => {
             fullDatePicker.value = selectedDate.toStringWithoutTime();
@@ -7046,6 +7714,10 @@ Day goals:
                         delete task.regularity;
                     }
                 }
+            }
+
+            if (isTask && task) {
+                task.updatedAt = (new Date()).toISOString();
             }
 
             if (icon !== '' && icon != null) {
@@ -7839,11 +8511,49 @@ Day goals:
             save();
         }
 
+        function getRandomGoogleTasksSyncDelayMs() {
+            return (300 + Math.floor(Math.random() * 61)) * 1000;
+        }
+
+        function isGoogleTasksPeriodicSyncEnabled() {
+            return getGoogleCalendarSettings().periodicSyncEnabled !== false;
+        }
+
+        function scheduleInitialGoogleTasksSync() {
+            if (!GOOGLE_CALENDAR_CLIENT_ID || !getCachedGoogleTasksAccessToken()) return;
+            window.setTimeout(() => {
+                syncOneTimeTasksToGoogleCalendar({ automatic: true });
+            }, 600);
+        }
+
+        function startGoogleTasksPeriodicSyncChecker() {
+            if (googleTasksPeriodicSyncIntervalId) {
+                clearInterval(googleTasksPeriodicSyncIntervalId);
+            }
+            googleTasksPeriodicSyncIntervalId = window.setInterval(() => {
+                if (!isGoogleTasksPeriodicSyncEnabled()) return;
+                if (!GOOGLE_CALENDAR_CLIENT_ID || !getCachedGoogleTasksAccessToken()) return;
+                if (googleTasksSyncInProgress) return;
+                if (Date.now() - googleTasksLastAutoSyncAt < googleTasksNextAutoSyncDelayMs) return;
+                syncOneTimeTasksToGoogleCalendar({ automatic: true });
+            }, 30000);
+        }
+
         // ===================== //
         // === Инициализация === //
         // ===================== //
 
+        connectGoogleCalendarBtn?.addEventListener('click', connectGoogleCalendar);
+        disconnectGoogleCalendarBtn?.addEventListener('click', disconnectGoogleCalendar);
+        saveGoogleCalendarSettingsBtn?.addEventListener('click', saveGoogleCalendarSettingsFromForm);
+        googleTasksPeriodicSyncSwitch?.addEventListener('change', () => saveGoogleCalendarSettingsFromForm(false));
+        syncGoogleCalendarBtn?.addEventListener('click', syncOneTimeTasksToGoogleCalendar);
+
         load();
+        fillGoogleCalendarSettingsForm();
+        scheduleInitialGoogleTasksSync();
+        startGoogleTasksPeriodicSyncChecker();
+        updateGoogleCalendarConnectionControls();
         progressCalendarForm?.addEventListener('submit', (event) => {
             event.preventDefault();
             const title = progressCalendarTitleInput.value.trim();
