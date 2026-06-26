@@ -7212,15 +7212,29 @@ Day goals:
             showNotification('Google Calendar disconnected');
         }
 
+        function getGoogleTasksNetworkErrorMessage(error) {
+            const isNetworkError = error instanceof TypeError
+                || String(error?.message ?? error).toLowerCase().includes('failed to fetch');
+            if (!isNetworkError) {
+                return error;
+            }
+            return new Error('Could not reach Google Tasks API. Check mobile internet, VPN/ad blocker/private DNS/browser content blockers, and whether tasks.googleapis.com is available from this device.');
+        }
+
         async function googleCalendarFetch(path, accessToken, options = {}) {
-            const response = await fetch(`https://tasks.googleapis.com/tasks/v1/${path}`, {
-                ...options,
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                    ...(options.headers ?? {}),
-                },
-            });
+            let response;
+            try {
+                response = await fetch(`https://tasks.googleapis.com/tasks/v1/${path}`, {
+                    ...options,
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        ...(options.headers ?? {}),
+                    },
+                });
+            } catch (error) {
+                throw getGoogleTasksNetworkErrorMessage(error);
+            }
             const payload = await response.json().catch(() => ({}));
             if (!response.ok) {
                 throw new Error(payload.error?.message ?? response.statusText);
