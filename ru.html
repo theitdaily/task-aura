@@ -31,6 +31,7 @@
 
     <!-- Подключение Bootstrap CSS -->
     <link href="./resources/bootstrap.min.css" rel="stylesheet">
+    <link href="./resources/select2.min.css" rel="stylesheet">
     <!-- Подключение Bootstrap Icons -->
     <link rel="stylesheet" href="./resources/bootstrap-icons.css">
 
@@ -151,10 +152,10 @@
         .task {
             display: flex;
             align-items: center;
-            padding: 8px;
+            padding: 4px 8px;
             border: 1px solid #ccc;
             border-radius: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             background-color: #f8fcff;
         }
 
@@ -691,7 +692,7 @@
 
         .completed-toggle-btn {
             display: flex;
-            margin: 12px auto 6px;
+            margin: 16px auto 6px;
             border-radius: 999px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             white-space: nowrap;
@@ -907,7 +908,7 @@
         }
 
         /* Общий контейнер для папок и заметок */
-        #notesContainer, #routineContainer, #tasksContainer, #progressContainer, #newsContainer, #profileContainer {
+        #inboxContainer, #notesContainer, #routineContainer, #tasksContainer, #allTasksContainer, #projectsContainer, #lifeAreasContainer, #progressContainer, #newsContainer, #profileContainer {
             opacity: 0;
             max-height: 0;
             overflow: hidden;
@@ -915,7 +916,7 @@
         }
 
         /* Активный контейнер */
-        #notesContainer.show, #routineContainer.show, #tasksContainer.show, #progressContainer.show, #newsContainer.show, #profileContainer.show {
+        #inboxContainer.show, #notesContainer.show, #routineContainer.show, #tasksContainer.show, #allTasksContainer.show, #projectsContainer.show, #lifeAreasContainer.show, #progressContainer.show, #newsContainer.show, #profileContainer.show {
             opacity: 1;
             max-height: fit-content; /* или другой подходящий максимум, чтобы плавно раскрыть */
             padding-bottom: 12px;
@@ -1403,10 +1404,48 @@
         .progress-calendar-grid-wrap { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: start; overflow: overlay; }
         .progress-weekday-labels { display: grid; grid-template-rows: repeat(7, 12px); gap: 3px; font-size: .72rem; color: #6a6d78; }
         .progress-month-labels { display: grid; grid-auto-columns: 12px; grid-auto-flow: column; gap: 3px; margin-bottom: 4px; font-size: .72rem; color: #6a6d78; }
+
+        .planning-hero, .planning-card {
+            background: #fff;
+            border: 1px solid var(--surface-border);
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(62, 35, 104, .08);
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .planning-hero {
+            background: linear-gradient(135deg, #fbf8ff, #eef8ff);
+        }
+        .planning-title { font-weight: 800; color: #2d1854; margin-bottom: 4px; }
+        .planning-subtitle { color: #6a6177; font-size: .9rem; margin: 0; }
+        .planning-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 10px; }
+        .planning-stat { border-radius: 14px; background: #f7f2ff; padding: 10px; }
+        .planning-stat-value { font-size: 1.35rem; font-weight: 800; color: var(--accent-color-dark); }
+        .planning-stat-label { font-size: .78rem; color: #6a6177; }
+        .planning-list { display: grid; gap: 8px; }
+        .planning-item { border: 1px solid #ece4f8; border-radius: 14px; padding: 10px; background: #fff; cursor: pointer; }
+        .planning-item:hover { background: #fbf8ff; }
+        .planning-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+        .planning-chip { display:inline-flex; align-items:center; gap:4px; border-radius:999px; padding:2px 8px; background:#f1ebfb; color:#4f327a; font-size:.75rem; }
+        .planning-progress { height: 7px; background:#eee7f8; border-radius:999px; overflow:hidden; margin-top:8px; }
+        .planning-progress > span { display:block; height:100%; background:var(--accent-color); }
+        .planning-goal-meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+        .planning-date-chip { display:inline-flex; align-items:center; gap:5px; border:1px solid #ece4f8; background:#fbf8ff; color:#5d4a72; border-radius:999px; padding:3px 9px; font-size:.75rem; }
+        .planning-date-chip i { color: var(--accent-color-dark); }
+        .inbox-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; margin-bottom:12px; }
+        .task-group-title { margin: 14px 0 8px; font-weight: 800; color:#4f327a; font-size:.9rem; }
+        .task-group-title span { /*background:#f7f2ff; border:1px solid #ece4f8; border-radius:999px;*/ padding:5px 10px; }
+        .task-filter-chip { display:inline-flex; align-items:center; gap:6px; margin:0 0 10px; border-radius:999px; padding:5px 10px; background:#f1ebfb; color:#4f327a; font-size:.8rem; }
+        .select2-container--default .select2-selection--multiple { border-color:#dee2e6; border-radius:.375rem; min-height:38px; }
+        .menu-settings-list { font-size:.78rem; color:#6a6177; line-height:1.5; }
+        .menu-settings-editor { display:grid; gap:8px; width:100%; }
+        .menu-settings-row { display:flex; align-items:center; justify-content:space-between; gap:8px; border:1px solid #ece4f8; background:#fff; border-radius:12px; padding:8px 10px; }
+        .menu-settings-row-label { display:flex; align-items:center; gap:8px; font-size:.9rem; color:#3f3153; }
+        .menu-settings-row-actions { display:flex; gap:4px; }
     </style>
 
         <meta name="version" content="1.5.0">
-<style id="googleidentityservice_button_styles">.qJTHM{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;color:#202124;direction:ltr;-webkit-touch-callout:none;font-family:Roboto-Regular,arial,sans-serif;-webkit-font-smoothing:antialiased;font-weight:400;margin:0;overflow:hidden;-webkit-text-size-adjust:100%}.ynRLnc{left:-9999px;position:absolute;top:-9999px}.L6cTce{display:none}.bltWBb{overflow-wrap:break-word;word-break:break-word}.hSRGPd{color:#1a73e8;cursor:pointer;font-weight:500;text-decoration:none}.Bz112c-W3lGp{height:16px;width:16px}.Bz112c-E3DyYd{height:20px;width:20px}.Bz112c-r9oPif{height:24px;width:24px}.Bz112c-u2z5K{height:36px;width:36px}.Bz112c-uaxL4e{border-radius:10px}.LgbsSe-Bz112c{display:block}.S9gUrf-YoZ4jf{border:none;margin:0;padding:0}.S9gUrf-YoZ4jf *{border:none;margin:0;padding:0}.fFW7wc-ibnC6b>.aZ2wEe>div{border-color:#4285f4}.P1ekSe-ZMv3u{-webkit-transition:height .2s linear;transition:height .2s linear}.P1ekSe-ZMv3u>div:first-child{background-color:#1a73e8!important;-webkit-transition:width .3s linear;transition:width .3s linear}.P1ekSe-ZMv3u>div:nth-child(2){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.P1ekSe-ZMv3u>div:nth-child(3){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.haAclf{display:inline-block}.nsm7Bb-HzV7m-LgbsSe{border-radius:4px;box-sizing:border-box;-webkit-transition:background-color .218s,border-color .218s;transition:background-color .218s,border-color .218s;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-webkit-appearance:none;background-color:#fff;background-image:none;border:1px solid #dadce0;color:#3c4043;cursor:pointer;font-family:Google Sans,arial,sans-serif;font-size:.875rem;height:40px;letter-spacing:.25px;outline:none;overflow:hidden;padding:0 12px;position:relative;text-align:center;vertical-align:middle;white-space:nowrap;width:auto}@media screen and (-ms-high-contrast:active){.nsm7Bb-HzV7m-LgbsSe{border:2px solid windowText;color:windowText}}@media screen and (preferes-contrast:more){.nsm7Bb-HzV7m-LgbsSe{color:#000}}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe{font-size:.875rem;height:32px;letter-spacing:.25px;padding:0 10px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe{font-size:.6875rem;height:20px;letter-spacing:.3px;padding:0 8px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe{padding:0;width:40px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe{width:32px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe{width:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK{border-radius:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.pSzOP-SxQuSe{border-radius:16px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.purZT-SxQuSe{border-radius:10px}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc{border:1px solid #8e918f;background-color:#131314;color:#e3e3e3}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc{border:none;color:#fff}.nsm7Bb-HzV7m-LgbsSe.MFS4be-v3pZbf-Ia7Qfc{background-color:#1a73e8}.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{background-color:#202124;color:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{color:#fff}}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:18px;margin-right:8px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:14px;min-width:14px;width:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:10px;min-width:10px;width:10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin-left:8px;margin-right:-4px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:10px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:8px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:4px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:3px;border-bottom-left-radius:3px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background-color:#fff;height:36px;margin-left:-10px;margin-right:12px;min-width:36px;width:36px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c,.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:28px;margin-left:-8px;margin-right:10px;min-width:28px;width:28px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:16px;margin-left:-6px;margin-right:8px;min-width:16px;width:16px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:3px;margin-left:2px;margin-right:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:8px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-bN97Pc-sM5MNb{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;-webkit-flex-direction:row;-webkit-box-orient:horizontal;-webkit-box-direction:normal;flex-direction:row;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;-webkit-flex-wrap:nowrap;flex-wrap:nowrap;height:100%;position:relative;width:100%}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX{-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:1;-webkit-box-flex:1;flex-grow:1;font-family:Google Sans,arial,sans-serif;font-weight:500;overflow:hidden;text-overflow:ellipsis;vertical-align:top}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-weight:300}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:0;-webkit-box-flex:0;flex-grow:0}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-MJoBVe{-webkit-transition:background-color .218s;transition:background-color .218s;bottom:0;left:0;position:absolute;right:0;top:0}.nsm7Bb-HzV7m-LgbsSe:focus,.nsm7Bb-HzV7m-LgbsSe:hover{box-shadow:none;border-color:rgb(210,227,252);outline:none}.nsm7Bb-HzV7m-LgbsSe:focus-within{outline:2px solid #00639b;border-color:transparent}.nsm7Bb-HzV7m-LgbsSe:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.08)}.nsm7Bb-HzV7m-LgbsSe:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.1)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.08)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.12)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.24)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.32)}.nsm7Bb-HzV7m-LgbsSe .n1UuX-DkfjY{border-radius:50%;display:-webkit-box;display:-webkit-flex;display:flex;height:20px;margin-left:-4px;margin-right:8px;min-width:20px;width:20px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-family:Roboto;font-size:12px;text-align:left}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .fmcmS,.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .ssJRIf{overflow:hidden;text-overflow:ellipsis}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;color:#5f6368;fill:#5f6368;font-size:11px;font-weight:400}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#e8eaed;fill:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff,.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#000;fill:#000}}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .Bz112c{height:18px;margin:-3px -3px -3px 2px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:0;border-bottom-left-radius:0;border-top-right-radius:3px;border-bottom-right-radius:3px;margin-left:12px;margin-right:-10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.L5Fo6c-sM5MNb{border:0;display:block;left:0;position:relative;top:0}.L5Fo6c-bF1uUb{border-radius:4px;bottom:0;cursor:pointer;left:0;position:absolute;right:0;top:0}.L5Fo6c-bF1uUb:focus{border:none;outline:none}sentinel{}</style></head>
+<style id="googleidentityservice_button_styles">.qJTHM{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;color:#202124;direction:ltr;-webkit-touch-callout:none;font-family:Roboto-Regular,arial,sans-serif;-webkit-font-smoothing:antialiased;font-weight:400;margin:0;overflow:hidden;-webkit-text-size-adjust:100%}.ynRLnc{left:-9999px;position:absolute;top:-9999px}.L6cTce{display:none}.bltWBb{overflow-wrap:break-word;word-break:break-word}.hSRGPd{color:#1a73e8;cursor:pointer;font-weight:500;text-decoration:none}.Bz112c-W3lGp{height:16px;width:16px}.Bz112c-E3DyYd{height:20px;width:20px}.Bz112c-r9oPif{height:24px;width:24px}.Bz112c-u2z5K{height:36px;width:36px}.Bz112c-uaxL4e{border-radius:10px}.LgbsSe-Bz112c{display:block}.S9gUrf-YoZ4jf{border:none;margin:0;padding:0}.S9gUrf-YoZ4jf *{border:none;margin:0;padding:0}.fFW7wc-ibnC6b>.aZ2wEe>div{border-color:#4285f4}.P1ekSe-ZMv3u{-webkit-transition:height .2s linear;transition:height .2s linear}.P1ekSe-ZMv3u>div:first-child{background-color:#1a73e8!important;-webkit-transition:width .3s linear;transition:width .3s linear}.P1ekSe-ZMv3u>div:nth-child(2){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.P1ekSe-ZMv3u>div:nth-child(3){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.haAclf{display:inline-block}.nsm7Bb-HzV7m-LgbsSe{border-radius:4px;box-sizing:border-box;-webkit-transition:background-color .218s,border-color .218s;transition:background-color .218s,border-color .218s;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-webkit-appearance:none;background-color:#fff;background-image:none;border:1px solid #dadce0;color:#3c4043;cursor:pointer;font-family:Google Sans,arial,sans-serif;font-size:.875rem;height:40px;letter-spacing:.25px;outline:none;overflow:hidden;padding:0 12px;position:relative;text-align:center;vertical-align:middle;white-space:nowrap;width:auto}@media screen and (-ms-high-contrast:active){.nsm7Bb-HzV7m-LgbsSe{border:2px solid windowText;color:windowText}}@media screen and (preferes-contrast:more){.nsm7Bb-HzV7m-LgbsSe{color:#000}}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe{font-size:.875rem;height:32px;letter-spacing:.25px;padding:0 10px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe{font-size:.6875rem;height:20px;letter-spacing:.3px;padding:0 8px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe{padding:0;width:40px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe{width:32px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe{width:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK{border-radius:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.pSzOP-SxQuSe{border-radius:16px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.purZT-SxQuSe{border-radius:10px}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc{border:1px solid #8e918f;background-color:#131314;color:#e3e3e3}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc{border:none;color:#fff}.nsm7Bb-HzV7m-LgbsSe.MFS4be-v3pZbf-Ia7Qfc{background-color:#1a73e8}.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{background-color:#202124;color:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{color:#fff}}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:18px;margin-right:8px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:14px;min-width:14px;width:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:10px;min-width:10px;width:10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin-left:8px;margin-right:-4px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:10px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:8px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:4px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:3px;border-bottom-left-radius:3px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background-color:#fff;height:36px;margin-left:-10px;margin-right:12px;min-width:36px;width:36px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c,.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:28px;margin-left:-8px;margin-right:10px;min-width:28px;width:28px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:16px;margin-left:-6px;margin-right:8px;min-width:16px;width:16px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:3px;margin-left:2px;margin-right:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:8px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-bN97Pc-sM5MNb{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;-webkit-flex-direction:row;-webkit-box-orient:horizontal;-webkit-box-direction:normal;flex-direction:row;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;-webkit-flex-wrap:nowrap;flex-wrap:nowrap;height:100%;position:relative;width:100%}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX{-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:1;-webkit-box-flex:1;flex-grow:1;font-family:Google Sans,arial,sans-serif;font-weight:500;overflow:hidden;text-overflow:ellipsis;vertical-align:top}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-weight:300}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:0;-webkit-box-flex:0;flex-grow:0}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-MJoBVe{-webkit-transition:background-color .218s;transition:background-color .218s;bottom:0;left:0;position:absolute;right:0;top:0}.nsm7Bb-HzV7m-LgbsSe:focus,.nsm7Bb-HzV7m-LgbsSe:hover{box-shadow:none;border-color:rgb(210,227,252);outline:none}.nsm7Bb-HzV7m-LgbsSe:focus-within{outline:2px solid #00639b;border-color:transparent}.nsm7Bb-HzV7m-LgbsSe:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.08)}.nsm7Bb-HzV7m-LgbsSe:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.1)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.08)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.12)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.24)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.32)}.nsm7Bb-HzV7m-LgbsSe .n1UuX-DkfjY{border-radius:50%;display:-webkit-box;display:-webkit-flex;display:flex;height:20px;margin-left:-4px;margin-right:8px;min-width:20px;width:20px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-family:Roboto;font-size:12px;text-align:left}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .fmcmS,.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .ssJRIf{overflow:hidden;text-overflow:ellipsis}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;color:#5f6368;fill:#5f6368;font-size:11px;font-weight:400}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.i5vt6e-to915-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#c4c7c5;fill:#c4c7c5}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#e8eaed;fill:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff,.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#000;fill:#000}}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .Bz112c{height:18px;margin:-3px -3px -3px 2px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:0;border-bottom-left-radius:0;border-top-right-radius:3px;border-bottom-right-radius:3px;margin-left:12px;margin-right:-10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.L5Fo6c-sM5MNb{border:0;display:block;left:0;position:relative;top:0}.L5Fo6c-bF1uUb{border-radius:4px;bottom:0;cursor:pointer;left:0;position:absolute;right:0;top:0}.L5Fo6c-bF1uUb:focus{border:none;outline:none}sentinel{}</style></head>
 <body>
         <!-- Вкладка Routine (активная) -->
     <div class="nav-top">
@@ -1419,25 +1458,38 @@
                 <button id="nextWeek" class="m-1"> &gt;&gt;</button>
             </div>
             <div class="d-flex justify-content-around" id="weekDays">
-                <div class="text-center day" data-day="2026-06-22"><div>Пн</div><div>22</div></div>
-                <div class="text-center day" data-day="2026-06-23"><div>Вт</div><div>23</div></div>
-                <div class="text-center day" data-day="2026-06-24"><div>Ср</div><div>24</div></div>
-                <div class="text-center day" data-day="2026-06-25"><div>Чт</div><div>25</div></div>
-                <div class="text-center day active active-lightning-blue" data-day="2026-06-26"><div>Пт</div><div>26</div></div>
-                <div class="text-center day" data-day="2026-06-27"><div>Сб</div><div>27</div></div>
-                <div class="text-center day" data-day="2026-06-28"><div>Вс</div><div>28</div></div>
+                <div class="text-center day active active-lightning-blue" data-day="2026-06-29"><div>Пн</div><div>29</div></div>
+                <div class="text-center day" data-day="2026-06-30"><div>Вт</div><div>30</div></div>
+                <div class="text-center day" data-day="2026-07-01"><div>Ср</div><div>1</div></div>
+                <div class="text-center day" data-day="2026-07-02"><div>Чт</div><div>2</div></div>
+                <div class="text-center day" data-day="2026-07-03"><div>Пт</div><div>3</div></div>
+                <div class="text-center day" data-day="2026-07-04"><div>Сб</div><div>4</div></div>
+                <div class="text-center day" data-day="2026-07-05"><div>Вс</div><div>5</div></div>
             </div>
         </div>
     </div>
 
+    <!-- Входящие: системная точка сбора заметок и идей -->
+
+    <div class="container flex-fill show" id="inboxContainer"><section class="planning-hero"><div class="planning-title"><i class="bi bi-inbox-fill"></i> Входящие</div><p class="planning-subtitle">Сначала фиксируйте идеи, а место для них выбирайте позже.</p><div class="inbox-actions"><button class="btn btn-primary btn-sm" id="inboxAddNoteBtn">Добавить заметку</button><button class="btn btn-outline-primary btn-sm" id="inboxCreateTaskBtn">Создать задачу</button><button class="btn btn-outline-secondary btn-sm" id="inboxOpenNotesBtn">Перенести в папку</button></div></section><section class="planning-card"><div class="planning-title">Неразобранные заметки</div><p class="planning-subtitle">Превращайте элементы в задачу, проект, направление или цель, когда станет ясно зачем.</p><div class="planning-list"><div class="text-muted small">Входящие пусты</div></div></section></div>
+
     <!-- Основной блок задач -->
-    <div class="container flex-fill show" id="routineContainer"><button class="btn btn-outline-secondary completed-toggle-btn" title="Показать выполненные задачи"><i class="bi bi-eye"></i> Показать выполненные задачи</button><button class="btn btn-outline-primary routine-action-btn" title="Добавить предвыполненную регулярную задачу на выбранный день"><i class="bi bi-check2-circle me-1"></i> Предвыполнить регулярную задачу</button><button class="btn routine-action-btn btn-outline-danger" title="Переключить в режим отмены задач"><i class="bi bi-check2-square me-1"></i> Режим выполнения: выполнить</button></div>
+    <div class="container flex-fill" id="routineContainer"><button class="btn btn-outline-secondary completed-toggle-btn" title="Показать выполненные задачи"><i class="bi bi-eye"></i> Показать выполненные задачи</button><button class="btn btn-outline-primary routine-action-btn" title="Добавить предвыполненную регулярную задачу на выбранный день"><i class="bi bi-check2-circle me-1"></i> Предвыполнить регулярную задачу</button><button class="btn routine-action-btn btn-outline-danger" title="Переключить в режим отмены задач"><i class="bi bi-check2-square me-1"></i> Режим выполнения: выполнить</button><button class="btn btn-outline-secondary routine-action-btn"><i class="bi bi-tags"></i> Группировка</button></div>
 
     <!-- Блок задач без регулярности -->
     <div class="container flex-fill" id="tasksContainer"><div class="daily-goal-zone" id="dailyGoalZone">
                 <div class="daily-goal-zone-title">Задания дня</div>
                 <div class="daily-goal-zone-subtitle">Перетащите сюда нерегулярные задачи. Прогресс сохраняется для выбранного дня.</div>
-            </div><div id="regularTasksZone" style="min-height: 60px;"></div><button class="btn btn-outline-secondary completed-toggle-btn" title="Показать выполненные задачи"><i class="bi bi-eye"></i> Показать выполненные задачи</button></div>
+            </div><div id="regularTasksZone" style="min-height: 60px;"></div><button class="btn btn-outline-secondary completed-toggle-btn" title="Показать выполненные задачи"><i class="bi bi-eye"></i> Показать выполненные задачи</button><button class="btn btn-outline-secondary routine-action-btn"><i class="bi bi-tags"></i> Группировка</button></div>
+
+    <!-- Блок всех задач -->
+    <div class="container flex-fill" id="allTasksContainer"><section class="planning-hero"><div class="planning-title"><i class="bi bi-ui-checks"></i> Все задачи</div><p class="planning-subtitle">Регулярные и нерегулярные задачи на выбранный день.</p></section><div class="text-muted small">Нет задач</div><button class="btn btn-outline-secondary routine-action-btn"><i class="bi bi-tags"></i> Группировка</button></div>
+
+    <!-- Блок проектов долгосрочной работы -->
+    <div class="container" id="projectsContainer"><section class="planning-hero"><div class="planning-title"><i class="bi bi-kanban"></i> Проекты</div><p class="planning-subtitle">Проекты отвечают на вопрос, над чем вы сейчас работаете.</p><div class="inbox-actions"><button class="btn btn-primary btn-sm" id="planningAddProjectBtn">Добавить проект</button></div></section><div class="planning-list"></div></div>
+
+    <!-- Блок жизненных направлений и дерева целей -->
+    <div class="container" id="lifeAreasContainer"><section class="planning-hero"><div class="planning-title"><i class="bi bi-compass"></i> Жизненные направления</div><p class="planning-subtitle">Направления объясняют, зачем нужны проекты и задачи.</p><div class="inbox-actions"><button class="btn btn-primary btn-sm" id="planningAddDirectionBtn">Добавить жизненное направление</button></div></section></div>
 
     <!-- Блок с заметками -->
     <div class="container" style="display: grid;" id="notesContainer">
@@ -1676,6 +1728,102 @@
                     <option value="sunday">Неделя начинается с воскресенья</option>
                 </select>
             </div>
+            <div class="profile-select-block" style="width: 100%; max-width: 520px;">
+                <label class="form-label mb-0">Пункты нижнего меню</label>
+                <div id="bottomMenuOrderEditor" class="menu-settings-editor"><div class="menu-settings-row" data-menu-target="inboxContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="">
+                        <span>Входящие</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div><div class="menu-settings-row" data-menu-target="routineContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="">
+                        <span>Сегодня</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div><div class="menu-settings-row" data-menu-target="projectsContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="">
+                        <span>Проекты</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div><div class="menu-settings-row" data-menu-target="lifeAreasContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="">
+                        <span>Жизненные направления</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div><div class="menu-settings-row" data-menu-target="tasksContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="">
+                        <span>Задачи</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div><div class="menu-settings-row" data-menu-target="allTasksContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="">
+                        <span>Все задачи</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div><div class="menu-settings-row" data-menu-target="progressContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="">
+                        <span>Достижения</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div><div class="menu-settings-row" data-menu-target="notesContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="">
+                        <span>Заметки</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div><div class="menu-settings-row" data-menu-target="newsContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="">
+                        <span>Новости</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div><div class="menu-settings-row" data-menu-target="profileContainer">
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" checked="" disabled="">
+                        <span>Настройки</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                </div></div>
+                <div class="form-text menu-settings-list" id="bottomMenuOrderHelp">Выберите пункты меню галочками и изменяйте порядок стрелками. Настройки нельзя убрать.</div>
+                <button id="saveBottomMenuOrderBtn" class="btn btn-outline-primary btn-sm mt-2" type="button">Сохранить меню</button>
+            </div>
         </div>
         <div style="width: 100%;">
             <textarea id="gptPromptInput" class="form-control" rows="10" placeholder="Введите промпт..." style="height: 151px;">                Сегодня дата: TODAY_DATE_FROM_APP.\n\nВот список моих задач:\nTODAY_TASKS_JSON\n\nТы — мой дружелюбный личный ассистент.\n\nТвоя роль:\n- Проанализировать список задач и определить приоритеты на сегодня.\n- Сначала учитывать срочность (просроченные и ближайшие дедлайны), затем пользу и реалистичность выполнения.\n- Игнорировать задачи, где completed = true.\n\nПравила ответа:\n1. Сначала кратко перечисли 1–3 самые актуальные задачи на сегодня в порядке приоритета.\n2. Предложи, с какой задачи начать прямо сейчас (или 2 варианта, если приоритет близкий).\n3. Коротко объясни выбор (1–2 предложения).\n4. НЕ давай пошаговый план, пока я прямо не попрошу план/шаги.\n5. Если я попрошу план, дай короткие и понятные шаги.\n\nСтиль:\n- Поддерживающий, спокойный, практичный.\n- Кратко и структурированно.            </textarea>
@@ -1747,7 +1895,7 @@
     </div>
 
     <!-- Кнопка + снизу справа -->
-    <button class="btn btn-primary add-note-btn" title="Добавить регулярную задачу" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
+    <button class="btn btn-primary add-note-btn" title="Добавить заметку/задачу" data-bs-toggle="modal" data-bs-target="#formNoteModal">+</button>
     <button class="btn btn-success finish-day-btn" id="finishDayBtn" title="Завершить день" style="display: none;">
         <i class="bi bi-award"></i> <span id="finishDayBtnText">Завершить день</span>
     </button>
@@ -1932,7 +2080,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="formNoteFolder" class="form-label">Папка</label>
-                                <select class="form-select" id="formNoteFolder" aria-label="Выберите папку"><option value="">Без папки</option><option value="__archive__">Архив</option></select>
+                                <select class="form-select" id="formNoteFolder" aria-label="Выберите папку"><option value="">Входящие</option><option value="__archive__">Архив</option></select>
                             </div>
                             <div class="mb-0">
                                 <label for="formNoteParentNote" class="form-label">Родительская заметка</label>
@@ -1958,6 +2106,13 @@
                                     <input class="form-check-input" type="checkbox" id="isTaskSwitch">
                                     <label class="form-check-label" for="isTaskSwitch">Задача</label>
                                 </div>
+                            </div>
+                            <div class="mb-3" id="taskPlanningLinksContainer" style="display: none;">
+                                <label for="formTaskProject" class="form-label">Связанный проект</label>
+                                <select class="form-select" id="formTaskProject"><option value="">Без проекта</option></select>
+                                <label for="formTaskGoals" class="form-label mt-2">Связанные цели</label>
+                                <select class="form-select" id="formTaskGoals" multiple="" size="4"></select>
+                                <div class="form-text">Удерживайте Ctrl или Cmd, чтобы выбрать несколько целей</div>
                             </div>
                         <!-- Начало задачи -->
                         <div class="mb-3" id="taskDateStartContainer" style="display: none;">
@@ -2241,44 +2396,83 @@
         </div>
     </div>
 
+
+    <div class="modal fade" id="styledInputModal" tabindex="-1" aria-labelledby="styledInputModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="styledInputModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label" id="styledInputModalQuestion" for="styledInputModalInput"></label>
+                    <textarea class="form-control" id="styledInputModalInput" rows="3"></textarea>
+                    <div class="form-text" id="styledInputModalHelp"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="styledInputModalCancelBtn" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" id="styledInputModalOkBtn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Нижняя навигация -->
     <nav class="navbar fixed-bottom bottom-nav">
-        <button class="nav-button active" data-target="routineContainer">
-            <i class="bi bi-house-door-fill"></i>
-            <span>Рутина</span>
-        </button>
-        <button class="nav-button" data-target="tasksContainer">
-            <i class="bi bi-list-task"></i>
-            <span>Задачи</span>
-        </button>
-        <button class="nav-button" data-target="progressContainer">
-            <i class="bi bi-graph-up"></i>
-            <span>Прогресс</span>
-        </button>
-        <button class="nav-button" data-target="notesContainer">
-            <i class="bi bi-journal-text"></i>
-            <span>Заметки</span>
-        </button>
-        <div class="nav-more-wrap">
+        
+        
+        
+        
+        <button class="nav-button active" data-target="inboxContainer">
+            <i class="bi bi-inbox-fill"></i>
+            <span>Входящие</span>
+        </button><button class="nav-button" data-target="routineContainer">
+            <i class="bi bi-calendar-check"></i>
+            <span>Сегодня</span>
+        </button><button class="nav-button" data-target="projectsContainer">
+            <i class="bi bi-kanban"></i>
+            <span>Проекты</span>
+        </button><button class="nav-button" data-target="lifeAreasContainer">
+            <i class="bi bi-compass"></i>
+            <span>Направления</span>
+        </button><div class="nav-more-wrap">
             <button class="nav-button nav-more-toggle" id="navMoreToggle" type="button" aria-expanded="false" aria-controls="secondaryNavMenu">
                 <i class="bi bi-three-dots"></i>
                 <span>Ещё</span>
             </button>
             <div class="secondary-nav" id="secondaryNavMenu">
-                <button class="nav-button secondary-nav-button" data-target="newsContainer">
+                
+                
+                
+                
+                
+                
+            <button class="nav-button secondary-nav-button" data-target="tasksContainer">
+                    <i class="bi bi-list-task"></i>
+                    <span>Задачи</span>
+                </button><button class="nav-button secondary-nav-button" data-target="allTasksContainer">
+                    <i class="bi bi-ui-checks"></i>
+                    <span>Все задачи</span>
+                </button><button class="nav-button secondary-nav-button" data-target="progressContainer">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Прогресс</span>
+                </button><button class="nav-button secondary-nav-button" data-target="notesContainer">
+                    <i class="bi bi-journal-text"></i>
+                    <span>Заметки</span>
+                </button><button class="nav-button secondary-nav-button" data-target="newsContainer">
                     <i class="bi bi-newspaper"></i>
                     <span>Новости</span>
-                </button>
-                <button class="nav-button secondary-nav-button" data-target="profileContainer">
+                </button><button class="nav-button secondary-nav-button" data-target="profileContainer">
                     <i class="bi bi-gear-fill"></i>
                     <span>Настройки</span>
-                </button>
-            </div>
+                </button></div>
         </div>
     </nav>
         
     <!-- Подключение Bootstrap JS и Popper -->
+    <script src="./resources/jquery-3.7.1.min.js"></script>
     <script src="./resources/bootstrap.bundle.min.js"></script>
+    <script src="./resources/select2.min.js"></script>
     <script src="./resources/client" async="" defer=""></script>
 
     <script>
@@ -2714,6 +2908,25 @@
                 {id: 1, children: []},
                 {id: 2, children: [{id: 3, children: [{id: 4, children: []}]}]}
             ], // иерархия папок в заметках (по ID)
+
+            lifeAreas: {
+                1: {id: 1, title: 'Карьера', description: 'Долгосрочный профессиональный рост и осмысленная работа.', color: '#6f42c1', icon: '💼', sortOrder: 1, archived: false},
+                2: {id: 2, title: 'Здоровье', description: 'Энергия, привычки, тело и ясность мышления.', color: '#198754', icon: '🌿', sortOrder: 2, archived: false},
+                3: {id: 3, title: 'Собственные проекты', description: 'Продукты, творчество и независимые инициативы.', color: '#0d6efd', icon: '🚀', sortOrder: 3, archived: false}
+            },
+            life_area_max_id: 3,
+            goals: {
+                1: {id: 1, lifeAreaId: 3, parentId: null, level: 'long', title: 'Создать лучший персональный планировщик', description: 'Долгосрочное видение, которое объясняет смысл ежедневной работы.', status: 'active', dateStart: '2026-01-01', deadline: '2031-12-31', percent: 12, notes: ''},
+                2: {id: 2, lifeAreaId: 3, parentId: 1, level: 'year', title: 'Выпустить Task Aura 2.0', description: 'Превратить Task Aura в систему долгосрочного планирования.', status: 'active', dateStart: '2026-01-01', deadline: '2026-12-31', percent: 25, notes: ''},
+                3: {id: 3, lifeAreaId: 3, parentId: 2, level: 'month', title: 'Реализовать долгосрочное планирование', description: 'Связать направления, цели, проекты и задачи.', status: 'active', dateStart: '2026-06-01', deadline: '2026-06-30', percent: 40, notes: ''},
+                4: {id: 4, lifeAreaId: 2, parentId: null, level: 'long', title: 'Создать стабильную энергию', description: 'Поддерживать ежедневное выполнение через здоровые привычки.', status: 'active', dateStart: '2026-01-01', deadline: '2030-12-31', percent: 15, notes: ''}
+            },
+            goal_max_id: 4,
+            projects: {
+                1: {id: 1, title: 'Task Aura', description: 'Рабочее пространство для развития самого планировщика.', progress: 30, lifeAreaIds: [3], goalIds: [1,2,3], taskIds: [1,5]},
+                2: {id: 2, title: 'Фундамент здоровья', description: 'Простые рутины, которые поддерживают высокий уровень энергии.', progress: 20, lifeAreaIds: [2], goalIds: [4], taskIds: [11]}
+            },
+            project_max_id: 2,
             progressCalendars: {
                 1: {id: 1, system: true, type: 'medals', title: 'Медали по дням', description: 'Системный календарь по умолчанию', gradientStep: 1, taskIds: []}
             },
@@ -2795,6 +3008,7 @@
             showNotification('Данные успешно импортированы');
             updateWeek(selectedDate, 'import:data');
             refreshNotes();
+            refreshPlanningViews();
             updateFolderListInForm();
             updateCreateFolderOptions();
             refreshAchievements();
@@ -2810,6 +3024,12 @@
                 folders: {},
                 structure: [],
                 dayRatings: {},
+                lifeAreas: {},
+                goals: {},
+                projects: {},
+                life_area_max_id: 0,
+                goal_max_id: 0,
+                project_max_id: 0,
                 progressCalendars: {
                 1: {id: 1, system: true, type: 'medals', title: 'Медали по дням', description: 'Системный календарь по умолчанию', gradientStep: 1, taskIds: []}
             },
@@ -2821,6 +3041,7 @@
             showNotification('Данные удалены!');
             updateWeek(selectedDate);
             refreshNotes();
+            refreshPlanningViews();
             updateFolderListInForm();
             updateCreateFolderOptions();
         }
@@ -2867,6 +3088,9 @@
             }
             if (data.settings.weekStart !== 'monday' && data.settings.weekStart !== 'sunday') {
                 data.settings.weekStart = 'monday';
+            }
+            if (!Array.isArray(data.settings.bottomMenuOrder)) {
+                data.settings.bottomMenuOrder = getDefaultBottomMenuOrder();
             }
             if (data.settings.noteDisplayMode !== 'compact' && data.settings.noteDisplayMode !== 'folders') {
                 data.settings.noteDisplayMode = 'folders';
@@ -2947,6 +3171,40 @@
                     }
                 }
                 normalizeOneTimeTaskGoalProgress(data.tasks[taskId]);
+            }
+            normalizePlanningData();
+            applyBottomMenuSettings();
+        }
+
+        function normalizePlanningData() {
+            if (!data.lifeAreas || typeof data.lifeAreas !== 'object') data.lifeAreas = {};
+            if (!data.goals || typeof data.goals !== 'object') data.goals = {};
+            if (!data.projects || typeof data.projects !== 'object') data.projects = {};
+            data.life_area_max_id = Math.max(Number(data.life_area_max_id) || 0, ...Object.keys(data.lifeAreas).map(Number).filter(Number.isFinite), 0);
+            data.goal_max_id = Math.max(Number(data.goal_max_id) || 0, ...Object.keys(data.goals).map(Number).filter(Number.isFinite), 0);
+            data.project_max_id = Math.max(Number(data.project_max_id) || 0, ...Object.keys(data.projects).map(Number).filter(Number.isFinite), 0);
+            for (const area of Object.values(data.lifeAreas)) {
+                if (!Array.isArray(area.goalIds)) area.goalIds = Object.values(data.goals).filter(g => Number(g.lifeAreaId) === Number(area.id) && g.parentId == null).map(g => Number(g.id));
+                if (typeof area.archived !== 'boolean') area.archived = false;
+                if (!area.color) area.color = '#6f42c1';
+                if (!area.icon) area.icon = '◦';
+            }
+            for (const goal of Object.values(data.goals)) {
+                if (!goal.status) goal.status = 'active';
+                if (!goal.level) goal.level = goal.parentId == null ? 'long' : 'month';
+                goal.percent = Math.max(0, Math.min(100, Number(goal.percent) || 0));
+                if (!Number.isFinite(Number(goal.sortOrder))) goal.sortOrder = Number(goal.id) || 0;
+            }
+            for (const project of Object.values(data.projects)) {
+                if (!Array.isArray(project.lifeAreaIds)) project.lifeAreaIds = [];
+                if (!Array.isArray(project.goalIds)) project.goalIds = [];
+                if (!Array.isArray(project.taskIds)) project.taskIds = [];
+                if ('status' in project) delete project.status;
+                project.progress = Math.max(0, Math.min(100, Number(project.progress) || 0));
+            }
+            for (const task of Object.values(data.tasks ?? {})) {
+                if (!Array.isArray(task.goalIds)) task.goalIds = [];
+                if (task.projectId != null && !data.projects[task.projectId]) delete task.projectId;
             }
         }
 
@@ -3836,13 +4094,164 @@
         const datePickerModal = new bootstrap.Modal(document.getElementById('datePickerModal'));
         const prefillDoneTaskModalEl = document.getElementById('prefillDoneTaskModal');
         const prefillDoneTaskModal = new bootstrap.Modal(prefillDoneTaskModalEl);
+
+        const styledInputModalEl = document.getElementById('styledInputModal');
+        const styledInputModal = new bootstrap.Modal(styledInputModalEl);
+        const styledInputModalLabel = document.getElementById('styledInputModalLabel');
+        const styledInputModalQuestion = document.getElementById('styledInputModalQuestion');
+        const styledInputModalInput = document.getElementById('styledInputModalInput');
+        const styledInputModalHelp = document.getElementById('styledInputModalHelp');
+        const styledInputModalOkBtn = document.getElementById('styledInputModalOkBtn');
+
+        function askStyledInput(question, defaultValue = '', options = {}) {
+            return new Promise((resolve) => {
+                styledInputModalLabel.textContent = options.title || 'Ввод';
+                styledInputModalQuestion.textContent = question;
+                styledInputModalInput.value = defaultValue ?? '';
+                styledInputModalInput.rows = options.rows || 3;
+                styledInputModalHelp.textContent = options.help || '';
+
+                const cleanup = (value) => {
+                    styledInputModalOkBtn.removeEventListener('click', onOk);
+                    styledInputModalEl.removeEventListener('hidden.bs.modal', onHidden);
+                    resolve(value);
+                };
+                const onOk = () => {
+                    const value = styledInputModalInput.value;
+                    styledInputModal.hide();
+                    cleanup(value);
+                };
+                const onHidden = () => cleanup(null);
+
+                styledInputModalOkBtn.addEventListener('click', onOk, { once: true });
+                styledInputModalEl.addEventListener('hidden.bs.modal', onHidden, { once: true });
+                styledInputModal.show();
+                setTimeout(() => styledInputModalInput.focus(), 150);
+            });
+        }
         let goalTimerSeconds = 0;
         let goalTimerIntervalId = null;
         let goalTimerLastTimestamp = null;
 
         // массив ID всех контейнеров
-        const containers = ['notesContainer', 'routineContainer', 'tasksContainer', 'progressContainer', 'newsContainer', 'profileContainer'];
+        const containers = ['inboxContainer', 'notesContainer', 'routineContainer', 'tasksContainer', 'allTasksContainer', 'projectsContainer', 'lifeAreasContainer', 'progressContainer', 'newsContainer', 'profileContainer'];
         const navTop = document.querySelector('.nav-top');
+        const bottomNav = document.querySelector('.bottom-nav');
+        const navMoreWrap = document.querySelector('.nav-more-wrap');
+        const bottomMenuOrderEditor = document.getElementById('bottomMenuOrderEditor');
+        const bottomMenuOrderHelp = document.getElementById('bottomMenuOrderHelp');
+        const saveBottomMenuOrderBtn = document.getElementById('saveBottomMenuOrderBtn');
+
+        function getBottomMenuItems() {
+            return [
+                { id: 'inboxContainer', label: 'Входящие' },
+                { id: 'routineContainer', label: 'Сегодня' },
+                { id: 'projectsContainer', label: 'Проекты' },
+                { id: 'lifeAreasContainer', label: 'Жизненные направления' },
+                { id: 'tasksContainer', label: 'Задачи' },
+                { id: 'allTasksContainer', label: 'Все задачи' },
+                { id: 'progressContainer', label: 'Достижения' },
+                { id: 'notesContainer', label: 'Заметки' },
+                { id: 'newsContainer', label: 'Новости' },
+                { id: 'profileContainer', label: 'Настройки' }
+            ];
+        }
+
+        function getDefaultBottomMenuOrder() {
+            return getBottomMenuItems().map(item => item.id);
+        }
+
+        function normalizeBottomMenuOrder(value) {
+            const allowed = getBottomMenuItems().map(item => item.id);
+            const raw = Array.isArray(value) ? value : String(value || '').split(',');
+            const order = raw.map(item => String(item).trim()).filter(item => allowed.includes(item));
+            if (!order.includes('profileContainer')) order.push('profileContainer');
+            return [...new Set(order)];
+        }
+
+        function moveBottomMenuEditorItem(targetId, direction) {
+            const row = bottomMenuOrderEditor?.querySelector(`[data-menu-target="${targetId}"]`);
+            if (!row) return;
+            if (direction < 0 && row.previousElementSibling) {
+                bottomMenuOrderEditor.insertBefore(row, row.previousElementSibling);
+            }
+            if (direction > 0 && row.nextElementSibling) {
+                bottomMenuOrderEditor.insertBefore(row.nextElementSibling, row);
+            }
+        }
+
+        function readBottomMenuEditorOrder() {
+            const rows = Array.from(bottomMenuOrderEditor?.querySelectorAll('[data-menu-target]') ?? []);
+            const order = rows
+                .filter(row => row.querySelector('input[type="checkbox"]')?.checked)
+                .map(row => row.dataset.menuTarget);
+            if (!order.includes('profileContainer')) order.push('profileContainer');
+            return normalizeBottomMenuOrder(order);
+        }
+
+        function renderBottomMenuEditor(order) {
+            if (!bottomMenuOrderEditor) return;
+            const orderedItems = normalizeBottomMenuOrder(order)
+                .map(id => getBottomMenuItems().find(item => item.id === id))
+                .filter(Boolean);
+            getBottomMenuItems().forEach(item => {
+                if (!orderedItems.some(orderedItem => orderedItem.id === item.id)) orderedItems.push(item);
+            });
+            bottomMenuOrderEditor.innerHTML = '';
+            orderedItems.forEach(item => {
+                const required = item.id === 'profileContainer';
+                const enabled = required || normalizeBottomMenuOrder(order).includes(item.id);
+                const row = document.createElement('div');
+                row.className = 'menu-settings-row';
+                row.dataset.menuTarget = item.id;
+                row.innerHTML = `
+                    <label class="menu-settings-row-label">
+                        <input class="form-check-input" type="checkbox" ${enabled ? 'checked' : ''} ${required ? 'disabled' : ''}>
+                        <span>${item.label}</span>
+                    </label>
+                    <div class="menu-settings-row-actions">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="up">↑</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-action="down">↓</button>
+                    </div>
+                `;
+                row.querySelector('[data-action="up"]')?.addEventListener('click', () => moveBottomMenuEditorItem(item.id, -1));
+                row.querySelector('[data-action="down"]')?.addEventListener('click', () => moveBottomMenuEditorItem(item.id, 1));
+                bottomMenuOrderEditor.appendChild(row);
+            });
+        }
+
+        function ensureSettingsObject() {
+            if (!data.settings || typeof data.settings !== 'object') data.settings = {};
+            return data.settings;
+        }
+
+        function applyBottomMenuSettings() {
+            const settings = ensureSettingsObject();
+            const order = normalizeBottomMenuOrder(settings.bottomMenuOrder || getDefaultBottomMenuOrder());
+            settings.bottomMenuOrder = order;
+            const primaryLimit = order.length <= 5 ? 5 : 4;
+            const primaryTargets = order.slice(0, primaryLimit);
+            const secondaryTargets = order.slice(primaryLimit);
+
+            getBottomMenuItems().forEach(item => {
+                const button = document.querySelector(`.nav-button[data-target="${item.id}"]`);
+                if (button) button.style.display = order.includes(item.id) ? '' : 'none';
+            });
+            primaryTargets.forEach(targetId => {
+                const button = document.querySelector(`.nav-button[data-target="${targetId}"]`);
+                if (button) bottomNav.insertBefore(button, navMoreWrap);
+            });
+            secondaryTargets.forEach(targetId => {
+                const button = document.querySelector(`.nav-button[data-target="${targetId}"]`);
+                if (button) secondaryNavMenu.appendChild(button);
+            });
+            navMoreWrap.style.display = secondaryTargets.length ? '' : 'none';
+            if (!secondaryTargets.length) closeSecondaryNav();
+            if (bottomMenuOrderEditor) {
+                renderBottomMenuEditor(order);
+                bottomMenuOrderHelp.textContent = 'Выберите пункты меню галочками и изменяйте порядок стрелками. Настройки нельзя убрать.';
+            }
+        }
 
         const formIsTaskSwitch = document.getElementById('isTaskSwitch');
         const formFields = {
@@ -3854,6 +4263,9 @@
             parent: document.getElementById('formNoteParentNote'),
             bgColor: document.getElementById('formNoteBgColor'),
             tags: document.getElementById('formNoteTags'),
+            planningLinksContainer: document.getElementById('taskPlanningLinksContainer'),
+            project: document.getElementById('formTaskProject'),
+            goals: document.getElementById('formTaskGoals'),
             hideFromCompact: document.getElementById('formNoteHideFromCompact'),
             dateStart: document.getElementById('taskDateStart'),
             dateStartContainer: document.getElementById('taskDateStartContainer'),
@@ -3962,7 +4374,7 @@
         let activeProgressSection = 'calendar';
         let progressCalendarYear = (new Date()).getFullYear();
         const customAchievementsList = document.getElementById('customAchievementsList');
-        let currentActiveTab = 'routineContainer';
+        let currentActiveTab = 'inboxContainer';
         let activeQuickPreset = 'note';
         const expandedTaskChildren = new Set();
 
@@ -3985,7 +4397,7 @@
 
         function getDefaultPresetByTab(targetId) {
             if (targetId === 'routineContainer') return 'routine';
-            if (targetId === 'tasksContainer') return 'task';
+            if (targetId === 'tasksContainer' || targetId === 'allTasksContainer') return 'task';
             return 'note';
         }
 
@@ -4063,16 +4475,29 @@
         }
 
         function updateAddButtonContext(targetId) {
+            addNoteBtn.style.display = '';
             if (targetId === 'routineContainer') {
                 addNoteBtn.title = 'Добавить регулярную задачу';
                 addNoteBtn.setAttribute('data-bs-toggle', 'modal');
                 addNoteBtn.setAttribute('data-bs-target', '#formNoteModal');
                 return;
             }
-            if (targetId === 'tasksContainer') {
+            if (targetId === 'tasksContainer' || targetId === 'allTasksContainer') {
                 addNoteBtn.title = 'Добавить обычную задачу';
                 addNoteBtn.setAttribute('data-bs-toggle', 'modal');
                 addNoteBtn.setAttribute('data-bs-target', '#formNoteModal');
+                return;
+            }
+            if (targetId === 'projectsContainer') {
+                addNoteBtn.title = 'Добавить проект';
+                addNoteBtn.removeAttribute('data-bs-toggle');
+                addNoteBtn.removeAttribute('data-bs-target');
+                return;
+            }
+            if (targetId === 'lifeAreasContainer') {
+                addNoteBtn.style.display = 'none';
+                addNoteBtn.removeAttribute('data-bs-toggle');
+                addNoteBtn.removeAttribute('data-bs-target');
                 return;
             }
             if (targetId === 'progressContainer' && activeProgressSection === 'calendar') {
@@ -4163,6 +4588,12 @@
         }
 
         addNoteBtn.addEventListener('click', (event) => {
+            if (currentActiveTab === 'projectsContainer') {
+                event.preventDefault();
+                event.stopPropagation();
+                openProjectEditor();
+                return;
+            }
             if (currentActiveTab !== 'progressContainer') return;
             event.preventDefault();
             event.stopPropagation();
@@ -5130,6 +5561,86 @@
             return toggleBtn;
         }
 
+        function ensureTaskGroupingSettings(tabId) {
+            if (!data.settings.taskGrouping || typeof data.settings.taskGrouping !== 'object') {
+                data.settings.taskGrouping = {};
+            }
+            if (!data.settings.taskGrouping[tabId]) {
+                data.settings.taskGrouping[tabId] = { mode: 'none', tags: [] };
+            }
+            return data.settings.taskGrouping[tabId];
+        }
+
+        function getTaskTags(task) {
+            const note = data.notes?.[task.note];
+            return (note?.tags ?? '').split(',').map(tag => tag.trim()).filter(Boolean);
+        }
+
+        function getAvailableTaskTags(tasks) {
+            return [...new Set(tasks.flatMap(task => getTaskTags(task)))].sort((a, b) => a.localeCompare(b));
+        }
+
+        function groupTasksByTags(tasks, tabId) {
+            const settings = ensureTaskGroupingSettings(tabId);
+            if (settings.mode !== 'tags') {
+                return [{ title: '', tasks }];
+            }
+            const availableTags = getAvailableTaskTags(tasks);
+            const orderedTags = (settings.tags || []).filter(tag => availableTags.includes(tag));
+            availableTags.forEach(tag => {
+                if (!orderedTags.includes(tag)) orderedTags.push(tag);
+            });
+            const groups = orderedTags.map(tag => ({ title: `#${tag}`, tag, tasks: [] }));
+            const otherGroup = { title: 'Без выбранных тегов', tag: null, tasks: [] };
+            tasks.forEach(task => {
+                const taskTags = getTaskTags(task);
+                const group = groups.find(item => taskTags.includes(item.tag)) || otherGroup;
+                group.tasks.push(task);
+            });
+            return [...groups.filter(group => group.tasks.length > 0), ...(otherGroup.tasks.length ? [otherGroup] : [])];
+        }
+
+        function appendGroupedTaskList(container, tasks, tabId, renderTask) {
+            groupTasksByTags(tasks, tabId).forEach(group => {
+                if (group.title) {
+                    const title = document.createElement('div');
+                    title.className = 'task-group-title';
+                    title.innerHTML = `<span>${group.title}</span>`;
+                    container.appendChild(title);
+                }
+                group.tasks.forEach(renderTask);
+            });
+        }
+
+        function createTaskGroupingButton(tabId, tasksProvider) {
+            const button = document.createElement('button');
+            button.className = 'btn btn-outline-secondary routine-action-btn';
+            button.innerHTML = '<i class="bi bi-tags"></i> Группировка';
+            button.addEventListener('click', async () => {
+                const settings = ensureTaskGroupingSettings(tabId);
+                const tags = getAvailableTaskTags(tasksProvider());
+                await showPlanningEntityForm({
+                    title: 'Группировка задач',
+                    fields: [
+                        { name: 'mode', label: 'Тип группировки', type: 'select', value: settings.mode || 'none', options: [
+                            { value: 'none', label: 'Без группировки' },
+                            { value: 'tags', label: 'По тегам' }
+                        ] },
+                        { name: 'tags', label: 'Приоритет тегов', type: 'textarea', value: (settings.tags?.length ? settings.tags : tags).join(', '), help: 'Введите теги через запятую в порядке отображения' }
+                    ],
+                    onSave: (values) => {
+                        settings.mode = values.mode || 'none';
+                        settings.tags = String(values.tags || '').split(',').map(tag => tag.trim()).filter(Boolean);
+                        save();
+                        if (tabId === 'routineContainer') refreshRoutine();
+                        else if (tabId === 'tasksContainer') refreshTasks();
+                        else refreshAllTasks();
+                    }
+                });
+            });
+            return button;
+        }
+
         function createRoutinePrecompleteButton() {
             const btn = document.createElement('button');
             btn.className = 'btn btn-outline-primary routine-action-btn';
@@ -5411,9 +5922,8 @@
                 childIds.add(Number(task.id));
             });
 
-            visibleRoutineTasks
-                .filter(task => !childIds.has(Number(task.id)))
-                .forEach((task) => {
+            const topLevelRoutineTasks = visibleRoutineTasks.filter(task => !childIds.has(Number(task.id)));
+            appendGroupedTaskList(container, topLevelRoutineTasks, 'routineContainer', (task) => {
                     const taskId = Number(task.id);
                     const childTasks = childMap.get(taskId) ?? [];
                     const isExpanded = expandedTaskChildren.has(taskId);
@@ -5435,9 +5945,11 @@
             container.appendChild(createCompletedTasksToggleButton('routineContainer'));
             container.appendChild(createRoutinePrecompleteButton());
             container.appendChild(createRoutineCancelModeButton());
+            container.appendChild(createTaskGroupingButton('routineContainer', () => tasksToday));
+            refreshAllTasks();
         }
 
-        function addTaskToDailyGoals(taskId, date = selectedDate) {
+        async function addTaskToDailyGoals(taskId, date = selectedDate) {
             const task = data.tasks[taskId];
             if (!task || task.regularity) return;
 
@@ -5453,7 +5965,7 @@
                 const suggestedValue = task.goal.type === 'count'
                     ? ((Number.isFinite(stepValue) && stepValue !== 0) ? stepValue : 1)
                     : Number(task.goal.count ?? 0);
-                const userInput = prompt('Введите значение цели на день', String(suggestedValue));
+                const userInput = await askStyledInput('Введите значение цели на день', String(suggestedValue), { title: 'Задания дня' });
                 if (userInput == null) return;
                 const target = Number(userInput);
                 if (!Number.isFinite(target) || target <= 0) {
@@ -5507,13 +6019,13 @@
             dailyGoalZone.addEventListener('dragleave', () => {
                 dailyGoalZone.classList.remove('dragover');
             });
-            dailyGoalZone.addEventListener('drop', (event) => {
+            dailyGoalZone.addEventListener('drop', async (event) => {
                 event.preventDefault();
                 dailyGoalZone.classList.remove('dragover');
                 const sourceId = event.dataTransfer.getData('text/plain');
                 const sourceTaskId = Number(sourceId?.replace('task-', ''));
                 if (!Number.isFinite(sourceTaskId)) return;
-                addTaskToDailyGoals(sourceTaskId, selectedDate);
+                await addTaskToDailyGoals(sourceTaskId, selectedDate);
             });
             container.appendChild(dailyGoalZone);
             const regularTasksZone = document.createElement('div');
@@ -5566,9 +6078,8 @@
                 childIds.add(Number(task.id));
             });
 
-            visibleRegularTasks
-                .filter(task => !childIds.has(Number(task.id)))
-                .forEach(task => {
+            const topLevelRegularTasks = visibleRegularTasks.filter(task => !childIds.has(Number(task.id)));
+            appendGroupedTaskList(regularTasksZone, topLevelRegularTasks, 'tasksContainer', (task) => {
                     const taskId = Number(task.id);
                     const childTasks = childMap.get(taskId) ?? [];
                     const isExpanded = expandedTaskChildren.has(taskId);
@@ -5589,6 +6100,93 @@
                     }
                 });
             container.appendChild(createCompletedTasksToggleButton('tasksContainer'));
+            container.appendChild(createTaskGroupingButton('tasksContainer', () => onetimeTasks));
+            refreshAllTasks();
+        }
+
+        let allTasksProjectFilterId = null;
+
+        function getAllTasksForSelectedDate() {
+            const regularTasks = getRegularityTasksFromDate(selectedDate);
+            const onetimeTasks = getOnetimeTasksFromDate(selectedDate);
+            return [...regularTasks, ...onetimeTasks].filter(task => {
+                if (allTasksProjectFilterId != null) {
+                    const project = data.projects?.[allTasksProjectFilterId];
+                    const isProjectTask = Number(task.projectId) === Number(allTasksProjectFilterId)
+                        || (project?.taskIds || []).map(Number).includes(Number(task.id));
+                    if (!isProjectTask) return false;
+                }
+                if (task.regularity) {
+                    return !(data.settings?.hideCompletedRegularTasks !== false && IsTaskCompleted(task, selectedDate));
+                }
+                return !(data.settings?.hideCompletedOnetimeTasks !== false && IsTaskCompleted(task, selectedDate));
+            });
+        }
+
+        function openAllTasksSection(projectId = null) {
+            allTasksProjectFilterId = projectId;
+            const btn = document.querySelector('.nav-button[data-target="allTasksContainer"]');
+            btn?.click();
+            refreshAllTasks();
+        }
+
+        function refreshAllTasks() {
+            const container = document.getElementById('allTasksContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const projectFilter = allTasksProjectFilterId != null ? data.projects?.[allTasksProjectFilterId] : null;
+            const header = document.createElement('section');
+            header.className = 'planning-hero';
+            header.innerHTML = `<div class="planning-title"><i class="bi bi-ui-checks"></i> Все задачи</div><p class="planning-subtitle">Регулярные и нерегулярные задачи на выбранный день.</p>`;
+            container.appendChild(header);
+            if (projectFilter) {
+                const filterChip = document.createElement('div');
+                filterChip.className = 'task-filter-chip';
+                filterChip.innerHTML = `<i class="bi bi-kanban"></i> ${projectFilter.title} <button class="btn btn-sm btn-link p-0" type="button">Сброс</button>`;
+                filterChip.querySelector('button')?.addEventListener('click', () => {
+                    allTasksProjectFilterId = null;
+                    refreshAllTasks();
+                });
+                container.appendChild(filterChip);
+            }
+
+            const allTasks = getAllTasksForSelectedDate();
+            const visibleTaskMap = new Map(allTasks.map(task => [Number(task.id), task]));
+            const childMap = new Map();
+            const childIds = new Set();
+            allTasks.forEach(task => {
+                const parentTaskId = getParentTaskId(task);
+                if (parentTaskId == null || !visibleTaskMap.has(parentTaskId)) return;
+                if (!childMap.has(parentTaskId)) childMap.set(parentTaskId, []);
+                childMap.get(parentTaskId).push(task);
+                childIds.add(Number(task.id));
+            });
+            const topLevelTasks = allTasks.filter(task => !childIds.has(Number(task.id)));
+            appendGroupedTaskList(container, topLevelTasks, 'allTasksContainer', (task) => {
+                const taskId = Number(task.id);
+                const childTasks = childMap.get(taskId) ?? [];
+                const isExpanded = expandedTaskChildren.has(taskId);
+                container.appendChild(renderTaskHtmlBlock(task, {
+                    childCount: childTasks.length,
+                    childrenExpanded: isExpanded,
+                    onToggleChildren: () => {
+                        if (expandedTaskChildren.has(taskId)) expandedTaskChildren.delete(taskId);
+                        else expandedTaskChildren.add(taskId);
+                        refreshAllTasks();
+                    }
+                }));
+                if (isExpanded) {
+                    childTasks.forEach(childTask => container.appendChild(renderTaskHtmlBlock(childTask, { isChildTask: true })));
+                }
+            });
+            if (topLevelTasks.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'text-muted small';
+                empty.textContent = 'Нет задач';
+                container.appendChild(empty);
+            }
+            container.appendChild(createTaskGroupingButton('allTasksContainer', () => getAllTasksForSelectedDate()));
         }
 
         function ArchiveCompletedAndExpiredTaskNotes() {
@@ -5620,6 +6218,488 @@
             }
 
             refreshNotes();
+        }
+
+
+        function getGoalChildren(goalId) {
+            return Object.values(data.goals ?? {}).filter(goal => Number(goal.parentId) === Number(goalId));
+        }
+
+        function getGoalProgress(goal) {
+            const children = getGoalChildren(goal.id);
+            if (children.length === 0) return Math.max(0, Math.min(100, Number(goal.percent) || 0));
+            return Math.round(children.reduce((sum, child) => sum + getGoalProgress(child), 0) / children.length);
+        }
+
+        function getGoalChain(goal) {
+            const chain = [];
+            let current = goal;
+            while (current) {
+                chain.unshift(current);
+                current = current.parentId != null ? data.goals?.[current.parentId] : null;
+            }
+            const area = data.lifeAreas?.[goal.lifeAreaId];
+            return `${area ? area.title + ' → ' : ''}${chain.map(item => item.title).join(' → ')}`;
+        }
+
+        function createPlanningCard(title, subtitle = '') {
+            const card = document.createElement('section');
+            card.className = 'planning-card';
+            card.innerHTML = `<div class="planning-title">${title}</div>${subtitle ? `<p class="planning-subtitle">${subtitle}</p>` : ''}`;
+            return card;
+        }
+
+
+        function parsePlanningIds(value) {
+            return String(value || '')
+                .split(',')
+                .map(item => Number(item.trim()))
+                .filter(id => Number.isFinite(id) && id > 0);
+        }
+
+        function getPlanningTermOptions() {
+            return [
+                { value: 'long', label: 'Долгосрочно' },
+                { value: 'ten_years', label: '10 лет' },
+                { value: 'five_years', label: '5 лет' },
+                { value: 'three_years', label: '3 года' },
+                { value: 'year', label: 'Год' },
+                { value: 'quarter', label: 'Квартал' },
+                { value: 'month', label: 'Месяц' }
+            ];
+        }
+
+        function getGoalDeadlineForTerm(term, startDateValue) {
+            const start = startDateValue ? new Date(`${startDateValue}T00:00:00`) : new Date();
+            if (Number.isNaN(start.getTime())) return '';
+            const deadline = new Date(start);
+            switch (term) {
+                case 'long':
+                case 'ten_years': deadline.setFullYear(deadline.getFullYear() + 10); break;
+                case 'five_years': deadline.setFullYear(deadline.getFullYear() + 5); break;
+                case 'three_years': deadline.setFullYear(deadline.getFullYear() + 3); break;
+                case 'year': deadline.setFullYear(deadline.getFullYear() + 1); break;
+                case 'quarter': deadline.setMonth(deadline.getMonth() + 3); break;
+                case 'month': deadline.setMonth(deadline.getMonth() + 1); break;
+                default: return '';
+            }
+            deadline.setDate(deadline.getDate() - 1);
+            return deadline.toISOString().slice(0, 10);
+        }
+
+        function getGoalTermLabel(level) {
+            return getPlanningTermOptions().find(option => option.value === level)?.label || (level || 'Срок цели');
+        }
+
+        function formatPlanningDate(dateValue) {
+            if (!dateValue) return '—';
+            return formatDateNoWrap(dateValue);
+        }
+
+        function formatGoalDeadline(dateValue) {
+            return dateValue ? formatPlanningDate(dateValue) : 'Бессрочно';
+        }
+
+        function createPlanningOption(value, label, selected = false) {
+            const option = document.createElement('option');
+            option.value = String(value);
+            option.textContent = label;
+            option.selected = selected;
+            return option;
+        }
+
+        function getTaskPlanningTitle(task) {
+            const note = data.notes?.[task.note];
+            return note?.title || `Задача #${task.id}`;
+        }
+
+        function showPlanningEntityForm({ title, fields, onSave, dangerLabel = '', onDanger = null }) {
+            return new Promise((resolve) => {
+                let modalEl = document.getElementById('planningEntityModal');
+                if (!modalEl) {
+                    modalEl = document.createElement('div');
+                    modalEl.className = 'modal fade';
+                    modalEl.id = 'planningEntityModal';
+                    modalEl.tabIndex = -1;
+                    modalEl.innerHTML = `
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="planningEntityModalLabel"></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                </div>
+                                <div class="modal-body"><form id="planningEntityModalForm" class="row g-3"></form></div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                    <button type="submit" class="btn btn-primary" form="planningEntityModalForm">Сохранить</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    document.body.appendChild(modalEl);
+                }
+
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                const form = modalEl.querySelector('#planningEntityModalForm');
+                const modalFooter = modalEl.querySelector('.modal-footer');
+                modalEl.querySelector('#planningEntityModalLabel').textContent = title;
+                form.innerHTML = '';
+
+                let dangerBtn = modalEl.querySelector('#planningEntityModalDangerBtn');
+                if (!dangerBtn) {
+                    dangerBtn = document.createElement('button');
+                    dangerBtn.type = 'button';
+                    dangerBtn.id = 'planningEntityModalDangerBtn';
+                    dangerBtn.className = 'btn btn-outline-danger me-auto';
+                    modalFooter.prepend(dangerBtn);
+                }
+                dangerBtn.textContent = dangerLabel;
+                dangerBtn.style.display = onDanger ? '' : 'none';
+
+                fields.forEach(field => {
+                    const wrap = document.createElement('div');
+                    wrap.className = field.fullWidth === false ? 'col-md-6' : 'col-12';
+                    const label = document.createElement('label');
+                    label.className = 'form-label';
+                    label.htmlFor = `planning-field-${field.name}`;
+                    label.textContent = field.label;
+                    let input;
+                    if (field.type === 'textarea') {
+                        input = document.createElement('textarea');
+                        input.rows = field.rows || 3;
+                    } else if (field.type === 'select') {
+                        input = document.createElement('select');
+                        const selectedValues = field.multiple ? (Array.isArray(field.value) ? field.value : []).map(String) : [];
+                        if (field.multiple) input.multiple = true;
+                        (field.options || []).forEach(option => input.appendChild(createPlanningOption(option.value, option.label, field.multiple ? selectedValues.includes(String(option.value)) : String(field.value ?? '') === String(option.value))));
+                        if (field.multiple) {
+                            input.size = Math.min(Math.max((field.options || []).length, 2), 6);
+                            if (selectedValues.length === 0) input.selectedIndex = -1;
+                        }
+                    } else {
+                        input = document.createElement('input');
+                        input.type = field.type || 'text';
+                    }
+                    input.className = 'form-control';
+                    if (field.type === 'select' && field.multiple) input.classList.add('planning-select2');
+                    input.id = `planning-field-${field.name}`;
+                    input.name = field.name;
+                    if (field.required) input.required = true;
+                    if (field.type !== 'select') input.value = field.value ?? '';
+                    wrap.appendChild(label);
+                    wrap.appendChild(input);
+                    if (field.help) {
+                        const help = document.createElement('div');
+                        help.className = 'form-text';
+                        help.textContent = field.help;
+                        wrap.appendChild(help);
+                    }
+                    form.appendChild(wrap);
+                });
+
+                const cleanup = (value) => {
+                    if (window.jQuery?.fn?.select2) {
+                        window.jQuery(form).find('.planning-select2').each(function () {
+                            if (window.jQuery(this).data('select2')) window.jQuery(this).select2('destroy');
+                        });
+                    }
+                    form.removeEventListener('submit', submitHandler);
+                    dangerBtn.removeEventListener('click', dangerHandler);
+                    modalEl.removeEventListener('hidden.bs.modal', hiddenHandler);
+                    resolve(value);
+                };
+                const dangerHandler = () => {
+                    if (!onDanger || onDanger() === false) return;
+                    modal.hide();
+                    cleanup('danger');
+                };
+                const submitHandler = (event) => {
+                    event.preventDefault();
+                    const values = {};
+                    fields.forEach(field => {
+                        const input = form.elements[field.name];
+                        values[field.name] = field.multiple ? Array.from(input.selectedOptions).map(option => Number(option.value)) : input.value;
+                    });
+                    onSave(values);
+                    modal.hide();
+                    cleanup(values);
+                };
+                const hiddenHandler = () => cleanup(null);
+                dangerBtn.addEventListener('click', dangerHandler, { once: true });
+                form.addEventListener('submit', submitHandler, { once: true });
+                modalEl.addEventListener('hidden.bs.modal', hiddenHandler, { once: true });
+                modal.show();
+                if (window.jQuery?.fn?.select2) {
+                    window.jQuery(form).find('.planning-select2').select2({
+                        dropdownParent: window.jQuery(modalEl),
+                        width: '100%',
+                        placeholder: 'Выбрать',
+                        closeOnSelect: false
+                    });
+                }
+            });
+        }
+
+        async function openProjectEditor(projectId = null) {
+            const existing = projectId != null ? data.projects?.[projectId] : null;
+            await showPlanningEntityForm({
+                title: existing ? 'Редактировать проект' : 'Добавить проект',
+                fields: [
+                    { name: 'title', label: 'Название проекта', value: existing?.title || '', required: true },
+                    { name: 'description', label: 'Описание проекта', type: 'textarea', value: existing?.description || '' },
+                    { name: 'lifeAreaIds', label: 'Жизненные направления', type: 'select', multiple: true, value: existing?.lifeAreaIds || [], options: Object.values(data.lifeAreas ?? {}).map(area => ({ value: area.id, label: area.title })) },
+                    { name: 'goalIds', label: 'Связанные цели', type: 'select', multiple: true, value: existing?.goalIds || [], options: Object.values(data.goals ?? {}).map(goal => ({ value: goal.id, label: getGoalChain(goal) })) },
+                    { name: 'taskIds', label: 'Задачи', type: 'select', multiple: true, value: existing?.taskIds || [], options: Object.values(data.tasks ?? {}).map(task => ({ value: task.id, label: getTaskPlanningTitle(task) })) }
+                ],
+                onSave: (values) => {
+                    const project = existing || { id: (Number(data.project_max_id) || 0) + 1 };
+                    project.title = values.title.trim();
+                    project.description = values.description || '';
+                    if ('status' in project) delete project.status;
+                    project.lifeAreaIds = values.lifeAreaIds;
+                    project.goalIds = values.goalIds;
+                    project.taskIds = values.taskIds;
+                    if (!existing) {
+                        data.project_max_id = project.id;
+                        data.projects[project.id] = project;
+                    }
+                    for (const task of Object.values(data.tasks ?? {})) {
+                        if (project.taskIds.map(Number).includes(Number(task.id))) task.projectId = project.id;
+                        else if (Number(task.projectId) === Number(project.id)) delete task.projectId;
+                    }
+                    save();
+                    updatePlanningLinksInForm();
+                    refreshRoutine();
+                    refreshTasks();
+                    refreshPlanningViews();
+                }
+            });
+        }
+
+        async function openLifeAreaEditor(areaId = null) {
+            const existing = areaId != null ? data.lifeAreas?.[areaId] : null;
+            await showPlanningEntityForm({
+                title: existing ? 'Редактировать направление' : 'Добавить жизненное направление',
+                fields: [
+                    { name: 'title', label: 'Название направления', value: existing?.title || '', required: true, fullWidth: false },
+                    { name: 'color', label: 'Цвет направления', type: 'color', value: existing?.color || '#6f42c1', fullWidth: false },
+                    { name: 'description', label: 'Описание направления', type: 'textarea', value: existing?.description || '' },
+                    { name: 'icon', label: 'Иконка направления', value: existing?.icon || '◦', fullWidth: false },
+                    { name: 'sortOrder', label: 'Порядок сортировки', type: 'number', value: existing?.sortOrder ?? Object.keys(data.lifeAreas ?? {}).length + 1, fullWidth: false }
+                ],
+                onSave: (values) => {
+                    const normalizedTitle = values.title.trim();
+                    if (!normalizedTitle) return;
+                    const area = existing || { id: (Number(data.life_area_max_id) || 0) + 1, archived: false };
+                    area.title = normalizedTitle;
+                    area.description = values.description || '';
+                    area.color = values.color || '#6f42c1';
+                    area.icon = values.icon || '◦';
+                    area.sortOrder = Number(values.sortOrder) || 0;
+                    if (!existing) {
+                        data.life_area_max_id = area.id;
+                        data.lifeAreas[area.id] = area;
+                    }
+                    save();
+                    updatePlanningLinksInForm();
+                    refreshPlanningViews();
+                }
+            });
+        }
+
+        async function openGoalEditor(goalId = null, defaults = {}) {
+            const existing = goalId != null ? data.goals?.[goalId] : null;
+            const defaultStart = existing?.dateStart || selectedDate.toStringWithoutTime();
+            await showPlanningEntityForm({
+                title: existing ? 'Редактировать цель' : 'Добавить цель',
+                fields: [
+                    { name: 'title', label: 'Название цели', value: existing?.title || '', required: true, fullWidth: false },
+                    { name: 'level', label: 'Срок цели', type: 'select', value: existing?.level || defaults.level || 'year', options: getPlanningTermOptions(), fullWidth: false },
+                    { name: 'lifeAreaId', label: 'Жизненное направление', type: 'select', value: existing?.lifeAreaId ?? defaults.lifeAreaId ?? '', required: true, options: Object.values(data.lifeAreas ?? {}).map(area => ({ value: area.id, label: area.title })) },
+                    { name: 'parentId', label: 'Родительская цель', type: 'select', value: existing?.parentId ?? defaults.parentId ?? '', options: [{ value: '', label: 'Без родительской цели' }, ...Object.values(data.goals ?? {}).filter(goal => Number(goal.id) !== Number(goalId)).map(goal => ({ value: goal.id, label: getGoalChain(goal) }))] },
+                    { name: 'description', label: 'Описание цели', type: 'textarea', value: existing?.description || '' },
+                    { name: 'dateStart', label: 'Дата начала', type: 'date', value: defaultStart, fullWidth: false },
+                    { name: 'deadline', label: 'Дедлайн', type: 'date', value: existing?.deadline || getGoalDeadlineForTerm(defaults.level || 'year', defaultStart), fullWidth: false, help: 'Оставьте пустым для бессрочной цели' }
+                ],
+                dangerLabel: existing ? 'Удалить цель' : '',
+                onDanger: existing ? () => {
+                    if (!confirm('Удалить цель?')) return false;
+                    deleteGoalById(existing.id);
+                    save();
+                    updatePlanningLinksInForm();
+                    refreshRoutine();
+                    refreshTasks();
+                    refreshPlanningViews();
+                    return true;
+                } : null,
+                onSave: (values) => {
+                    const areaId = Number(values.lifeAreaId);
+                    if (!data.lifeAreas?.[areaId] || !values.title.trim()) return;
+                    const goal = existing || { id: (Number(data.goal_max_id) || 0) + 1, status: 'active', percent: 0, notes: '' };
+                    goal.lifeAreaId = areaId;
+                    goal.parentId = values.parentId ? Number(values.parentId) : null;
+                    goal.level = values.level || 'year';
+                    goal.title = values.title.trim();
+                    goal.description = values.description || '';
+                    goal.dateStart = values.dateStart || '';
+                    goal.deadline = values.deadline || '';
+                    if (!existing) {
+                        goal.sortOrder = getNextGoalSortOrder(goal.lifeAreaId);
+                        data.goal_max_id = goal.id;
+                        data.goals[goal.id] = goal;
+                    }
+                    save();
+                    updatePlanningLinksInForm();
+                    refreshPlanningViews();
+                }
+            });
+        }
+
+        function getNextGoalSortOrder(lifeAreaId) {
+            const areaGoals = Object.values(data.goals ?? {}).filter(goal => Number(goal.lifeAreaId) === Number(lifeAreaId));
+            return areaGoals.reduce((max, goal) => Math.max(max, Number(goal.sortOrder) || 0), 0) + 1;
+        }
+
+        function deleteGoalById(goalId) {
+            const numericGoalId = Number(goalId);
+            Object.values(data.goals ?? {})
+                .filter(goal => Number(goal.parentId) === numericGoalId)
+                .forEach(goal => deleteGoalById(goal.id));
+
+            delete data.goals[numericGoalId];
+            for (const area of Object.values(data.lifeAreas ?? {})) {
+                area.goalIds = (area.goalIds || []).map(Number).filter(id => id !== numericGoalId);
+            }
+            for (const project of Object.values(data.projects ?? {})) {
+                project.goalIds = (project.goalIds || []).map(Number).filter(id => id !== numericGoalId);
+            }
+            for (const task of Object.values(data.tasks ?? {})) {
+                task.goalIds = (task.goalIds || []).map(Number).filter(id => id !== numericGoalId);
+            }
+        }
+
+        function reorderGoalsInArea(lifeAreaId, draggedGoalId, targetGoalId) {
+            if (Number(draggedGoalId) === Number(targetGoalId)) return;
+            const orderedGoals = Object.values(data.goals ?? {})
+                .filter(goal => Number(goal.lifeAreaId) === Number(lifeAreaId))
+                .sort((a, b) => (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0) || Number(a.id) - Number(b.id));
+            const draggedIndex = orderedGoals.findIndex(goal => Number(goal.id) === Number(draggedGoalId));
+            const targetIndex = orderedGoals.findIndex(goal => Number(goal.id) === Number(targetGoalId));
+            if (draggedIndex < 0 || targetIndex < 0) return;
+
+            const [draggedGoal] = orderedGoals.splice(draggedIndex, 1);
+            orderedGoals.splice(targetIndex, 0, draggedGoal);
+            orderedGoals.forEach((goal, index) => {
+                goal.sortOrder = index + 1;
+            });
+            save();
+            refreshPlanningViews();
+        }
+
+        function renderInbox() {
+            const container = document.getElementById('inboxContainer');
+            if (!container) return;
+            const inboxNotes = Object.values(data.notes ?? {}).filter(note => note.folder == null && note.folder !== ARCHIVE_FOLDER_KEY);
+            container.innerHTML = '';
+            const hero = document.createElement('section');
+            hero.className = 'planning-hero';
+            hero.innerHTML = `<div class="planning-title"><i class="bi bi-inbox-fill"></i> Входящие</div><p class="planning-subtitle">Сначала фиксируйте идеи, а место для них выбирайте позже.</p><div class="inbox-actions"><button class="btn btn-primary btn-sm" id="inboxAddNoteBtn">Добавить заметку</button><button class="btn btn-outline-primary btn-sm" id="inboxCreateTaskBtn">Создать задачу</button><button class="btn btn-outline-secondary btn-sm" id="inboxOpenNotesBtn">Перенести в папку</button></div>`;
+            container.appendChild(hero);
+            hero.querySelector('#inboxAddNoteBtn').addEventListener('click', () => { ResetNoteForm(); applyQuickPreset('note'); formFields.folder.value = ''; formNoteModal.show(); });
+            hero.querySelector('#inboxCreateTaskBtn').addEventListener('click', () => { ResetNoteForm(); applyQuickPreset('task'); formFields.folder.value = ''; formNoteModal.show(); });
+            hero.querySelector('#inboxOpenNotesBtn').addEventListener('click', () => document.querySelector('.nav-button[data-target="notesContainer"]')?.click());
+            const list = createPlanningCard('Неразобранные заметки', 'Превращайте элементы в задачу, проект, направление или цель, когда станет ясно зачем.');
+            const wrap = document.createElement('div');
+            wrap.className = 'planning-list';
+            inboxNotes.forEach(note => {
+                const item = document.createElement('div');
+                item.className = 'planning-item';
+                item.innerHTML = `<strong>${note.icon || '📝'} ${note.title || 'Without a title'}</strong><div class="small text-muted">${(note.description || '').slice(0, 130)}</div><div class="planning-meta"><span class="planning-chip">Входящие</span>${note.task ? '<span class="planning-chip">Задача</span>' : ''}</div>`;
+                item.addEventListener('click', () => ShowNoteFormForNote(note.id));
+                wrap.appendChild(item);
+            });
+            if (inboxNotes.length === 0) wrap.innerHTML = `<div class="text-muted small">Входящие пусты</div>`;
+            list.appendChild(wrap);
+            container.appendChild(list);
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projectsContainer');
+            if (!container) return;
+            container.innerHTML = `<section class="planning-hero"><div class="planning-title"><i class="bi bi-kanban"></i> Проекты</div><p class="planning-subtitle">Проекты отвечают на вопрос, над чем вы сейчас работаете.</p><div class="inbox-actions"><button class="btn btn-primary btn-sm" id="planningAddProjectBtn">Добавить проект</button></div></section>`;
+            container.querySelector('#planningAddProjectBtn')?.addEventListener('click', () => openProjectEditor());
+            const list = document.createElement('div');
+            list.className = 'planning-list';
+            Object.values(data.projects ?? {}).forEach(project => {
+                const projectTasks = Object.values(data.tasks ?? {}).filter(task => Number(task.projectId) === Number(project.id) || (project.taskIds || []).map(Number).includes(Number(task.id)));
+                const regularCount = projectTasks.filter(task => !!task.regularity).length;
+                const oneTimeCount = projectTasks.filter(task => !task.regularity).length;
+                const item = document.createElement('article');
+                item.className = 'planning-item';
+                const areas = (project.lifeAreaIds || []).map(id => data.lifeAreas?.[id]?.title).filter(Boolean);
+                const goals = (project.goalIds || []).map(id => data.goals?.[id]?.title).filter(Boolean);
+                item.innerHTML = `<div class="d-flex justify-content-between gap-2"><strong>${project.title}</strong><button class="btn btn-outline-secondary btn-sm" type="button">Редактировать</button></div><div class="small text-muted">${project.description || ''}</div><div class="planning-meta">${regularCount ? `<span class="planning-chip">${regularCount} Регулярные задачи</span>` : ''}${oneTimeCount ? `<span class="planning-chip">${oneTimeCount} Задачи</span>` : ''}${areas.map(a => `<span class="planning-chip">${a}</span>`).join('')}${goals.slice(0,3).map(g => `<span class="planning-chip">${g}</span>`).join('')}</div>`;
+                item.addEventListener('click', () => openAllTasksSection(project.id));
+                item.querySelector('button')?.addEventListener('click', (event) => { event.stopPropagation(); openProjectEditor(project.id); });
+                list.appendChild(item);
+            });
+            container.appendChild(list);
+        }
+
+        function renderLifeAreas() {
+            const container = document.getElementById('lifeAreasContainer');
+            if (!container) return;
+            container.innerHTML = `<section class="planning-hero"><div class="planning-title"><i class="bi bi-compass"></i> Жизненные направления</div><p class="planning-subtitle">Направления объясняют, зачем нужны проекты и задачи.</p><div class="inbox-actions"><button class="btn btn-primary btn-sm" id="planningAddDirectionBtn">Добавить жизненное направление</button></div></section>`;
+            container.querySelector('#planningAddDirectionBtn')?.addEventListener('click', () => openLifeAreaEditor());
+            Object.values(data.lifeAreas ?? {}).filter(a => !a.archived).sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0)).forEach(area => {
+                const goals = Object.values(data.goals ?? {})
+                    .filter(g => Number(g.lifeAreaId) === Number(area.id))
+                    .sort((a, b) => (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0) || Number(a.id) - Number(b.id));
+                const projects = Object.values(data.projects ?? {}).filter(p => (p.lifeAreaIds || []).map(Number).includes(Number(area.id)));
+                const tasks = Object.values(data.tasks ?? {}).filter(t => projects.some(p => (p.taskIds || []).map(Number).includes(Number(t.id))) || (t.goalIds || []).some(id => goals.some(g => Number(g.id) === Number(id))));
+                const card = createPlanningCard(`${area.icon} ${area.title}`, area.description || '');
+                card.style.borderColor = area.color || 'var(--surface-border)';
+                card.innerHTML += `<div class="inbox-actions"><button class="btn btn-outline-secondary btn-sm" data-action="edit-area">Редактировать направление</button><button class="btn btn-outline-primary btn-sm" data-action="add-goal">Добавить цель</button></div><div class="planning-grid"><div class="planning-stat"><div class="planning-stat-value">${goals.filter(g=>g.status==='active').length}</div><div class="planning-stat-label">Активные цели</div></div><div class="planning-stat"><div class="planning-stat-value">${projects.length}</div><div class="planning-stat-label">Проекты</div></div><div class="planning-stat"><div class="planning-stat-value">${tasks.length}</div><div class="planning-stat-label">Задачи</div></div></div>`;
+                card.querySelector('[data-action="edit-area"]')?.addEventListener('click', () => openLifeAreaEditor(area.id));
+                card.querySelector('[data-action="add-goal"]')?.addEventListener('click', () => openGoalEditor(null, { lifeAreaId: area.id }));
+                const goalList = document.createElement('div');
+                goalList.className = 'planning-list mt-2';
+                goals.forEach(goal => {
+                    const row = document.createElement('div');
+                    row.className = 'planning-item';
+                    row.draggable = true;
+                    row.dataset.goalId = String(goal.id);
+                    row.dataset.lifeAreaId = String(area.id);
+                    row.innerHTML = `<div class="d-flex justify-content-between gap-2"><strong>${goal.title}</strong><i class="bi bi-grip-vertical text-muted" title="Перетащите, чтобы изменить порядок"></i></div><div class="small text-muted">${getGoalChain(goal)}</div><div class="planning-goal-meta"><span class="planning-date-chip"><i class="bi bi-hourglass-split"></i>Срок цели: ${getGoalTermLabel(goal.level)}</span><span class="planning-date-chip"><i class="bi bi-calendar-event"></i>Дата начала: ${formatPlanningDate(goal.dateStart)}</span><span class="planning-date-chip"><i class="bi bi-flag"></i>Дедлайн: ${formatGoalDeadline(goal.deadline)}</span></div>`;
+                    row.addEventListener('click', () => openGoalEditor(goal.id));
+                    row.addEventListener('dragstart', (event) => {
+                        event.dataTransfer.setData('text/plain', JSON.stringify({ goalId: goal.id, lifeAreaId: area.id }));
+                        event.dataTransfer.effectAllowed = 'move';
+                    });
+                    row.addEventListener('dragover', (event) => {
+                        event.preventDefault();
+                        event.dataTransfer.dropEffect = 'move';
+                    });
+                    row.addEventListener('drop', (event) => {
+                        event.preventDefault();
+                        try {
+                            const payload = JSON.parse(event.dataTransfer.getData('text/plain'));
+                            if (Number(payload.lifeAreaId) !== Number(area.id)) return;
+                            reorderGoalsInArea(area.id, payload.goalId, goal.id);
+                        } catch (error) {
+                            console.error('Could not reorder goals', error);
+                        }
+                    });
+                    goalList.appendChild(row);
+                });
+                card.appendChild(goalList);
+                container.appendChild(card);
+            });
+        }
+
+        function refreshPlanningViews() {
+            renderInbox();
+            renderProjects();
+            renderLifeAreas();
         }
 
         function refreshNotes() {
@@ -5830,7 +6910,7 @@
                     deleteIcon.title = 'Удалить';
                     deleteIcon.addEventListener('click', (event) => {
                         event.stopPropagation();
-                        if (!confirm('Удалить папку и переместить заметки в родительскую папку? Если родительской нет — в "Заметки без папки".')) {
+                        if (!confirm('Удалить папку и переместить заметки в родительскую папку? Если родительской нет — во «Входящие».')) {
                             return;
                         }
                         deleteFolderById(folderId);
@@ -5846,9 +6926,9 @@
                 const renameIcon = document.createElement('i');
                 renameIcon.className = 'bi bi-pencil-square icon';
                 renameIcon.title = 'Переименовать папку';
-                renameIcon.addEventListener('click', (event) => {
+                renameIcon.addEventListener('click', async (event) => {
                     event.stopPropagation();
-                    const nextFolderName = prompt('Введите новое название папки', folderName);
+                    const nextFolderName = await askStyledInput('Введите новое название папки', folderName, { title: 'Переименовать папку' });
                     if (nextFolderName == null) return;
 
                     const normalizedFolderName = nextFolderName.trim();
@@ -5950,7 +7030,7 @@
                 titleDiv.className = 'folder-header';
                 const title = document.createElement('span');
                 title.className = 'folder-name';
-                title.textContent = 'Заметки без папки';
+                title.textContent = 'Входящие';
 
                 const notesListDiv = document.createElement('div');
                 notesListDiv.className = 'notes-list';
@@ -6147,11 +7227,23 @@
             formFields.bgColor.value = note.bgColor ?? '';
             formFields.tags.value = note.tags ?? '';
             formFields.hideFromCompact.checked = note.hideFromCompact === true;
-            if (note.task != null) {
+            if (note.task != null && !data.tasks?.[note.task]) {
+                delete note.task;
+                save();
+                refreshNotes();
+                refreshPlanningViews();
+            }
+            if (note.task != null && data.tasks?.[note.task]) {
                 const task = data.tasks[note.task];
                 formIsTaskSwitch.checked = true;
                 formFields.dateStart.value = task.dateStart ?? '';
                 formFields.dateEnd.value = task.dateEnd ?? '';
+                updatePlanningLinksInForm();
+                formFields.project.value = task.projectId ?? '';
+                const selectedGoalIds = new Set((task.goalIds || []).map(id => String(id)));
+                Array.from(formFields.goals.options).forEach(option => {
+                    option.selected = selectedGoalIds.has(String(option.value));
+                });
 
                 const regType = task.regularity ? task.regularity.type : 'null';
                 formFields.repeat.value = regType;
@@ -6241,10 +7333,16 @@
                 : (IsTaskCompleted(task, selectedDate) ? 'Выполнено' : 'Не выполнено');
             const cancellationReason = GetTaskCancellationReason(task, selectedDate);
 
+            const linkedProject = task.projectId != null ? data.projects?.[task.projectId] : null;
+            const linkedGoals = (task.goalIds || []).map(id => data.goals?.[id]).filter(Boolean);
+            const linkedDirections = [...new Set(linkedGoals.map(goal => data.lifeAreas?.[goal.lifeAreaId]?.title).filter(Boolean))];
             const lines = [
                 regularityText,
                 'Статус' + ': ' + doneText,
-                'Время' + ': ' + timeText
+                'Время' + ': ' + timeText,
+                'Связанный проект' + ': ' + (linkedProject?.title || 'Без проекта'),
+                'Связанные цели' + ': ' + (linkedGoals.length ? linkedGoals.map(goal => getGoalChain(goal)).join('; ') : 'Нет связанных целей'),
+                'Жизненные направления' + ': ' + (linkedDirections.length ? linkedDirections.join(', ') : '—')
             ];
             if (IsTaskCancelled(task, selectedDate) && cancellationReason) {
                 lines.push('Причина отмены' + ': ' + cancellationReason);
@@ -6425,12 +7523,12 @@
             return taskDiv;
         }
 
-        function clickOnTaskCompleteButton(task) {
+        async function clickOnTaskCompleteButton(task) {
             if (task.regularity && routineCompletionMode === 'cancel') {
                 if (IsTaskCancelled(task, selectedDate)) {
                     SetTaskCancelled(task, false, selectedDate);
                 } else {
-                    const reasonInput = prompt('Введите причину отмены', '');
+                    const reasonInput = await askStyledInput('Введите причину отмены', '', { title: 'Причина отмены' });
                     if (reasonInput === null) {
                         return;
                     }
@@ -6631,6 +7729,12 @@
             navMoreToggle.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
         });
 
+        saveBottomMenuOrderBtn?.addEventListener('click', () => {
+            ensureSettingsObject().bottomMenuOrder = readBottomMenuEditorOrder();
+            save();
+            applyBottomMenuSettings();
+        });
+
         document.addEventListener('click', (event) => {
             if (!secondaryNavMenu.classList.contains('open')) {
                 return;
@@ -6656,7 +7760,7 @@
                 }
                 closeSecondaryNav();
 
-                if (targetId === 'tasksContainer' || targetId === 'routineContainer') {
+                if (targetId === 'tasksContainer' || targetId === 'routineContainer' || targetId === 'allTasksContainer') {
                     // Разблокировать
                     navTop.classList.remove('disabled');
                 } else {
@@ -6683,6 +7787,7 @@
                 currentActiveTab = targetId;
                 updateAddButtonContext(targetId);
                 localStorage.setItem('activeTab', targetId);
+                if (targetId === 'allTasksContainer') refreshAllTasks();
                 updateFinishDayButtonVisibility();
             });
         });
@@ -6777,7 +7882,7 @@
             containers.forEach(id => {
                 const container = document.getElementById(id);
 
-                if (container.classList.contains('show') && (id === 'tasksContainer' || id === 'routineContainer')) {
+                if (container.classList.contains('show') && (id === 'tasksContainer' || id === 'routineContainer' || id === 'allTasksContainer')) {
                     const transitionDuration = 135;
                     container.classList.remove('show');
 
@@ -6790,7 +7895,7 @@
         }
 
         function getActiveTaskContainer() {
-            for (const id of ['tasksContainer', 'routineContainer']) {
+            for (const id of ['tasksContainer', 'routineContainer', 'allTasksContainer']) {
                 const container = document.getElementById(id);
                 if (container && container.classList.contains('show')) {
                     return container;
@@ -6950,6 +8055,7 @@
         }
         bindDaySwipe('tasksContainer');
         bindDaySwipe('routineContainer');
+        bindDaySwipe('allTasksContainer');
 
         function getGoogleCalendarSettings() {
             const settings = data?.settings?.googleCalendar;
@@ -7884,7 +8990,11 @@
                 }
             } else {
                 if (id != null && note.task) {
+                    const removedTaskId = note.task;
                     delete data.tasks[note.task];
+                    for (const project of Object.values(data.projects ?? {})) {
+                        project.taskIds = (project.taskIds || []).map(Number).filter(id => id !== Number(removedTaskId));
+                    }
                     delete note.task;
                     taskDeleted = true;
                 }
@@ -7897,6 +9007,10 @@
                 const timeStart = formFields.timeType.value !== 'null' ? formFields.timeStart.value : null;
                 const dateEnd = formFields.dateEnd.value;
                 const repeatable = formFields.repeat.value !== 'null' ? formFields.repeat.value : null;
+
+                const selectedProjectId = formFields.project.value ? Number(formFields.project.value) : null;
+                task.projectId = selectedProjectId && data.projects?.[selectedProjectId] ? selectedProjectId : null;
+                task.goalIds = Array.from(formFields.goals.selectedOptions).map(option => Number(option.value)).filter(id => data.goals?.[id]);
 
                 if (dateStart != null && dateStart !== '') {
                     task.dateStart = dateStart;
@@ -8006,6 +9120,7 @@
 
             if (isTask && task) {
                 task.updatedAt = (new Date()).toISOString();
+                syncTaskPlanningLinks(task);
             }
 
             if (icon !== '' && icon != null) {
@@ -8024,6 +9139,7 @@
                 updateFinishDayButtonVisibility();
             }
             refreshNotes();
+            refreshPlanningViews();
 
             // После сохранения закрываем модальное окно Bootstrap
             formNoteModal.hide();
@@ -8032,7 +9148,7 @@
 
         function updateFolderListInForm() {
             // Очистить существующие опции, кроме "Без папки"
-            formFields.folder.innerHTML = '<option value="">Без папки</option>';
+            formFields.folder.innerHTML = '<option value="">Входящие</option>';
             formFields.folder.innerHTML += `<option value="${ARCHIVE_FOLDER_KEY}">Архив</option>`;
             // Добавить опции из data.folders
             for (const folderId in data.folders) {
@@ -8044,7 +9160,43 @@
             }
         }
 
+
+        function updatePlanningLinksInForm() {
+            formFields.project.innerHTML = '<option value="">Без проекта</option>';
+            Object.values(data.projects ?? {}).forEach(project => {
+                const option = document.createElement('option');
+                option.value = String(project.id);
+                option.textContent = project.title;
+                formFields.project.appendChild(option);
+            });
+
+            formFields.goals.innerHTML = '';
+            Object.values(data.goals ?? {}).forEach(goal => {
+                const option = document.createElement('option');
+                option.value = String(goal.id);
+                option.textContent = getGoalChain(goal);
+                formFields.goals.appendChild(option);
+            });
+        }
+
+        function syncTaskPlanningLinks(task) {
+            if (!task) return;
+            for (const project of Object.values(data.projects ?? {})) {
+                project.taskIds = (project.taskIds || []).map(Number).filter(id => id !== Number(task.id));
+            }
+            if (task.projectId != null && data.projects?.[task.projectId]) {
+                const project = data.projects[task.projectId];
+                project.taskIds = project.taskIds || [];
+                if (!project.taskIds.map(Number).includes(Number(task.id))) {
+                    project.taskIds.push(Number(task.id));
+                }
+                task.goalIds = task.goalIds || [];
+                project.goalIds = [...new Set([...(project.goalIds || []).map(Number), ...task.goalIds.map(Number)])];
+            }
+        }
+
         formNoteModalEl.addEventListener('show.bs.modal', () => {
+            updatePlanningLinksInForm();
             const isEditMode = !!formFields.id.value;
             quickAddPanel.style.display = isEditMode ? 'none' : 'grid';
             if (!isEditMode) {
@@ -8076,6 +9228,7 @@
             formFields.repeatContainer.style.display = show ? 'block' : 'none';
             formFields.timeTypeContainer.style.display = show ? 'block' : 'none';
             formFields.goalTypeContainer.style.display = show ? 'block' : 'none';
+            formFields.planningLinksContainer.style.display = show ? 'block' : 'none';
 
             if (show) {
                 showTimeType(formFields.timeType.value);
@@ -8895,9 +10048,11 @@
         notesDisplayMode = data.settings.noteDisplayMode ?? 'folders';
         updateWeek(selectedDate);
         refreshNotes();
+        refreshPlanningViews();
         updateFolderListInForm();
         updateCreateFolderOptions();
         updateParentNoteOptions();
+        updatePlanningLinksInForm();
     </script>
 
 
