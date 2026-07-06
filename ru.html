@@ -8163,6 +8163,30 @@
             return titleParts.join(' ').trim() || 'Задача';
         }
 
+        function parseGoogleTaskTitleForTaskAura(googleTask) {
+            const fallbackTitle = 'Задача';
+            const rawTitle = String(googleTask?.title ?? '').trim();
+            const title = rawTitle || fallbackTitle;
+            const emojiMatch = title.match(/^(?:\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?)*)/u);
+            if (!emojiMatch) {
+                return { icon: null, title };
+            }
+
+            const icon = emojiMatch[0];
+            const titleWithoutIcon = title.slice(icon.length).trim() || fallbackTitle;
+            return { icon, title: titleWithoutIcon };
+        }
+
+        function applyGoogleTaskTitleToTaskAuraNote(note, googleTask) {
+            const { icon, title } = parseGoogleTaskTitleForTaskAura(googleTask);
+            note.title = title;
+            if (icon) {
+                note.icon = icon;
+            } else if ('icon' in note) {
+                delete note.icon;
+            }
+        }
+
         function getGoogleSyncDuplicateKey(title, description) {
             return `${String(title ?? '').trim()}\u0000${String(description ?? '').trim()}`;
         }
@@ -8179,7 +8203,7 @@
         }
 
         function applyGoogleTaskContentToTaskAuraTask(task, note, googleTask) {
-            note.title = googleTask.title || 'Задача';
+            applyGoogleTaskTitleToTaskAuraNote(note, googleTask);
             note.description = getGoogleTaskNotesWithoutTaskAuraMarker(googleTask);
             const googleDueDate = getGoogleTaskDueDateForTaskAura(googleTask);
             if (googleDueDate) {
@@ -8771,12 +8795,14 @@
             const googleDueDate = getGoogleTaskDueDateForTaskAura(googleTask);
             const dateEnd = googleTask.due ? String(googleTask.due).slice(0, 10) : null;
             const dateStart = dateEnd ? (new Date()).toStringWithoutTime() : selectedDate.toStringWithoutTime();
+            const parsedTitle = parseGoogleTaskTitleForTaskAura(googleTask);
             const note = {
                 id: noteId,
-                title: googleTask.title || 'Задача',
+                title: parsedTitle.title,
                 description: getGoogleTaskNotesWithoutTaskAuraMarker(googleTask),
                 folder: null,
                 task: taskId,
+                ...(parsedTitle.icon ? { icon: parsedTitle.icon } : {}),
             };
             const task = {
                 id: taskId,
